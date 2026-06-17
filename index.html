@@ -438,13 +438,12 @@
                             msg.imageOptions.map(opt => `
                                 <button class="image-option-btn border border-pink-200 rounded-lg overflow-hidden hover:ring-2 hover:ring-pink-500 transition-all text-left bg-white shadow-sm" data-image-url="${opt.url}" data-image-label="${opt.label}">
                                     <img src="${opt.url}" class="w-full h-20 object-cover" alt="${opt.label}">
-                                    <div class="p-2 text-xs text-pink-700 font-bold bg-pink-50/50">${opt.label}</div>
+                                    <div class="p-2 text-[10px] sm:text-xs text-pink-700 font-bold bg-pink-50/50 leading-tight">${opt.label}</div>
                                 </button>
                             `).join('') +
                         `</div>`;
                     }
 
-                    // ★追加: デザインテイストの8つの画像選択肢をレンダリング
                     if (msg.designOptions) {
                         optionsHtml = `<div class="grid grid-cols-2 gap-2 mt-3 w-full">` + 
                             msg.designOptions.map(opt => `
@@ -515,12 +514,10 @@
                 });
             });
 
-            // ★追加: デザインテイストボタンのイベント
             document.querySelectorAll('.design-option-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     if(!isStarted || messageInput.disabled) return; 
                     const rawLabel = e.currentTarget.getAttribute('data-design-label');
-                    // 改行タグをスペースに置換して送信
                     const label = rawLabel.replace(/<br>/g, " ");
                     messageInput.value = label + " にします。";
                     handleSendMessage(); 
@@ -528,9 +525,6 @@
             });
         }
 
-        // ==========================================
-        // モード1: 手動フロー
-        // ==========================================
         function startManualFlow() {
             isStarted = true;
             currentStep = 1;
@@ -563,25 +557,44 @@
                 userKodawari = userInput;
                 
                 let suggestions = [];
-                if (userInput.includes("イタリアン") || userInput.includes("パスタ") || userInput.includes("野菜")) {
+                if (userInput.includes("イタリアン") || userInput.includes("パスタ") || userInput.includes("野菜") || userInput.includes("レストラン")) {
                     suggestions = [
                         { url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop", label: "モダンなダイニング" },
                         { url: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop", label: "本格パスタ" },
                         { url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop", label: "新鮮な食材" },
-                        { url: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop", label: "テーブルセッティング" }
+                        { url: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop", label: "テーブルセッティング" },
+                        { url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=800&auto=format&fit=crop", label: "焼き立てピザ" },
+                        { url: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=800&auto=format&fit=crop", label: "ワインとグラス" },
+                        { url: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=800&auto=format&fit=crop", label: "シェフの調理風景" },
+                        { url: "https://images.unsplash.com/photo-1525610553991-2bede1a236e2?q=80&w=800&auto=format&fit=crop", label: "おしゃれなテラス席" }
+                    ];
+                } else if (userInput.includes("美容") || userInput.includes("サロン") || userInput.includes("ヘア")) {
+                    suggestions = [
+                        { url: "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=800&auto=format&fit=crop", label: "サロン内観" },
+                        { url: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=800&auto=format&fit=crop", label: "ヘアスタイリング" },
+                        { url: "https://images.unsplash.com/photo-1521590832167-7bfc17484d20?q=80&w=800&auto=format&fit=crop", label: "スキンケア" },
+                        { url: "https://images.unsplash.com/photo-1595476108010-b4d1f10d5e43?q=80&w=800&auto=format&fit=crop", label: "リラックス" },
+                        { url: "https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?q=80&w=800&auto=format&fit=crop", label: "ネイルアート" },
+                        { url: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=800&auto=format&fit=crop", label: "マッサージ・スパ" },
+                        { url: "https://images.unsplash.com/photo-1596462502278-27bf85033e5a?q=80&w=800&auto=format&fit=crop", label: "コスメアイテム" },
+                        { url: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=800&auto=format&fit=crop", label: "美容師と顧客" }
                     ];
                 } else {
                     suggestions = [
                         { url: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop", label: "明るいオフィス" },
                         { url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop", label: "ミーティングルーム" },
                         { url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=800&auto=format&fit=crop", label: "チームワーク" },
-                        { url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop", label: "スタイリッシュなPC" }
+                        { url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop", label: "スタイリッシュなPC" },
+                        { url: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=800&auto=format&fit=crop", label: "ビジネス街のビル" },
+                        { url: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?q=80&w=800&auto=format&fit=crop", label: "リモートワーク" },
+                        { url: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=800&auto=format&fit=crop", label: "クリエイティブな作業" },
+                        { url: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=800&auto=format&fit=crop", label: "握手・契約" }
                     ];
                 }
                 setTimeout(() => {
                     messages.push({ 
                         id: Date.now(), type: 'ai', 
-                        text: '素晴らしいこだわりですね！その強みを活かした文章を作成します。<br><br>続いて、<b>サイトのメインビジュアル</b>の候補をピックアップしました。イメージに合うものを一つ選んでクリックしてください。',
+                        text: '素晴らしいこだわりですね！その強みを活かした文章を作成します。<br><br>続いて、<b>サイトのメインビジュアル</b>の候補を8つピックアップしました。イメージに合うものを一つ選んでクリックしてください。',
                         imageOptions: suggestions 
                     });
                     renderMessages();
@@ -591,7 +604,6 @@
             else if (currentStep === 3) {
                 currentStep = 4;
                 setTimeout(() => {
-                    // ★修正: 8つの画像付きデザインテイストを提示
                     messages.push({ 
                         id: Date.now(), type: 'ai', 
                         text: '素敵な画像ですね！この画像をベースに構築します。<br><br>次に、<b>「デザイン要件（トーン＆マナー・配色）」</b>を決めていきましょう。以下の8つのデザインテイストから、ご希望のイメージに近いものをクリックしてください。',
@@ -613,13 +625,19 @@
             else if (currentStep === 4) {
                 currentStep = 5;
                 setTimeout(() => {
+                    // ★修正: 用途別の8つの構成パターンを提示
                     messages.push({ 
                         id: Date.now(), type: 'ai', 
-                        text: 'デザインの方向性が決まりましたね。<br><br>次に、<b>「サイト構成」</b>と導入したい<b>「機能」</b>を選んでください。',
+                        text: 'デザインの方向性が決まりましたね。<br><br>次に、<b>「サイト構成」</b>と導入したい<b>「機能」</b>を選んでください。用途に合わせて8つのパターンをご用意しています。',
                         options: [
-                            '本格的な5ページ構成 ＋ カレンダー予約機能 ＋ SNS連携',
-                            '複数ページ構成（メニュー詳細等）＋ お問い合わせフォーム',
-                            'シンプルに名刺代わりの1ページ構成（機能なし）'
+                            '名刺代わりのシンプル1ページ構成',
+                            '集客特化のランディングページ(LP)型',
+                            'ベーシックな複数ページ構成(3〜5P) ＋ お問い合わせ',
+                            '予約システム連動型の本格構成（カレンダー予約）',
+                            'ギャラリー・ポートフォリオ特化型',
+                            'ブログ・お知らせ更新機能付き（CMS）',
+                            'オンライン販売・ECカート機能付き',
+                            '採用・リクルート特化型（エントリー機能）'
                         ]
                     });
                     renderMessages();
@@ -648,7 +666,7 @@
                 setTimeout(() => {
                     messages.push({ 
                         id: Date.now(), type: 'ai', 
-                        text: '完璧です！必要な情報が全て揃いました。いただいた情報を整理しました。<br><br><div class="bg-pink-50 border border-pink-100 p-3 rounded text-xs mt-2 font-mono text-pink-800"><b>【プロジェクト要件定義】</b><br>・ターゲット・目的設定<br>・「独自の強み・こだわり」に基づくAIコピーライティング<br>・メイン画像の選定<br>・デザイン・配色ルールの適用<br>・本格的な複数ページ(5P)構成<br>・予約機能の組み込み<br>・全ページ共通: ロゴクリックでHOMEへ戻る機能<br>・最適化されたSEO・メタタグ設定</div><br>これより、ビジネスの成果に直結するサイトを自動構築します！少々お待ちください。' 
+                        text: '完璧です！必要な情報が全て揃いました。いただいた情報を整理しました。<br><br><div class="bg-pink-50 border border-pink-100 p-3 rounded text-xs mt-2 font-mono text-pink-800"><b>【プロジェクト要件定義】</b><br>・ターゲット・目的設定<br>・「独自の強み・こだわり」に基づくAIコピーライティング<br>・メイン画像の選定<br>・デザイン・配色ルールの適用<br>・用途に合わせた最適なページ構成<br>・必要なシステムの組み込み<br>・全ページ共通: ロゴクリックでHOMEへ戻る機能<br>・最適化されたSEO・メタタグ設定</div><br>これより、ビジネスの成果に直結するサイトを自動構築します！少々お待ちください。' 
                     });
                     renderMessages();
                     setTimeout(showLoadingAndPreview, 2500);
@@ -684,7 +702,19 @@
             }, 5500);
 
             setTimeout(() => { 
-                messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】業種に合わせたメイン画像の候補です。', imageOptions: [{ url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop", label: "モダンなダイニング" }]}); 
+                messages.push({ 
+                    id: Date.now(), type: 'ai', text: '【自動デモ】業種に合わせたメイン画像の候補です。', 
+                    imageOptions: [
+                        { url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop", label: "モダンなダイニング" },
+                        { url: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop", label: "本格パスタ" },
+                        { url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop", label: "新鮮な食材" },
+                        { url: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop", label: "テーブルセッティング" },
+                        { url: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=800&auto=format&fit=crop", label: "焼き立てピザ" },
+                        { url: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=800&auto=format&fit=crop", label: "ワインとグラス" },
+                        { url: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=800&auto=format&fit=crop", label: "シェフの調理風景" },
+                        { url: "https://images.unsplash.com/photo-1525610553991-2bede1a236e2?q=80&w=800&auto=format&fit=crop", label: "おしゃれなテラス席" }
+                    ]
+                }); 
                 renderMessages(); 
             }, 7000);
             setTimeout(() => { 
@@ -693,7 +723,6 @@
             }, 8500);
             
             setTimeout(() => { 
-                // ★修正: デモでも8つの画像テイストを表示
                 messages.push({ 
                     id: Date.now(), 
                     type: 'ai', 
@@ -714,7 +743,9 @@
             setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: 'モダン＆ミニマル (白黒/洗練) にします。' }); renderMessages(); }, 11500);
             
             setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】サイト構成、機能を教えてください。' }); renderMessages(); }, 13000);
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '本格的な5ページ構成、カレンダー予約機能必須。' }); renderMessages(); }, 14500);
+            
+            // ★修正: 追加した8パターンの中から選択するフローに変更
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '予約システム連動型の本格構成（カレンダー予約）でお願いします。' }); renderMessages(); }, 14500);
 
             setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】最後に、SEO・キーワードについて教えてください。' }); renderMessages(); }, 16000);
             setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '「地域名 ＋ 業種 ＋ 特徴」で集客したい（例：越谷 イタリアン 個室）' }); renderMessages(); }, 17500);
