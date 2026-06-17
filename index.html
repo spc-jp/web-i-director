@@ -205,7 +205,8 @@
                     
                     <!-- 共通ヘッダー -->
                     <header class="interactive-element sticky top-0 z-[60] flex items-center justify-between px-6 md:px-12 py-5 bg-white/95 backdrop-blur-sm border-b border-gray-100 hover:outline hover:outline-2 hover:outline-pink-400 transition-all cursor-pointer group" data-element-name="ヘッダー（ナビゲーション）">
-                        <div class="text-2xl font-bold tracking-widest text-gray-900 pointer-events-none" id="site-title-preview" style="font-family: 'Georgia', serif;">TRATTORIA VERA</div>
+                        <!-- ★修正: ロゴをクリック可能にし、page-homeへの遷移属性を付与 -->
+                        <div class="text-2xl font-bold tracking-widest text-gray-900 cursor-pointer preview-nav-link hover:text-pink-600 transition-colors" data-target="page-home" id="site-title-preview" style="font-family: 'Georgia', serif;">TRATTORIA VERA</div>
                         <!-- 5ページナビゲーション -->
                         <nav class="hidden lg:flex space-x-10 text-sm font-semibold text-gray-500 tracking-wider">
                             <a href="#" class="preview-nav-link text-gray-900 border-b-2 border-gray-900 pb-1" data-target="page-home">HOME</a>
@@ -415,7 +416,8 @@
                     <!-- 共通フッター -->
                     <footer class="bg-gray-900 text-white py-12 px-8 mt-auto border-t-4 border-pink-600">
                         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
-                            <div class="text-2xl font-bold mb-6 md:mb-0 tracking-widest" style="font-family: 'Georgia', serif;">TRATTORIA VERA</div>
+                            <!-- ★修正: フッターロゴもクリック可能に -->
+                            <div class="text-2xl font-bold mb-6 md:mb-0 tracking-widest cursor-pointer preview-nav-link hover:text-pink-400 transition-colors" data-target="page-home" style="font-family: 'Georgia', serif;">TRATTORIA VERA</div>
                             <div class="flex space-x-6 mb-6 md:mb-0">
                                 <a href="#" class="hover:text-pink-400 transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a>
                                 <a href="#" class="hover:text-pink-400 transition-colors"><i data-lucide="facebook" class="w-6 h-6"></i></a>
@@ -460,7 +462,7 @@
             if (!settingsMenu.classList.contains('hidden')) settingsMenu.classList.add('hidden');
         });
 
-        // プレビュー内のページ切り替えロジック
+        // ★修正: プレビュー内のページ切り替えロジック (ロゴクリック対応)
         function setupPreviewNavigation() {
             const navLinks = document.querySelectorAll('.preview-nav-link');
             const pages = document.querySelectorAll('.page-content');
@@ -470,17 +472,23 @@
                     e.preventDefault();
                     e.stopPropagation(); 
                     
-                    // ヘッダーナビの場合のみスタイル変更
+                    const targetId = link.getAttribute('data-target');
+
+                    // メニューバーのアクティブ状態を一旦リセット
+                    document.querySelectorAll('nav .preview-nav-link').forEach(l => {
+                        l.classList.remove('text-gray-900', 'border-b-2', 'border-gray-900', 'pb-1');
+                    });
+                    
+                    // クリックされたのがメニューバー内のリンクならそれをアクティブに。
+                    // ロゴがクリックされてHOMEに戻るなら、メニューバーのHOMEをアクティブにする。
                     if(link.parentElement.tagName === 'NAV') {
-                        document.querySelectorAll('nav .preview-nav-link').forEach(l => {
-                            l.classList.remove('text-gray-900', 'border-b-2', 'border-gray-900', 'pb-1');
-                        });
                         link.classList.add('text-gray-900', 'border-b-2', 'border-gray-900', 'pb-1');
+                    } else if (targetId === 'page-home') {
+                        const homeNav = document.querySelector('nav .preview-nav-link[data-target="page-home"]');
+                        if(homeNav) homeNav.classList.add('text-gray-900', 'border-b-2', 'border-gray-900', 'pb-1');
                     }
 
                     pages.forEach(p => p.classList.add('hidden'));
-                    
-                    const targetId = link.getAttribute('data-target');
                     document.getElementById(targetId).classList.remove('hidden');
                     
                     // スクロールを上に戻す
@@ -683,9 +691,10 @@
             else if (currentStep === 4) {
                 currentStep = 5; 
                 setTimeout(() => {
+                    // ★修正: 要件定義に「ロゴクリックでHOMEへ戻る機能」を追加
                     messages.push({ 
                         id: Date.now(), type: 'ai', 
-                        text: '完璧です！必要な情報が全て揃いました。いただいた情報を整理しました。<br><br><div class="bg-pink-50 border border-pink-100 p-3 rounded text-xs mt-2 font-mono text-pink-800"><b>【プロジェクト要件定義】</b><br>・ターゲット・目的設定<br>・メイン画像の選定<br>・デザイン・配色ルールの適用<br>・本格的な複数ページ(5P)構成<br>・予約機能の組み込み</div><br>これより、ビジネスの成果に直結するサイトを自動構築します！少々お待ちください。' 
+                        text: '完璧です！必要な情報が全て揃いました。いただいた情報を整理しました。<br><br><div class="bg-pink-50 border border-pink-100 p-3 rounded text-xs mt-2 font-mono text-pink-800"><b>【プロジェクト要件定義】</b><br>・ターゲット・目的設定<br>・メイン画像の選定<br>・デザイン・配色ルールの適用<br>・本格的な複数ページ(5P)構成<br>・予約機能の組み込み<br>・<b>全ページ共通: ロゴクリックでHOMEへ戻る機能</b></div><br>これより、ビジネスの成果に直結するサイトを自動構築します！少々お待ちください。' 
                     });
                     renderMessages();
                     setTimeout(showLoadingAndPreview, 2500);
@@ -724,7 +733,8 @@
             setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】最後にサイト構成、機能、SEOを教えてください。' }); renderMessages(); }, 9500);
             setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '本格的な5ページ構成、カレンダー予約機能必須。' }); renderMessages(); }, 11000);
             setTimeout(() => {
-                messages.push({ id: Date.now(), type: 'ai', text: '要件定義が完了しました！これよりサイトを自動構築します。' });
+                // ★修正: デモモードでも機能の記憶をアピール
+                messages.push({ id: Date.now(), type: 'ai', text: '要件定義が完了しました！もちろん、全ページ共通の「ロゴクリックでHOMEへ戻る機能」も必須要件として記憶・実装します。これよりサイトを自動構築します。' });
                 renderMessages();
                 showLoadingAndPreview();
             }, 12500);
