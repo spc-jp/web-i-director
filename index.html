@@ -27,6 +27,20 @@
         }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        /* プレビューサイト用アニメーション */
+        .preview-hero-text {
+            animation: fadeInUp 1s ease-out forwards;
+        }
+        .image-hover-zoom {
+            overflow: hidden;
+        }
+        .image-hover-zoom img {
+            transition: transform 0.5s ease;
+        }
+        .image-hover-zoom:hover img {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body class="flex h-screen w-full bg-gray-50 font-sans text-gray-800 overflow-hidden">
@@ -135,7 +149,7 @@
         </div>
 
         <!-- プレビュー領域 -->
-        <div class="flex-1 overflow-auto p-4 md:p-8 flex justify-center items-start relative bg-gray-100">
+        <div class="flex-1 overflow-auto p-4 md:p-0 flex justify-center items-start relative bg-gray-100">
             
             <div id="deploy-overlay" class="hidden absolute inset-0 bg-white/90 z-50 flex items-center justify-center backdrop-blur-sm flex-col">
                 <div class="w-16 h-16 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin mb-4"></div>
@@ -165,53 +179,253 @@
                 <p class="text-sm">左側のチャットから要件定義を完了させてください</p>
             </div>
 
-            <!-- キャンバス本体 -->
-            <div id="preview-canvas" class="hidden w-full max-w-[1000px] bg-white rounded-t-xl shadow-2xl min-h-full border border-gray-200 overflow-hidden relative group/canvas z-10 opacity-0 transition-opacity duration-500">
+            <!-- キャンバス本体 (高品質版・5ページ構成) -->
+            <div id="preview-canvas" class="hidden w-full max-w-[1200px] bg-white md:rounded-t-xl shadow-2xl min-h-full border-x border-t border-gray-200 overflow-x-hidden relative group/canvas z-10 opacity-0 transition-opacity duration-500">
                 
-                <div id="dummy-modal" class="hidden absolute inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
-                    <div class="bg-white p-8 rounded-2xl text-center w-80 shadow-2xl transform scale-100 transition-transform">
-                        <div class="w-12 h-12 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="calendar-clock" class="w-6 h-6"></i>
+                <!-- 予約カレンダーのダミーモーダル -->
+                <div id="dummy-modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center backdrop-blur-md transition-opacity">
+                    <div class="bg-white p-8 rounded-2xl text-center w-full max-w-md shadow-2xl transform scale-100 transition-transform m-4">
+                        <div class="flex justify-between items-center mb-6 border-b pb-4">
+                            <h3 class="text-xl font-bold text-gray-800">WEB予約システム</h3>
+                            <button id="close-modal-btn" class="text-gray-400 hover:text-gray-800"><i data-lucide="x" class="w-6 h-6"></i></button>
                         </div>
-                        <h3 class="text-xl font-bold mb-2 text-gray-800">予約カレンダー</h3>
-                        <p class="text-sm text-gray-500 mb-6 leading-relaxed">ここにお客様が日付と時間を選択できる<br>カレンダーUIが表示されます。</p>
-                        <button id="close-modal-btn" class="w-full bg-gray-900 text-white font-bold px-4 py-3 rounded-xl hover:bg-gray-800 transition-colors shadow-md">閉じる</button>
+                        <div class="w-full h-48 bg-gray-100 rounded-lg mb-4 flex items-center justify-center text-gray-400 border border-gray-200">
+                            <i data-lucide="calendar" class="w-10 h-10 mb-2 mr-2"></i> カレンダーUIがここに表示されます
+                        </div>
+                        <button class="w-full bg-gray-900 text-white font-bold px-4 py-4 rounded-xl hover:bg-gray-800 transition-colors shadow-md text-lg">次へ進む</button>
                     </div>
                 </div>
 
-                <div class="absolute top-4 right-4 bg-gray-900/80 text-white text-xs px-3 py-1.5 rounded-full opacity-0 group-hover/canvas:opacity-100 transition-opacity flex items-center pointer-events-none z-40 shadow-lg">
-                    <i data-lucide="mouse-pointer-2" class="w-3 h-3 mr-1.5"></i> 要素をクリックして編集
+                <div class="fixed top-20 right-8 bg-gray-900/90 text-white text-xs px-4 py-2 rounded-full opacity-0 group-hover/canvas:opacity-100 transition-opacity flex items-center pointer-events-none z-50 shadow-xl border border-gray-700">
+                    <i data-lucide="mouse-pointer-click" class="w-4 h-4 mr-2 text-pink-400"></i> 要素をクリックしてAIに編集指示
                 </div>
 
-                <!-- ダミーWebサイト -->
-                <div class="font-sans text-gray-800 h-full" id="generated-site-content">
-                    <header class="interactive-element flex items-center justify-between px-8 py-6 border-b border-gray-100 hover:outline hover:outline-2 hover:outline-pink-400 transition-all cursor-pointer relative group bg-white" data-element-name="ヘッダーナビゲーション">
-                        <div class="text-2xl font-bold tracking-wider pointer-events-none" id="site-title-preview">TRATTORIA VERA</div>
-                        <nav class="hidden md:flex space-x-8 text-sm font-medium text-gray-600 pointer-events-none">
-                            <span class="hover:text-gray-900">コンセプト</span><span class="hover:text-gray-900">メニュー</span><span class="hover:text-gray-900">店舗情報</span>
+                <!-- 生成されたWebサイトの中身 -->
+                <div class="font-sans text-gray-800 h-full flex flex-col min-h-screen relative" id="generated-site-content">
+                    
+                    <!-- 共通ヘッダー -->
+                    <header class="interactive-element sticky top-0 z-[60] flex items-center justify-between px-6 md:px-12 py-5 bg-white/95 backdrop-blur-sm border-b border-gray-100 hover:outline hover:outline-2 hover:outline-pink-400 transition-all cursor-pointer group" data-element-name="ヘッダー（ナビゲーション）">
+                        <div class="text-2xl font-bold tracking-widest text-gray-900 pointer-events-none" id="site-title-preview" style="font-family: 'Georgia', serif;">TRATTORIA VERA</div>
+                        <!-- 5ページナビゲーション -->
+                        <nav class="hidden lg:flex space-x-10 text-sm font-semibold text-gray-500 tracking-wider">
+                            <a href="#" class="preview-nav-link text-gray-900 border-b-2 border-gray-900 pb-1" data-target="page-home">HOME</a>
+                            <a href="#" class="preview-nav-link hover:text-gray-900 transition-colors" data-target="page-concept">CONCEPT</a>
+                            <a href="#" class="preview-nav-link hover:text-gray-900 transition-colors" data-target="page-menu">MENU</a>
+                            <a href="#" class="preview-nav-link hover:text-gray-900 transition-colors" data-target="page-gallery">GALLERY</a>
+                            <a href="#" class="preview-nav-link hover:text-gray-900 transition-colors" data-target="page-access">ACCESS</a>
                         </nav>
+                        <div class="hidden md:block pointer-events-none">
+                            <button class="bg-gray-900 text-white px-6 py-2.5 rounded text-sm font-bold tracking-wider hover:bg-gray-800 transition-colors">予約する</button>
+                        </div>
                     </header>
-                    <section class="relative h-[500px] bg-gray-900 flex items-center justify-center overflow-hidden">
-                        <div id="hero-bg" class="interactive-element absolute inset-0 opacity-50 hover:outline hover:outline-4 hover:outline-inset hover:outline-pink-400 cursor-pointer transition-all duration-700 flex items-center justify-center group" style="background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center;" data-element-name="ヒーロー背景画像">
-                            <div class="absolute inset-0 bg-black/30 group-hover:bg-pink-900/40 transition-colors pointer-events-none"></div>
+
+                    <!-- ===================================== -->
+                    <!-- PAGE 1: HOME (トップページ) -->
+                    <!-- ===================================== -->
+                    <main id="page-home" class="page-content flex-1">
+                        <!-- リッチなヒーローセクション -->
+                        <section class="relative h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
+                            <!-- ヒーロー背景 -->
+                            <div id="hero-bg" class="interactive-element absolute inset-0 opacity-90 hover:outline hover:outline-4 hover:outline-inset hover:outline-pink-400 cursor-pointer transition-all duration-700 flex items-center justify-center group" style="background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center; transform: scale(1.05);" data-element-name="メインビジュアル（ヒーロー画像）">
+                                <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30 pointer-events-none"></div>
+                                <div class="hidden group-hover:flex flex-col items-center justify-center bg-white/90 text-pink-600 px-6 py-3 rounded-xl shadow-2xl backdrop-blur-sm z-10 relative pointer-events-none transform scale-110">
+                                    <i data-lucide="image" class="w-6 h-6 mb-2"></i>
+                                    <span class="text-sm font-bold">画像を差し替える</span>
+                                </div>
+                            </div>
+                            <!-- ヒーローコンテンツ -->
+                            <div class="relative z-10 text-left px-8 md:px-20 w-full max-w-6xl pointer-events-none preview-hero-text">
+                                <p class="text-pink-400 font-bold tracking-[0.3em] mb-4 text-sm md:text-base">AUTHENTIC ITALIAN DINING</p>
+                                <h1 class="interactive-element pointer-events-auto text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-8 leading-tight tracking-tighter hover:outline hover:outline-2 hover:outline-pink-400 p-2 -ml-2 rounded cursor-pointer transition-all" data-element-name="キャッチコピー" style="font-family: 'Georgia', serif;">
+                                    五感で味わう、<br/>至福のひととき。
+                                </h1>
+                                <button id="reserve-btn-main" class="interactive-element pointer-events-auto mt-6 px-10 py-5 bg-white text-gray-900 font-bold rounded text-lg tracking-widest transition-all duration-300 shadow-2xl hover:outline hover:outline-4 hover:outline-pink-400 hover:-translate-y-1 relative group" data-element-name="「WEBで予約する」ボタン">
+                                    RESERVE NOW
+                                </button>
+                            </div>
+                        </section>
+
+                        <!-- About セクション -->
+                        <section class="py-24 px-8 max-w-6xl mx-auto">
+                            <div class="grid md:grid-cols-2 gap-16 items-center">
+                                <div class="image-hover-zoom rounded-lg shadow-xl">
+                                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop" alt="About" class="w-full h-[500px] object-cover rounded-lg">
+                                </div>
+                                <div>
+                                    <h2 class="interactive-element text-sm font-bold text-pink-500 tracking-[0.2em] mb-2 hover:outline hover:outline-2 hover:outline-pink-400 p-1 inline-block cursor-pointer" data-element-name="About見出しサブ">OUR STORY</h2>
+                                    <h3 class="interactive-element text-3xl md:text-4xl font-bold mb-6 text-gray-900 hover:outline hover:outline-2 hover:outline-pink-400 p-1 inline-block cursor-pointer" data-element-name="About見出しメイン" style="font-family: 'Georgia', serif;">素材への妥協なき探求</h3>
+                                    <p class="interactive-element text-gray-600 leading-loose mb-8 hover:outline hover:outline-2 hover:outline-pink-400 p-2 rounded cursor-pointer" data-element-name="About本文">
+                                        厳選された旬の食材を使用し、イタリアの伝統的な技法とモダンな感性を融合させた一皿をご提供します。洗練された空間で、特別な時間をお過ごしください。
+                                    </p>
+                                    <a href="#" class="preview-nav-link text-gray-900 border-b border-gray-900 pb-1 font-bold hover:text-pink-500 hover:border-pink-500 transition-colors" data-target="page-concept">コンセプトを詳しく見る →</a>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Recommend Menu セクション -->
+                        <section class="py-24 px-8 bg-gray-50">
+                            <div class="max-w-6xl mx-auto">
+                                <div class="text-center mb-16">
+                                    <h2 class="text-sm font-bold text-pink-500 tracking-[0.2em] mb-2">SPECIALTIES</h2>
+                                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900" style="font-family: 'Georgia', serif;">おすすめの逸品</h3>
+                                </div>
+                                <div class="grid md:grid-cols-3 gap-8">
+                                    <!-- カード1 -->
+                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400" data-element-name="メニューカード1">
+                                        <div class="h-64 image-hover-zoom"><img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Menu 1"></div>
+                                        <div class="p-8 text-center">
+                                            <h4 class="text-xl font-bold mb-2">特製ボロネーゼ</h4>
+                                            <p class="text-gray-500 text-sm mb-4">黒毛和牛をじっくり煮込んだ深い味わい</p>
+                                            <p class="font-bold text-lg">¥1,800</p>
+                                        </div>
+                                    </div>
+                                    <!-- カード2 -->
+                                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                                        <div class="h-64 image-hover-zoom"><img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Menu 2"></div>
+                                        <div class="p-8 text-center">
+                                            <h4 class="text-xl font-bold mb-2">鮮魚のカルパッチョ</h4>
+                                            <p class="text-gray-500 text-sm mb-4">毎朝市場から仕入れる新鮮な海の幸</p>
+                                            <p class="font-bold text-lg">¥1,400</p>
+                                        </div>
+                                    </div>
+                                    <!-- カード3 -->
+                                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                                        <div class="h-64 image-hover-zoom"><img src="https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Menu 3"></div>
+                                        <div class="p-8 text-center">
+                                            <h4 class="text-xl font-bold mb-2">ティラミス</h4>
+                                            <p class="text-gray-500 text-sm mb-4">マスカルポーネとエスプレッソの絶妙なハーモニー</p>
+                                            <p class="font-bold text-lg">¥800</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-12">
+                                     <button class="preview-nav-link border-2 border-gray-900 text-gray-900 px-10 py-3 rounded font-bold tracking-widest hover:bg-gray-900 hover:text-white transition-colors" data-target="page-menu">メニュー一覧を見る</button>
+                                </div>
+                            </div>
+                        </section>
+                    </main>
+
+                    <!-- ===================================== -->
+                    <!-- PAGE 2: CONCEPT (非表示) -->
+                    <!-- ===================================== -->
+                    <main id="page-concept" class="page-content hidden flex-1 py-20 px-8">
+                        <div class="max-w-4xl mx-auto text-center mb-16">
+                            <h2 class="text-4xl font-bold text-gray-900 mb-6" style="font-family: 'Georgia', serif;">CONCEPT</h2>
+                            <p class="text-gray-600 leading-loose">日常の喧騒から離れ、ゆったりと流れる時間の中で。<br>私たちが大切にしている3つのこだわりをご紹介します。</p>
                         </div>
-                        <div class="relative z-10 text-center px-4 flex flex-col items-center pointer-events-none">
-                            <h1 class="interactive-element pointer-events-auto text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight hover:outline hover:outline-2 hover:outline-pink-400 p-2 rounded cursor-pointer transition-all" data-element-name="キャッチコピー">
-                                最高の体験を、<br/>あなたに。
-                            </h1>
-                            <button id="reserve-btn" class="interactive-element pointer-events-auto mt-4 px-8 py-4 bg-white text-gray-900 font-bold rounded-sm text-lg transition-all duration-300 shadow-xl hover:outline hover:outline-4 hover:outline-pink-400 hover:scale-105 relative group" data-element-name="「WEBで予約する」ボタン">
-                                アクションを起こす
-                            </button>
+                        <!-- こだわり1 -->
+                        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center mb-20">
+                            <img src="https://images.unsplash.com/photo-1556804593-3d061405e3f3?q=80&w=800&auto=format&fit=crop" alt="Chef" class="w-full h-[400px] object-cover rounded-lg shadow-lg">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-4">01. Chef's Passion</h3>
+                                <p class="text-gray-600 leading-relaxed">本場イタリアで修行を積んだシェフが、伝統的なレシピを守りつつ、日本人の味覚に合わせた繊細なアレンジを加えます。一皿一皿に込められた情熱を感じてください。</p>
+                            </div>
                         </div>
-                    </section>
-                    <section class="py-24 px-8 max-w-4xl mx-auto text-center bg-white">
-                        <h2 class="interactive-element text-3xl font-bold mb-8 hover:outline hover:outline-2 hover:outline-pink-400 p-2 inline-block cursor-pointer transition-all" data-element-name="コンセプト見出し">Concept</h2>
-                        <div class="flex justify-center">
-                            <p class="interactive-element text-gray-600 leading-relaxed text-lg hover:outline hover:outline-2 hover:outline-pink-400 p-4 rounded cursor-pointer transition-all inline-block" data-element-name="コンセプト本文">
-                                ターゲットに響く最適なメッセージをここに配置します。<br/>魅力的なコンテンツでユーザーの心を掴みます。
-                            </p>
+                        <!-- こだわり2 -->
+                        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center mb-20">
+                            <div class="order-2 md:order-1">
+                                <h3 class="text-2xl font-bold mb-4">02. Fresh Ingredients</h3>
+                                <p class="text-gray-600 leading-relaxed">契約農家から直接仕入れる有機野菜や、漁港直送の新鮮な魚介類。素材そのものの味を最大限に引き出すため、調味料一つにも妥協しません。</p>
+                            </div>
+                            <img src="https://images.unsplash.com/photo-1595295333155-22d7b87515b8?q=80&w=800&auto=format&fit=crop" alt="Ingredients" class="w-full h-[400px] object-cover rounded-lg shadow-lg order-1 md:order-2">
                         </div>
-                    </section>
+                    </main>
+
+                    <!-- ===================================== -->
+                    <!-- PAGE 3: MENU (非表示) -->
+                    <!-- ===================================== -->
+                    <main id="page-menu" class="page-content hidden flex-1 py-20 px-8 bg-gray-50">
+                        <div class="max-w-4xl mx-auto">
+                            <h2 class="text-4xl font-bold text-gray-900 mb-16 text-center" style="font-family: 'Georgia', serif;">MENU</h2>
+                            
+                            <div class="bg-white p-10 rounded-xl shadow-lg mb-12">
+                                <h3 class="text-2xl font-bold border-b border-gray-200 pb-4 mb-8 text-pink-600">Lunch Course</h3>
+                                <div class="space-y-6">
+                                    <div class="flex justify-between items-baseline border-b border-gray-100 pb-4">
+                                        <div><h4 class="font-bold text-lg">Pranzo A</h4><p class="text-sm text-gray-500">前菜盛り合わせ / 選べるパスタ / ドリンク</p></div>
+                                        <span class="font-bold text-xl">¥2,000</span>
+                                    </div>
+                                    <div class="flex justify-between items-baseline border-b border-gray-100 pb-4">
+                                        <div><h4 class="font-bold text-lg">Pranzo B</h4><p class="text-sm text-gray-500">前菜 / パスタ / メイン料理(肉or魚) / デザート / ドリンク</p></div>
+                                        <span class="font-bold text-xl">¥3,500</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white p-10 rounded-xl shadow-lg">
+                                <h3 class="text-2xl font-bold border-b border-gray-200 pb-4 mb-8 text-pink-600">Dinner A la carte</h3>
+                                <div class="space-y-6">
+                                    <div class="flex justify-between items-baseline border-b border-gray-100 pb-4">
+                                        <h4 class="font-bold text-lg">水牛モッツァレラのカプレーゼ</h4><span class="font-bold text-xl">¥1,200</span>
+                                    </div>
+                                    <div class="flex justify-between items-baseline border-b border-gray-100 pb-4">
+                                        <h4 class="font-bold text-lg">ポルチーニ茸のリゾット</h4><span class="font-bold text-xl">¥1,600</span>
+                                    </div>
+                                    <div class="flex justify-between items-baseline border-b border-gray-100 pb-4">
+                                        <h4 class="font-bold text-lg">国産牛ホホ肉の赤ワイン煮込み</h4><span class="font-bold text-xl">¥2,800</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    <!-- ===================================== -->
+                    <!-- PAGE 4: GALLERY (非表示) -->
+                    <!-- ===================================== -->
+                    <main id="page-gallery" class="page-content hidden flex-1 py-20 px-8">
+                        <h2 class="text-4xl font-bold text-gray-900 mb-12 text-center" style="font-family: 'Georgia', serif;">GALLERY</h2>
+                        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=600&auto=format&fit=crop" class="w-full h-64 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=600&auto=format&fit=crop" class="w-full h-64 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=600&auto=format&fit=crop" class="w-full h-64 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1495474472205-16284618a48b?q=80&w=600&auto=format&fit=crop" class="w-full h-64 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=600&auto=format&fit=crop" class="w-full h-64 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1556804593-3d061405e3f3?q=80&w=600&auto=format&fit=crop" class="w-full h-64 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer">
+                        </div>
+                    </main>
+
+                    <!-- ===================================== -->
+                    <!-- PAGE 5: ACCESS (非表示) -->
+                    <!-- ===================================== -->
+                    <main id="page-access" class="page-content hidden flex-1 py-20 px-8 bg-gray-50">
+                        <h2 class="text-4xl font-bold text-gray-900 mb-12 text-center" style="font-family: 'Georgia', serif;">ACCESS & RESERVE</h2>
+                        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 bg-white p-8 md:p-12 rounded-xl shadow-xl">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-6 border-b pb-2">店舗情報</h3>
+                                <ul class="space-y-4 text-gray-600 mb-8">
+                                    <li class="flex"><i data-lucide="map-pin" class="w-5 h-5 mr-3 text-pink-500 flex-shrink-0"></i> 〒100-0000 東京都渋谷区ダミー1-2-3</li>
+                                    <li class="flex"><i data-lucide="phone" class="w-5 h-5 mr-3 text-pink-500 flex-shrink-0"></i> 03-1234-5678</li>
+                                    <li class="flex"><i data-lucide="clock" class="w-5 h-5 mr-3 text-pink-500 flex-shrink-0"></i> Lunch: 11:30 - 15:00<br>Dinner: 17:30 - 22:00</li>
+                                    <li class="flex"><i data-lucide="calendar-x" class="w-5 h-5 mr-3 text-pink-500 flex-shrink-0"></i> 定休日：毎週水曜日</li>
+                                </ul>
+                                <button id="reserve-btn-access" class="interactive-element w-full bg-gray-900 text-white font-bold py-4 rounded hover:bg-gray-800 transition-colors text-lg" data-element-name="「WEB予約」ボタン(Access)">
+                                    WEBで予約する
+                                </button>
+                            </div>
+                            <!-- ダミーマップ -->
+                            <div class="bg-gray-200 w-full h-[400px] rounded-lg flex items-center justify-center border border-gray-300">
+                                <div class="text-center text-gray-500">
+                                    <i data-lucide="map" class="w-12 h-12 mx-auto mb-2 opacity-50"></i>
+                                    <p>Google Map 埋め込みエリア</p>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    <!-- 共通フッター -->
+                    <footer class="bg-gray-900 text-white py-12 px-8 mt-auto border-t-4 border-pink-600">
+                        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
+                            <div class="text-2xl font-bold mb-6 md:mb-0 tracking-widest" style="font-family: 'Georgia', serif;">TRATTORIA VERA</div>
+                            <div class="flex space-x-6 mb-6 md:mb-0">
+                                <a href="#" class="hover:text-pink-400 transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a>
+                                <a href="#" class="hover:text-pink-400 transition-colors"><i data-lucide="facebook" class="w-6 h-6"></i></a>
+                                <a href="#" class="hover:text-pink-400 transition-colors"><i data-lucide="twitter" class="w-6 h-6"></i></a>
+                            </div>
+                        </div>
+                        <div class="text-center text-gray-500 text-sm mt-8">
+                            &copy; 2026 TRATTORIA VERA. All Rights Reserved.
+                        </div>
+                    </footer>
                 </div>
             </div>
         </div>
@@ -222,15 +436,12 @@
 
         let messages = [];
         let isStarted = false;
-        
-        // ★新しい状態管理: 手動ヒアリングのステップ (0:未開始, 1~4:ヒアリング中, 5:編集モード)
         let currentStep = 0; 
         
         let selectedElementName = null;
         let selectedElementNode = null;
-        let selectedHeroImage = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop"; // 初期画像
+        let selectedHeroImage = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop";
 
-        // DOM Elements
         const chatArea = document.getElementById('chat-area');
         const messageInput = document.getElementById('message-input');
         const sendBtn = document.getElementById('send-btn');
@@ -241,7 +452,6 @@
         const statusIndicator = document.getElementById('status-indicator');
         const statusText = document.getElementById('status-text');
         
-        // ヘッダー設定メニューのトグル
         settingsBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             settingsMenu.classList.toggle('hidden');
@@ -249,6 +459,36 @@
         document.addEventListener('click', () => {
             if (!settingsMenu.classList.contains('hidden')) settingsMenu.classList.add('hidden');
         });
+
+        // プレビュー内のページ切り替えロジック
+        function setupPreviewNavigation() {
+            const navLinks = document.querySelectorAll('.preview-nav-link');
+            const pages = document.querySelectorAll('.page-content');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation(); 
+                    
+                    // ヘッダーナビの場合のみスタイル変更
+                    if(link.parentElement.tagName === 'NAV') {
+                        document.querySelectorAll('nav .preview-nav-link').forEach(l => {
+                            l.classList.remove('text-gray-900', 'border-b-2', 'border-gray-900', 'pb-1');
+                        });
+                        link.classList.add('text-gray-900', 'border-b-2', 'border-gray-900', 'pb-1');
+                    }
+
+                    pages.forEach(p => p.classList.add('hidden'));
+                    
+                    const targetId = link.getAttribute('data-target');
+                    document.getElementById(targetId).classList.remove('hidden');
+                    
+                    // スクロールを上に戻す
+                    document.getElementById('preview-canvas').scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        }
+        setupPreviewNavigation();
 
         function renderMessages() {
             chatArea.innerHTML = '';
@@ -261,7 +501,7 @@
                         </div>
                         <h2 class="text-2xl font-bold text-gray-800 mb-3 tracking-tight">Web i Director</h2>
                         <p class="text-sm text-gray-500 mb-10 leading-relaxed">
-                            専属のAIディレクターと対話するだけで、<br>要件定義から制作・公開までを全自動化します。
+                            専属のAIディレクターと対話するだけで、<br>要件定義から本格的なサイト制作まで全自動化します。
                         </p>
                         <button id="start-manual-btn" class="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center hover:scale-105 transform mb-4">
                             <i data-lucide="message-square-text" class="w-5 h-5 mr-2 fill-current"></i>
@@ -281,14 +521,12 @@
                 if (msg.type === 'ai') {
                     let optionsHtml = '';
                     
-                    // テキストの選択肢
                     if (msg.options) {
                         optionsHtml = `<div class="flex flex-col gap-2 mt-3 w-full">` + 
                             msg.options.map(opt => `<button class="option-btn text-xs bg-pink-50 text-pink-700 border border-pink-200 px-3.5 py-2.5 rounded-lg hover:bg-pink-100 hover:shadow-sm transition-all font-medium text-left" data-option="${opt}">${opt}</button>`).join('') +
                         `</div>`;
                     }
 
-                    // ★画像の選択肢（業種別の提案）
                     if (msg.imageOptions) {
                         optionsHtml = `<div class="grid grid-cols-2 gap-2 mt-3 w-full">` + 
                             msg.imageOptions.map(opt => `
@@ -335,7 +573,6 @@
             lucide.createIcons();
             chatArea.scrollTop = chatArea.scrollHeight;
 
-            // テキスト選択肢ボタンのイベント
             document.querySelectorAll('.option-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     if(!isStarted || messageInput.disabled) return; 
@@ -345,23 +582,19 @@
                 });
             });
 
-            // ★画像選択肢ボタンのイベント
             document.querySelectorAll('.image-option-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     if(!isStarted || messageInput.disabled) return; 
                     const url = e.currentTarget.getAttribute('data-image-url');
                     const label = e.currentTarget.getAttribute('data-image-label');
                     
-                    selectedHeroImage = url; // プレビュー用の変数に保存
+                    selectedHeroImage = url;
                     messageInput.value = `「${label}」の画像をメインビジュアルにします。`;
                     handleSendMessage(); 
                 });
             });
         }
 
-        // ==========================================
-        // モード1: 手動でのヒアリングフロー（メイン機能）
-        // ==========================================
         function startManualFlow() {
             isStarted = true;
             currentStep = 1;
@@ -371,19 +604,16 @@
                 messages.push({ 
                     id: Date.now(), 
                     type: 'ai', 
-                    text: 'こんにちは！本格的なサイト制作に向けて、要件定義を行います。<br><br>まずは<b>「基本情報（会社名・業種）」</b>と、サイトの<b>「ターゲット（客層）」「目的・ゴール」</b>をチャットで自由に教えてください。<br>（例：TRATTORIA VERA、カジュアルイタリアン、20代カップルなど）' 
+                    text: 'こんにちは！本格的なサイト制作に向けて、要件定義を行います。<br><br>まずは<b>「基本情報（会社名・業種）」</b>と、サイトの<b>「ターゲット（客層）」「目的・ゴール」</b>を教えてください。<br>（例：TRATTORIA VERA、イタリアン、20代カップルなど）' 
                 });
                 renderMessages();
                 enableInputOnly();
             }, 500);
         }
 
-        // ユーザーが送信・選択したあとの処理
         function handleManualSteps(userInput) {
             if (currentStep === 1) {
-                currentStep = 2; // 画像提案ステップへ
-                
-                // ★業種キーワードの簡易判定ロジック
+                currentStep = 2; 
                 let suggestions = [];
                 if (userInput.includes("イタリアン") || userInput.includes("レストラン") || userInput.includes("パスタ")) {
                     suggestions = [
@@ -392,14 +622,7 @@
                         { url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop", label: "焼きたてピザ" },
                         { url: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop", label: "テーブルセッティング" }
                     ];
-                } else if (userInput.includes("カフェ") || userInput.includes("コーヒー")) {
-                    suggestions = [
-                        { url: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop", label: "おしゃれなカフェ内観" },
-                        { url: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=800&auto=format&fit=crop", label: "ラテアート" },
-                        { url: "https://images.unsplash.com/photo-1495474472205-16284618a48b?q=80&w=800&auto=format&fit=crop", label: "カフェスペース" },
-                        { url: "https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=800&auto=format&fit=crop", label: "スイーツとコーヒー" }
-                    ];
-                } else if (userInput.includes("美容") || userInput.includes("サロン") || userInput.includes("ヘア")) {
+                } else if (userInput.includes("美容") || userInput.includes("サロン")) {
                     suggestions = [
                         { url: "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=800&auto=format&fit=crop", label: "サロン内観" },
                         { url: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=800&auto=format&fit=crop", label: "ヘアスタイリング" },
@@ -407,7 +630,6 @@
                         { url: "https://images.unsplash.com/photo-1595476108010-b4d1f10d5e43?q=80&w=800&auto=format&fit=crop", label: "リラックス" }
                     ];
                 } else {
-                    // デフォルト（オフィス・IT・ビジネス系など）
                     suggestions = [
                         { url: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop", label: "明るいオフィス" },
                         { url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop", label: "ミーティングルーム" },
@@ -415,25 +637,22 @@
                         { url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop", label: "スタイリッシュなPC" }
                     ];
                 }
-
                 setTimeout(() => {
                     messages.push({ 
-                        id: Date.now(), 
-                        type: 'ai', 
-                        text: 'ありがとうございます。入力いただいた「業種」に合わせて、<b>サイトのメインビジュアル（一番上にくる大きな画像）</b>の候補をピックアップしました！<br><br>サイトの顔となる画像です。イメージに合うものを一つ選んでクリックしてください。',
-                        imageOptions: suggestions // ★ここで画像選択肢を渡す
+                        id: Date.now(), type: 'ai', 
+                        text: 'ありがとうございます。入力いただいた「業種」に合わせて、<b>サイトのメインビジュアル</b>の候補をピックアップしました！イメージに合うものを一つ選んでクリックしてください。',
+                        imageOptions: suggestions 
                     });
                     renderMessages();
                     enableInputOnly();
                 }, 1000);
             } 
             else if (currentStep === 2) {
-                currentStep = 3; // デザイン要件ステップへ
+                currentStep = 3;
                 setTimeout(() => {
                     messages.push({ 
-                        id: Date.now(), 
-                        type: 'ai', 
-                        text: '素敵な画像ですね！この画像をベースに構築します。<br><br>次に、<b>「デザイン要件（トーン＆マナー・配色）」</b>を決めていきましょう。ご希望のイメージに近いものを以下から選ぶか、チャットで教えてください。',
+                        id: Date.now(), type: 'ai', 
+                        text: '素敵な画像ですね！この画像をベースに構築します。<br><br>次に、<b>「デザイン要件（トーン＆マナー・配色）」</b>を決めていきましょう。ご希望のイメージに近いものを以下から選んでください。',
                         options: [
                             '白とダークグレー（モダン・洗練された印象）', 
                             'ベージュや木目調（温かみ・アットホーム）', 
@@ -446,14 +665,13 @@
                 }, 1000);
             }
             else if (currentStep === 3) {
-                currentStep = 4; // 構成ステップへ
+                currentStep = 4;
                 setTimeout(() => {
                     messages.push({ 
-                        id: Date.now(), 
-                        type: 'ai', 
+                        id: Date.now(), type: 'ai', 
                         text: 'デザインの方向性が決まりましたね。<br><br>最後に、<b>「サイト構成」</b>と導入したい<b>「機能」</b>を選んでください。',
                         options: [
-                            '1ページ構成 ＋ カレンダー予約機能 ＋ SNS連携',
+                            '本格的な5ページ構成 ＋ カレンダー予約機能 ＋ SNS連携',
                             '複数ページ構成（メニュー詳細等）＋ お問い合わせフォーム',
                             'シンプルに名刺代わりの1ページ構成（機能なし）'
                         ]
@@ -463,16 +681,13 @@
                 }, 1000);
             }
             else if (currentStep === 4) {
-                currentStep = 5; // 編集モードへ移行
+                currentStep = 5; 
                 setTimeout(() => {
                     messages.push({ 
-                        id: Date.now(), 
-                        type: 'ai', 
-                        text: '完璧です！必要な情報が全て揃いました。いただいた情報を整理しました。<br><br><div class="bg-pink-50 border border-pink-100 p-3 rounded text-xs mt-2 font-mono text-pink-800"><b>【プロジェクト要件定義】</b><br>・ターゲット・目的設定<br>・メイン画像の選定<br>・デザイン・配色ルールの適用<br>・サイト構成・機能の組み込み</div><br>これより、ビジネスの成果に直結するサイトを自動構築します！少々お待ちください。' 
+                        id: Date.now(), type: 'ai', 
+                        text: '完璧です！必要な情報が全て揃いました。いただいた情報を整理しました。<br><br><div class="bg-pink-50 border border-pink-100 p-3 rounded text-xs mt-2 font-mono text-pink-800"><b>【プロジェクト要件定義】</b><br>・ターゲット・目的設定<br>・メイン画像の選定<br>・デザイン・配色ルールの適用<br>・本格的な複数ページ(5P)構成<br>・予約機能の組み込み</div><br>これより、ビジネスの成果に直結するサイトを自動構築します！少々お待ちください。' 
                     });
                     renderMessages();
-                    
-                    // ローディング＆プレビュー表示処理へ
                     setTimeout(showLoadingAndPreview, 2500);
                 }, 1000);
             }
@@ -487,9 +702,7 @@
             messageInput.focus();
         }
 
-        // ==========================================
-        // モード2: デモ自動実行フロー（裏技・見学用）
-        // ==========================================
+        // モード2: デモ自動実行フロー
         document.getElementById('menu-auto-demo').addEventListener('click', () => {
             resetData();
             isStarted = true;
@@ -509,7 +722,7 @@
             setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】次にデザイン要件や参考サイトを教えてください。' }); renderMessages(); }, 6500);
             setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '白とダークグレー基調でモダンに。' }); renderMessages(); }, 8000);
             setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】最後にサイト構成、機能、SEOを教えてください。' }); renderMessages(); }, 9500);
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '1ページ構成、カレンダー予約機能必須。' }); renderMessages(); }, 11000);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '本格的な5ページ構成、カレンダー予約機能必須。' }); renderMessages(); }, 11000);
             setTimeout(() => {
                 messages.push({ id: Date.now(), type: 'ai', text: '要件定義が完了しました！これよりサイトを自動構築します。' });
                 renderMessages();
@@ -517,12 +730,9 @@
             }, 12500);
         });
 
-        // ==========================================
-        // 共通機能: プレビュー表示と編集モードの有効化
-        // ==========================================
         function showLoadingAndPreview() {
             let loadingMsgId = Date.now();
-            messages.push({ id: loadingMsgId, type: 'system', icon: 'loader-2', text: '要件定義書に基づき、コードを生成中...' });
+            messages.push({ id: loadingMsgId, type: 'system', icon: 'loader-2', text: '要件定義書に基づき、本格的な5ページ構成のコードを生成中...' });
             renderMessages();
             
             statusIndicator.classList.remove('bg-gray-300');
@@ -531,10 +741,9 @@
 
             setTimeout(() => {
                 messages = messages.filter(m => m.id !== loadingMsgId);
-                messages.push({ id: Date.now(), type: 'ai', text: '✅ <b>自動構築が完了しました！</b><br><br><b>💡【次のステップ：見たまま編集】</b><br>右側のプレビュー画面で、気になる箇所を直接クリックして、修正や機能追加の指示を出してみてください！' });
+                messages.push({ id: Date.now(), type: 'ai', text: '✅ <b>自動構築が完了しました！</b><br><br><b>💡【プレビューの操作方法】</b><br>・上部のメニュー（HOME, CONCEPT等）をクリックすると<b>ページ遷移</b>が確認できます。<br>・気になる箇所を直接クリックして、修正や機能追加の指示を出すことも可能です！' });
                 renderMessages();
 
-                // ★ここで選んだ画像をプレビューの背景に反映させる
                 if (selectedHeroImage) {
                     document.getElementById('hero-bg').style.backgroundImage = `url('${selectedHeroImage}')`;
                 }
@@ -542,10 +751,15 @@
                 document.getElementById('empty-state').classList.add('hidden');
                 const canvas = document.getElementById('preview-canvas');
                 canvas.classList.remove('hidden');
+                
+                // ホームページをデフォルト表示
+                document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+                document.getElementById('page-home').classList.remove('hidden');
+                
                 setTimeout(() => { canvas.classList.remove('opacity-0'); canvas.classList.add('opacity-100'); }, 100);
 
                 enableFullUI();
-            }, 3000);
+            }, 3500);
         }
 
         function enableFullUI() {
@@ -569,21 +783,17 @@
             statusText.textContent = "リアルタイムプレビュー (稼働中)";
         }
 
-        // ==========================================
-        // その他の設定メニュー機能
-        // ==========================================
         function resetData() {
             messages = [];
             isStarted = false;
             currentStep = 0;
-            selectedHeroImage = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop"; // リセット
+            selectedHeroImage = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop"; 
             
             document.getElementById('empty-state').classList.remove('hidden');
             document.getElementById('preview-canvas').classList.add('hidden', 'opacity-0');
             statusIndicator.className = "w-2 h-2 rounded-full bg-gray-300 mr-2";
             statusText.textContent = "プロジェクト未作成";
             
-            // UI無効化
             inputContainer.classList.add('opacity-50');
             messageInput.disabled = true;
             messageInput.value = '';
@@ -597,20 +807,20 @@
             resetData();
             isStarted = true;
             currentStep = 5;
-            messages.push({ id: Date.now(), type: 'system', icon: 'eye', text: 'プレビューを強制表示しました。' });
+            messages.push({ id: Date.now(), type: 'system', icon: 'eye', text: 'プレビューを強制表示しました。上部メニューからページ遷移をお試しください。' });
             renderMessages();
             
             document.getElementById('empty-state').classList.add('hidden');
             const canvas = document.getElementById('preview-canvas');
             canvas.classList.remove('hidden', 'opacity-0');
             canvas.classList.add('opacity-100');
+            
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            document.getElementById('page-home').classList.remove('hidden');
+
             enableFullUI();
         });
 
-
-        // ==========================================
-        // チャット送信と編集ロジック
-        // ==========================================
         function handleSendMessage() {
             const text = messageInput.value.trim();
             if (!text) return;
@@ -623,13 +833,11 @@
             messageInput.disabled = true;
             sendBtn.disabled = true;
 
-            // ヒアリング中（Step1~4）の場合はステップを進行する
             if (currentStep >= 1 && currentStep <= 4) {
                 handleManualSteps(text);
                 return;
             }
 
-            // 編集モード（Step5）の場合のAI処理
             setTimeout(() => {
                 let aiResponseText = "";
                 if (selectedElementNode) {
@@ -645,13 +853,12 @@
             }, 1000);
         }
 
-        // 簡易AI編集ロジック
         function applyAIAmendments(userInput, targetNode) {
             let changed = false;
             let aiResponse = `「${selectedElementName}」を更新しました！`;
 
             if (userInput.includes("カレンダー") || userInput.includes("予約")) {
-                if (targetNode.getAttribute('data-element-name') === '「WEBで予約する」ボタン') {
+                if (targetNode.getAttribute('data-element-name')?.includes('予約')) {
                     targetNode.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); document.getElementById('dummy-modal').classList.remove('hidden'); });
                     document.getElementById('dummy-modal').classList.remove('hidden');
                     aiResponse = "✅ カレンダー予約機能を実装しました！"; changed = true;
@@ -662,13 +869,12 @@
             if (userInput.includes("丸く")) { targetNode.style.borderRadius = "9999px"; changed = true; }
 
             let textMatch = userInput.match(/「(.+)」/);
-            if (textMatch && targetNode.getAttribute('data-element-name') !== 'ヒーロー背景画像') { targetNode.innerHTML = textMatch[1]; changed = true; }
+            if (textMatch && targetNode.getAttribute('data-element-name') !== 'メインビジュアル（ヒーロー画像）') { targetNode.innerHTML = textMatch[1]; changed = true; }
 
             if (!changed) aiResponse = "指示が解釈できませんでした。例：「赤色にして」「丸くして」「『こんにちは』に変更して」";
             return aiResponse;
         }
 
-        // イベントリスナー等
         function updateSendButtonState() {
             if (messageInput.value.trim() !== '') { sendBtn.removeAttribute('disabled'); sendBtn.classList.remove('cursor-not-allowed'); } 
             else { sendBtn.setAttribute('disabled', 'true'); sendBtn.classList.add('cursor-not-allowed'); }
@@ -693,7 +899,7 @@
 
         document.querySelectorAll('.interactive-element').forEach(el => {
             el.addEventListener('click', (e) => {
-                if(currentStep !== 5) return; // 編集モードでのみ発火
+                if(currentStep !== 5) return; 
                 e.stopPropagation();
                 if (selectedElementNode) selectedElementNode.classList.remove('element-selected');
                 setEditingElement(el.getAttribute('data-element-name'), el);
@@ -702,6 +908,10 @@
                 renderMessages();
             });
         });
+
+        // 予約ボタン類のイベントリスナー追加
+        document.getElementById('reserve-btn-main')?.addEventListener('click', (e)=>{ if(currentStep===5){ e.stopPropagation(); document.getElementById('dummy-modal').classList.remove('hidden'); }});
+        document.getElementById('reserve-btn-access')?.addEventListener('click', (e)=>{ if(currentStep===5){ e.stopPropagation(); document.getElementById('dummy-modal').classList.remove('hidden'); }});
 
         document.getElementById('close-modal-btn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('dummy-modal').classList.add('hidden'); });
         
