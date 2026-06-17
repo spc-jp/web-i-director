@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Web Director UIモックアップ</title>
+    <!-- Tailwind CSSの読み込み -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Iconsの読み込み -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="flex h-screen w-full bg-gray-50 font-sans text-gray-800 overflow-hidden">
+
+    <!-- 左ペイン：AIチャット＆コントロールパネル -->
+    <div class="w-[400px] bg-white border-r border-gray-200 flex flex-col shadow-sm z-10 flex-shrink-0">
+        <!-- 左ペインヘッダー -->
+        <div class="h-16 flex items-center px-6 border-b border-gray-100 bg-white">
+            <i data-lucide="sparkles" class="w-6 h-6 text-indigo-600 mr-2"></i>
+            <h1 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">AI Web Director</h1>
+        </div>
+
+        <!-- チャットエリア -->
+        <div id="chat-area" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 pb-8">
+            <!-- メッセージはJavaScriptで動的に追加されます -->
+        </div>
+
+        <!-- 入力エリア -->
+        <div class="p-4 bg-white border-t border-gray-100">
+            <!-- 編集中の要素ステータス -->
+            <div id="editing-status" class="hidden mb-2 text-xs text-gray-500 flex items-center">
+                <span id="editing-element-name" class="font-semibold text-indigo-600 mr-1"></span>を編集中...
+                <button id="clear-editing-btn" class="ml-2 text-gray-400 hover:text-gray-600">×</button>
+            </div>
+            
+            <div class="relative flex items-center">
+                <textarea
+                    id="message-input"
+                    placeholder="AIに指示を出す..."
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-4 pr-24 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 resize-none"
+                    rows="2"
+                ></textarea>
+                <div class="absolute right-2 flex items-center space-x-1">
+                    <button class="p-2 text-gray-400 hover:text-indigo-600 transition-colors rounded-lg">
+                        <i data-lucide="mic" class="w-5 h-5"></i>
+                    </button>
+                    <button 
+                        id="send-btn"
+                        disabled
+                        class="p-2 bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-gray-300 disabled:text-gray-100 transition-colors rounded-lg shadow-sm flex items-center justify-center"
+                    >
+                        <i data-lucide="send" class="w-4 h-4 ml-0.5"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mt-3 flex justify-between items-center text-xs text-gray-400">
+                <div class="flex space-x-3">
+                    <button class="flex items-center hover:text-gray-600"><i data-lucide="plus" class="w-3 h-3 mr-1"></i> ページ追加</button>
+                    <button class="flex items-center hover:text-gray-600"><i data-lucide="layout-template" class="w-3 h-3 mr-1"></i> デザイン設定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右ペイン：リアルタイムプレビュー -->
+    <div class="flex-1 flex flex-col bg-gray-100">
+        
+        <!-- プレビューツールバー -->
+        <div class="h-16 flex items-center justify-between px-6 bg-white border-b border-gray-200 shadow-sm z-10">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                    <button class="p-1.5 bg-white text-gray-800 rounded shadow-sm"><i data-lucide="monitor" class="w-4 h-4"></i></button>
+                    <button class="p-1.5 text-gray-500 hover:text-gray-800 rounded transition-colors"><i data-lucide="smartphone" class="w-4 h-4"></i></button>
+                </div>
+                <div class="text-sm text-gray-500 flex items-center">
+                    <span class="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+                    リアルタイムプレビュー
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <button class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
+                    <i data-lucide="settings" class="w-4 h-4 mr-2 text-gray-500"></i>
+                    SEO設定
+                </button>
+                <button class="flex items-center px-5 py-2 text-sm font-medium text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg transition-all shadow-md hover:shadow-lg">
+                    <i data-lucide="globe" class="w-4 h-4 mr-2"></i>
+                    ワンクリック公開
+                </button>
+            </div>
+        </div>
+
+        <!-- プレビューキャンバス（ダミーのWebサイト） -->
+        <div class="flex-1 overflow-auto p-8 flex justify-center items-start">
+            <div class="w-full max-w-[1000px] bg-white rounded-t-xl shadow-2xl min-h-full border border-gray-200 overflow-hidden relative group/canvas">
+                
+                <!-- ホバー時に「要素をクリックして編集」のヒントを出す -->
+                <div class="absolute top-4 right-4 bg-gray-900/80 text-white text-xs px-3 py-1.5 rounded-full opacity-0 group-hover/canvas:opacity-100 transition-opacity flex items-center pointer-events-none z-50">
+                    <i data-lucide="mouse-pointer-2" class="w-3 h-3 mr-1.5"></i>
+                    編集したい要素をクリック
+                </div>
+
+                <!-- --- ここからダミーWebサイトの中身 --- -->
+                <div class="font-sans text-gray-800">
+                    
+                    <!-- ヘッダー -->
+                    <header 
+                        class="interactive-element flex items-center justify-between px-8 py-6 border-b border-gray-100 hover:outline hover:outline-2 hover:outline-indigo-400 hover:bg-indigo-50/30 transition-all cursor-pointer relative group"
+                        data-element-name="ヘッダーナビゲーション"
+                    >
+                        <div class="text-2xl font-bold tracking-wider">TRATTORIA VERA</div>
+                        <nav class="hidden md:flex space-x-8 text-sm font-medium text-gray-600 pointer-events-none">
+                            <a href="#concept" class="hover:text-gray-900">コンセプト</a>
+                            <a href="#menu" class="hover:text-gray-900">メニュー</a>
+                            <a href="#info" class="hover:text-gray-900">店舗情報</a>
+                        </nav>
+                        <!-- 編集アイコン（ホバー時のみ表示） -->
+                        <div class="absolute top-2 right-2 hidden group-hover:flex bg-indigo-600 text-white text-xs px-2 py-1 rounded shadow">編集</div>
+                    </header>
+
+                    <!-- ヒーローセクション -->
+                    <section class="relative h-[500px] bg-gray-900 flex items-center justify-center overflow-hidden">
+                        <!-- 背景画像のダミー -->
+                        <div 
+                            class="interactive-element absolute inset-0 opacity-40 hover:outline hover:outline-4 hover:outline-inset hover:outline-indigo-400 cursor-pointer transition-all flex items-center justify-center group"
+                            style="background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center;"
+                            data-element-name="ヒーロー背景画像"
+                        >
+                            <div class="absolute inset-0 bg-black/30 group-hover:bg-indigo-900/40 transition-colors"></div>
+                            <div class="hidden group-hover:flex flex-col items-center justify-center bg-white/90 text-indigo-700 px-4 py-2 rounded-lg shadow-lg backdrop-blur-sm z-10 relative pointer-events-none">
+                                <i data-lucide="image" class="w-5 h-5 mb-1"></i>
+                                <span class="text-xs font-bold">画像を変更</span>
+                            </div>
+                        </div>
+
+                        <div class="relative z-10 text-center px-4 flex flex-col items-center">
+                            <h1 
+                                class="interactive-element text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight hover:outline hover:outline-2 hover:outline-indigo-400 hover:bg-indigo-500/20 p-2 rounded cursor-pointer transition-all"
+                                data-element-name="ヒーロー見出し（キャッチコピー）"
+                            >
+                                極上のパスタを、<br/>カジュアルに。
+                            </h1>
+                            
+                            <!-- 注目の予約ボタン -->
+                            <button 
+                                class="interactive-element mt-4 px-8 py-4 bg-white text-gray-900 font-bold rounded-sm text-lg hover:bg-gray-100 transition-colors shadow-lg hover:outline hover:outline-4 hover:outline-indigo-400 hover:shadow-indigo-500/50 relative group"
+                                data-element-name="「WEBで予約する」ボタン"
+                            >
+                                WEBで予約する
+                                <div class="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:flex bg-indigo-600 text-white text-xs px-3 py-1.5 rounded shadow whitespace-nowrap pointer-events-none">
+                                    ボタンのデザインや動きを編集
+                                </div>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- コンセプトセクション -->
+                    <section class="py-24 px-8 max-w-4xl mx-auto text-center">
+                        <h2 
+                            class="interactive-element text-3xl font-bold mb-8 hover:outline hover:outline-2 hover:outline-indigo-400 p-2 inline-block cursor-pointer"
+                            data-element-name="コンセプト見出し"
+                        >
+                            Concept
+                        </h2>
+                        <p 
+                            class="interactive-element text-gray-600 leading-relaxed text-lg hover:outline hover:outline-2 hover:outline-indigo-400 p-4 rounded cursor-pointer"
+                            data-element-name="コンセプト本文"
+                        >
+                            本場イタリアの味を、もっと身近に。<br/>
+                            厳選された新鮮な食材を使用し、シェフが一つ一つ丁寧に仕上げたお料理を、<br/>
+                            肩ひじ張らないアットホームな空間でお楽しみいただけます。
+                        </p>
+                    </section>
+
+                </div>
+                <!-- --- ダミーWebサイトの中身 ここまで --- -->
+
+            </div>
+        </div>
+    </div>
+
+    <!-- アプリケーションのJavaScriptロジック -->
+    <script>
+        // Lucideアイコンの初期化
+        lucide.createIcons();
+
+        // 状態管理
+        let messages = [
+            { id: 1, type: 'ai', text: 'こんにちは！AI Web Directorです。本日はどのようなWebサイトを作成しますか？まずは業種やジャンルを教えてください。' },
+            { id: 2, type: 'user', text: 'カジュアルなイタリアンレストランのサイトを作りたいです。' },
+            { id: 3, type: 'ai', text: 'カジュアルなイタリアンですね！承知いたしました。全体の雰囲気やメインカラーの希望はありますか？', options: ['白とダークグレー（モダン）', '赤と白（ポップ）', 'おまかせ'] },
+            { id: 4, type: 'user', text: '白とダークグレー（モダン）でお願いします。' },
+            { id: 5, type: 'ai', text: 'ありがとうございます。白とダークグレーを基調に、スマホ対応（レスポンシブ）のトップページ骨組みを生成しました！右側のプレビューをご確認ください。' },
+        ];
+        let selectedElement = null;
+
+        // DOM要素の取得
+        const chatArea = document.getElementById('chat-area');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const editingStatus = document.getElementById('editing-status');
+        const editingElementName = document.getElementById('editing-element-name');
+        const clearEditingBtn = document.getElementById('clear-editing-btn');
+
+        // チャットを描画する関数
+        function renderMessages() {
+            chatArea.innerHTML = '';
+            
+            messages.forEach(msg => {
+                const msgWrapper = document.createElement('div');
+                msgWrapper.className = `flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'} mb-4`;
+
+                if (msg.type === 'ai') {
+                    let optionsHtml = '';
+                    if (msg.options) {
+                        optionsHtml = `<div class="flex flex-wrap gap-2 mt-2">` + 
+                            msg.options.map(opt => `<button class="option-btn text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 px-3 py-1.5 rounded-full hover:bg-indigo-100 transition-colors" data-option="${opt}">${opt}</button>`).join('') +
+                        `</div>`;
+                    }
+
+                    msgWrapper.innerHTML = `
+                        <div class="flex items-start max-w-[90%]">
+                            <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-2 flex-shrink-0 mt-1">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <div class="bg-white border border-gray-100 shadow-sm p-3 rounded-2xl rounded-tl-sm text-sm leading-relaxed">
+                                    ${msg.text}
+                                </div>
+                                ${optionsHtml}
+                            </div>
+                        </div>
+                    `;
+                } else if (msg.type === 'user') {
+                    msgWrapper.innerHTML = `
+                        <div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-sm text-sm leading-relaxed max-w-[85%] shadow-sm">
+                            ${msg.text}
+                        </div>
+                    `;
+                } else if (msg.type === 'system') {
+                    msgWrapper.innerHTML = `
+                        <div class="w-full flex justify-center my-2">
+                            <div class="bg-amber-50 text-amber-700 border border-amber-200 text-xs px-4 py-2 rounded-full flex items-center shadow-sm">
+                                <i data-lucide="mouse-pointer-2" class="w-3 h-3 mr-1.5"></i>
+                                ${msg.text}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                chatArea.appendChild(msgWrapper);
+            });
+
+            // 新しく追加された要素に対してアイコンを再初期化
+            lucide.createIcons();
+
+            // 選択肢ボタンにイベントを追加
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const text = e.target.getAttribute('data-option');
+                    messageInput.value = text;
+                    updateSendButtonState();
+                    messageInput.focus();
+                });
+            });
+
+            // スクロールを一番下に
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        // メッセージ送信処理
+        function handleSendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+
+            // ユーザーメッセージを追加
+            messages.push({ id: Date.now(), type: 'user', text: text });
+            messageInput.value = '';
+            updateSendButtonState();
+            renderMessages();
+
+            // 入力を一時無効化
+            messageInput.disabled = true;
+
+            // 1秒後にAIのダミー返答を追加
+            setTimeout(() => {
+                const aiText = selectedElement 
+                    ? `「${selectedElement}」ですね。指示通りにデザインとコードを更新しました。プレビューをご確認ください！` 
+                    : 'ご指示ありがとうございます。内容を反映しました。他に修正したい箇所はありますか？プレビュー画面から直接クリックして指示することも可能です。';
+                
+                messages.push({ id: Date.now() + 1, type: 'ai', text: aiText });
+                
+                // 反映後に選択を解除
+                setEditingElement(null);
+                
+                messageInput.disabled = false;
+                messageInput.focus();
+                renderMessages();
+            }, 1000);
+        }
+
+        // 送信ボタンの有効/無効を更新
+        function updateSendButtonState() {
+            if (messageInput.value.trim() !== '') {
+                sendBtn.removeAttribute('disabled');
+            } else {
+                sendBtn.setAttribute('disabled', 'true');
+            }
+        }
+
+        // 編集対象の要素をセットする関数
+        function setEditingElement(elementName) {
+            selectedElement = elementName;
+            if (selectedElement) {
+                editingElementName.textContent = selectedElement;
+                editingStatus.classList.remove('hidden');
+                messageInput.placeholder = "変更内容を指示してください（例：赤色にして）";
+            } else {
+                editingStatus.classList.add('hidden');
+                messageInput.placeholder = "AIに指示を出す...";
+            }
+        }
+
+        // === イベントリスナーの登録 ===
+
+        // テキストエリアの入力監視
+        messageInput.addEventListener('input', updateSendButtonState);
+
+        // Enterキーで送信
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+            }
+        });
+
+        // 送信ボタンクリック
+        sendBtn.addEventListener('click', handleSendMessage);
+
+        // 選択解除ボタン
+        clearEditingBtn.addEventListener('click', () => {
+            setEditingElement(null);
+        });
+
+        // プレビュー画面の要素クリック
+        document.querySelectorAll('.interactive-element').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const elementName = el.getAttribute('data-element-name');
+                setEditingElement(elementName);
+                
+                messages.push({ 
+                    id: Date.now(), 
+                    type: 'system', 
+                    text: `プレビューから「${elementName}」を選択しました。` 
+                });
+                renderMessages();
+            });
+        });
+
+        // 初回描画
+        renderMessages();
+
+    </script>
+</body>
+</html>
