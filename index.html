@@ -44,7 +44,7 @@
             transform: scale(1.05);
         }
 
-        /* ★追加: 初期状態（空画面）のワクワクアニメーション用 */
+        /* 初期状態（空画面）のワクワクアニメーション用 */
         @keyframes float {
             0% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-25px) rotate(8deg); }
@@ -205,8 +205,6 @@
 
             <!-- ワクワクする初期状態のアニメーション -->
             <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center sparkle-bg z-0 overflow-hidden">
-                
-                <!-- 背景の浮遊パーツ群 -->
                 <div class="absolute inset-0 pointer-events-none overflow-hidden">
                     <div class="absolute top-[20%] left-[20%] animate-float text-pink-300/40 drop-shadow-md"><i data-lucide="image" class="w-16 h-16"></i></div>
                     <div class="absolute top-[15%] right-[25%] animate-float-reverse text-indigo-300/40 drop-shadow-md"><i data-lucide="type" class="w-12 h-12"></i></div>
@@ -215,8 +213,6 @@
                     <div class="absolute top-[40%] left-[10%] animate-float-reverse text-yellow-400/30 drop-shadow-md"><i data-lucide="sparkles" class="w-10 h-10"></i></div>
                     <div class="absolute bottom-[40%] right-[10%] animate-float-delayed text-blue-300/40 drop-shadow-md"><i data-lucide="code" class="w-16 h-16"></i></div>
                 </div>
-
-                <!-- 中央の魔法陣的なUI -->
                 <div class="relative w-40 h-40 mb-10 flex items-center justify-center">
                     <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-pink-300 to-purple-400 opacity-30 blur-2xl animate-pulse"></div>
                     <div class="ring-pulse absolute inset-8"></div>
@@ -224,8 +220,6 @@
                         <i data-lucide="wand-2" class="w-12 h-12 text-pink-500"></i>
                     </div>
                 </div>
-
-                <!-- ワクワクするメッセージ -->
                 <div class="relative z-10 text-center px-4">
                     <h2 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 mb-6 tracking-tight">
                         あなたのアイデアを、形にする準備ができました。
@@ -245,11 +239,11 @@
                 <div id="dummy-modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center backdrop-blur-md transition-opacity">
                     <div class="bg-white p-8 rounded-2xl text-center w-full max-w-md shadow-2xl transform scale-100 transition-transform m-4">
                         <div class="flex justify-between items-center mb-6 border-b pb-4">
-                            <h3 class="text-xl font-bold text-gray-800">WEB予約システム</h3>
+                            <h3 class="text-xl font-bold text-gray-800">お問い合わせ / 予約</h3>
                             <button id="close-modal-btn" class="text-gray-400 hover:text-gray-800"><i data-lucide="x" class="w-6 h-6"></i></button>
                         </div>
                         <div class="w-full h-48 bg-gray-100 rounded-lg mb-4 flex items-center justify-center text-gray-400 border border-gray-200">
-                            <i data-lucide="calendar" class="w-10 h-10 mb-2 mr-2"></i> カレンダーUIがここに表示されます
+                            <i data-lucide="calendar" class="w-10 h-10 mb-2 mr-2"></i> フォームUIがここに表示されます
                         </div>
                         <button class="w-full bg-gray-900 text-white font-bold px-4 py-4 rounded-xl hover:bg-gray-800 transition-colors shadow-md text-lg">次へ進む</button>
                     </div>
@@ -264,19 +258,17 @@
                     
                     <!-- 共通ヘッダー -->
                     <header class="interactive-element sticky top-0 z-[60] flex items-center justify-between px-6 md:px-12 py-5 bg-white/95 backdrop-blur-sm border-b border-gray-100 hover:outline hover:outline-2 hover:outline-pink-400 transition-all cursor-pointer group" data-element-name="ヘッダー（ナビゲーション）">
-                        <!-- ★修正: 企業名が動的に反映されるようにクラスを付与 -->
                         <div class="site-logo-preview text-2xl font-bold tracking-widest text-gray-900 cursor-pointer preview-nav-link hover:text-pink-600 transition-colors" data-target="page-home" id="site-title-preview" style="font-family: 'Georgia', serif;">あなたのサイト名</div>
                         
-                        <!-- ★修正: メニューを日本語化 -->
                         <nav class="hidden lg:flex space-x-10 text-sm font-semibold text-gray-600 tracking-wider">
                             <a href="#" class="preview-nav-link text-gray-900 border-b-2 border-gray-900 pb-1" data-target="page-home">ホーム</a>
                             <a href="#" class="preview-nav-link hover:text-gray-900 transition-colors" data-target="page-concept">コンセプト</a>
-                            <a href="#" class="preview-nav-link hover:text-gray-900 transition-colors" data-target="page-menu">メニュー</a>
+                            <a href="#" class="preview-nav-link hover:text-gray-900 transition-colors" data-target="page-menu" id="preview-nav-menu">サービス</a>
                             <a href="#" class="preview-nav-link hover:text-gray-900 transition-colors" data-target="page-gallery">ギャラリー</a>
                             <a href="#" class="preview-nav-link hover:text-gray-900 transition-colors" data-target="page-access">アクセス</a>
                         </nav>
                         <div class="hidden md:block pointer-events-none">
-                            <button class="bg-gray-900 text-white px-6 py-2.5 rounded text-sm font-bold tracking-wider hover:bg-gray-800 transition-colors">予約する</button>
+                            <button class="bg-gray-900 text-white px-6 py-2.5 rounded text-sm font-bold tracking-wider hover:bg-gray-800 transition-colors" id="preview-header-btn">お問い合わせ</button>
                         </div>
                     </header>
 
@@ -296,7 +288,7 @@
                                     最高の体験を、<br/>あなたに。
                                 </h1>
                                 <button id="reserve-btn-main" class="interactive-element pointer-events-auto mt-6 px-10 py-5 bg-white text-gray-900 font-bold rounded text-lg tracking-widest transition-all duration-300 shadow-2xl hover:outline hover:outline-4 hover:outline-pink-400 hover:-translate-y-1 relative group" data-element-name="「WEBで予約する」ボタン">
-                                    RESERVE NOW
+                                    <span id="preview-hero-btn-text">CONTACT US</span>
                                 </button>
                             </div>
                         </section>
@@ -304,15 +296,56 @@
                         <section class="py-24 px-8 max-w-6xl mx-auto">
                             <div class="grid md:grid-cols-2 gap-16 items-center">
                                 <div class="image-hover-zoom rounded-lg shadow-xl">
-                                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop" alt="About" class="w-full h-[500px] object-cover rounded-lg">
+                                    <img id="preview-about-img" src="https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop" alt="About" class="w-full h-[500px] object-cover rounded-lg">
                                 </div>
                                 <div>
                                     <h2 class="interactive-element text-sm font-bold text-pink-500 tracking-[0.2em] mb-2 hover:outline hover:outline-2 hover:outline-pink-400 p-1 inline-block cursor-pointer" data-element-name="About見出しサブ">OUR STORY</h2>
-                                    <h3 class="interactive-element text-3xl md:text-4xl font-bold mb-6 text-gray-900 hover:outline hover:outline-2 hover:outline-pink-400 p-1 inline-block cursor-pointer" data-element-name="About見出しメイン" id="preview-about-title" style="font-family: 'Georgia', serif;">素材への妥協なき探求</h3>
+                                    <h3 class="interactive-element text-3xl md:text-4xl font-bold mb-6 text-gray-900 hover:outline hover:outline-2 hover:outline-pink-400 p-1 inline-block cursor-pointer" data-element-name="About見出しメイン" id="preview-about-title" style="font-family: 'Georgia', serif;">確かな技術と信頼</h3>
                                     <p class="interactive-element text-gray-600 leading-loose mb-8 hover:outline hover:outline-2 hover:outline-pink-400 p-2 rounded cursor-pointer" data-element-name="About本文" id="preview-about-text">
-                                        厳選された旬の食材を使用し、伝統的な技法とモダンな感性を融合させた一皿をご提供します。洗練された空間で、特別な時間をお過ごしください。
+                                        長年培ってきた経験とノウハウで、お客様に最適なソリューションを提供します。細部までこだわり抜いた品質をお約束いたします。
                                     </p>
                                     <a href="#" class="preview-nav-link text-gray-900 border-b border-gray-900 pb-1 font-bold hover:text-pink-500 hover:border-pink-500 transition-colors" data-target="page-concept">コンセプトを詳しく見る →</a>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="py-24 px-8 bg-gray-50">
+                            <div class="max-w-6xl mx-auto">
+                                <div class="text-center mb-16">
+                                    <h2 class="text-sm font-bold text-pink-500 tracking-[0.2em] mb-2" id="preview-menu-section-subtitle">OUR SERVICES</h2>
+                                    <h3 class="text-3xl md:text-4xl font-bold text-gray-900" style="font-family: 'Georgia', serif;" id="preview-menu-section-title">主要なサービス</h3>
+                                </div>
+                                <div class="grid md:grid-cols-3 gap-8">
+                                    <!-- カード1 -->
+                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400" data-element-name="サービスカード1">
+                                        <div class="h-64 image-hover-zoom"><img id="preview-menu1-img" src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 1"></div>
+                                        <div class="p-8 text-center">
+                                            <h4 class="text-xl font-bold mb-2" id="preview-menu1-title">サービスA</h4>
+                                            <p class="text-gray-500 text-sm mb-4" id="preview-menu1-desc">高品質なサービスをご提供します。</p>
+                                            <p class="font-bold text-lg" id="preview-menu1-price">お見積り</p>
+                                        </div>
+                                    </div>
+                                    <!-- カード2 -->
+                                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                                        <div class="h-64 image-hover-zoom"><img id="preview-menu2-img" src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 2"></div>
+                                        <div class="p-8 text-center">
+                                            <h4 class="text-xl font-bold mb-2" id="preview-menu2-title">サービスB</h4>
+                                            <p class="text-gray-500 text-sm mb-4" id="preview-menu2-desc">お客様のニーズに柔軟に対応いたします。</p>
+                                            <p class="font-bold text-lg" id="preview-menu2-price">お見積り</p>
+                                        </div>
+                                    </div>
+                                    <!-- カード3 -->
+                                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                                        <div class="h-64 image-hover-zoom"><img id="preview-menu3-img" src="https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 3"></div>
+                                        <div class="p-8 text-center">
+                                            <h4 class="text-xl font-bold mb-2" id="preview-menu3-title">サービスC</h4>
+                                            <p class="text-gray-500 text-sm mb-4" id="preview-menu3-desc">アフターサポートも万全の体制です。</p>
+                                            <p class="font-bold text-lg" id="preview-menu3-price">お見積り</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-12">
+                                     <button class="preview-nav-link border-2 border-gray-900 text-gray-900 px-10 py-3 rounded font-bold tracking-widest hover:bg-gray-900 hover:text-white transition-colors" data-target="page-menu" id="preview-menu-btn-text">サービス一覧を見る</button>
                                 </div>
                             </div>
                         </section>
@@ -322,32 +355,31 @@
                     <main id="page-concept" class="page-content hidden flex-1 py-20 px-8">
                         <div class="max-w-4xl mx-auto text-center mb-16">
                             <h2 class="text-4xl font-bold text-gray-900 mb-6" style="font-family: 'Georgia', serif;">CONCEPT</h2>
-                            <p class="text-gray-600 leading-loose">日常の喧騒から離れ、ゆったりと流れる時間の中で。<br>私たちが大切にしているこだわりをご紹介します。</p>
+                            <p class="text-gray-600 leading-loose">私たちが大切にしているこだわりと、<br>提供する価値についてご紹介します。</p>
                         </div>
                         <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center mb-20">
-                            <!-- 日本向け画像に一部変更 -->
-                            <img src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800&auto=format&fit=crop" alt="Concept Image" class="w-full h-[400px] object-cover rounded-lg shadow-lg">
+                            <img id="preview-concept-img" src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800&auto=format&fit=crop" alt="Concept Image" class="w-full h-[400px] object-cover rounded-lg shadow-lg">
                             <div>
-                                <h3 class="text-2xl font-bold mb-4">01. Our Passion</h3>
-                                <p class="text-gray-600 leading-relaxed">長年の経験と確かな技術で、お客様の期待を超える価値を提供します。一つひとつの仕事に情熱を注ぎ、細部までこだわり抜いた仕上がりをお約束いたします。</p>
+                                <h3 class="text-2xl font-bold mb-4" id="preview-concept-title">01. Our Passion</h3>
+                                <p class="text-gray-600 leading-relaxed" id="preview-concept-desc">長年の経験と確かな技術で、お客様の期待を超える価値を提供します。一つひとつの仕事に情熱を注ぎ、細部までこだわり抜いた仕上がりをお約束いたします。</p>
                             </div>
                         </div>
                     </main>
 
-                    <!-- PAGE 3: MENU -->
+                    <!-- PAGE 3: MENU/SERVICE -->
                     <main id="page-menu" class="page-content hidden flex-1 py-20 px-8 bg-gray-50">
                         <div class="max-w-4xl mx-auto">
-                            <h2 class="text-4xl font-bold text-gray-900 mb-16 text-center" style="font-family: 'Georgia', serif;">MENU / SERVICE</h2>
+                            <h2 class="text-4xl font-bold text-gray-900 mb-16 text-center" style="font-family: 'Georgia', serif;" id="preview-page-menu-title">SERVICE</h2>
                             <div class="bg-white p-10 rounded-xl shadow-lg mb-12">
-                                <h3 class="text-2xl font-bold border-b border-gray-200 pb-4 mb-8 text-pink-600">Standard Plan</h3>
+                                <h3 class="text-2xl font-bold border-b border-gray-200 pb-4 mb-8 text-pink-600" id="preview-page-menu-sub1">Standard Plan</h3>
                                 <div class="space-y-6">
                                     <div class="flex justify-between items-baseline border-b border-gray-100 pb-4">
-                                        <div><h4 class="font-bold text-lg">ベーシックコース</h4><p class="text-sm text-gray-500">基本的なサービスを網羅した標準的なプランです。</p></div>
-                                        <span class="font-bold text-xl">¥2,000〜</span>
+                                        <div><h4 class="font-bold text-lg" id="preview-page-menu-item1">ベーシックコース</h4><p class="text-sm text-gray-500">基本的なサービスを網羅した標準的なプランです。</p></div>
+                                        <span class="font-bold text-xl">要相談</span>
                                     </div>
                                     <div class="flex justify-between items-baseline border-b border-gray-100 pb-4">
-                                        <div><h4 class="font-bold text-lg">プレミアムコース</h4><p class="text-sm text-gray-500">より高品質な素材やオプションを追加した特別プランです。</p></div>
-                                        <span class="font-bold text-xl">¥5,000〜</span>
+                                        <div><h4 class="font-bold text-lg" id="preview-page-menu-item2">プレミアムコース</h4><p class="text-sm text-gray-500">より高品質な素材やオプションを追加した特別プランです。</p></div>
+                                        <span class="font-bold text-xl">要相談</span>
                                     </div>
                                 </div>
                             </div>
@@ -358,26 +390,26 @@
                     <main id="page-gallery" class="page-content hidden flex-1 py-20 px-8">
                         <h2 class="text-4xl font-bold text-gray-900 mb-12 text-center" style="font-family: 'Georgia', serif;">GALLERY</h2>
                         <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-4">
-                            <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=600&auto=format&fit=crop" class="w-full h-64 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer">
-                            <img src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=600&auto=format&fit=crop" class="w-full h-64 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer">
-                            <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=600&auto=format&fit=crop" class="w-full h-64 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer">
+                            <img id="preview-gallery1-img" src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=600&auto=format&fit=crop" class="w-full h-64 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer">
+                            <img id="preview-gallery2-img" src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=600&auto=format&fit=crop" class="w-full h-64 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer">
+                            <img id="preview-gallery3-img" src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=600&auto=format&fit=crop" class="w-full h-64 object-cover rounded hover:opacity-80 transition-opacity cursor-pointer">
                         </div>
                     </main>
 
                     <!-- PAGE 5: ACCESS -->
                     <main id="page-access" class="page-content hidden flex-1 py-20 px-8 bg-gray-50">
-                        <h2 class="text-4xl font-bold text-gray-900 mb-12 text-center" style="font-family: 'Georgia', serif;">ACCESS & RESERVE</h2>
+                        <h2 class="text-4xl font-bold text-gray-900 mb-12 text-center" style="font-family: 'Georgia', serif;">ACCESS & CONTACT</h2>
                         <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 bg-white p-8 md:p-12 rounded-xl shadow-xl">
                             <div>
-                                <h3 class="text-2xl font-bold mb-6 border-b pb-2">店舗情報</h3>
+                                <h3 class="text-2xl font-bold mb-6 border-b pb-2">企業・店舗情報</h3>
                                 <ul class="space-y-4 text-gray-600 mb-8">
                                     <li class="flex"><i data-lucide="map-pin" class="w-5 h-5 mr-3 text-pink-500 flex-shrink-0"></i> 〒100-0000 東京都渋谷区ダミー1-2-3</li>
                                     <li class="flex"><i data-lucide="phone" class="w-5 h-5 mr-3 text-pink-500 flex-shrink-0"></i> 03-1234-5678</li>
                                     <li class="flex"><i data-lucide="clock" class="w-5 h-5 mr-3 text-pink-500 flex-shrink-0"></i> 営業時間: 10:00 - 19:00</li>
-                                    <li class="flex"><i data-lucide="calendar-x" class="w-5 h-5 mr-3 text-pink-500 flex-shrink-0"></i> 定休日：毎週水曜日</li>
+                                    <li class="flex"><i data-lucide="calendar-x" class="w-5 h-5 mr-3 text-pink-500 flex-shrink-0"></i> 定休日：土日祝日</li>
                                 </ul>
-                                <button id="reserve-btn-access" class="interactive-element w-full bg-gray-900 text-white font-bold py-4 rounded hover:bg-gray-800 transition-colors text-lg" data-element-name="「WEB予約」ボタン(Access)">
-                                    WEBで予約する
+                                <button id="reserve-btn-access" class="interactive-element w-full bg-gray-900 text-white font-bold py-4 rounded hover:bg-gray-800 transition-colors text-lg" data-element-name="「お問い合わせ」ボタン(Access)">
+                                    お問い合わせはこちら
                                 </button>
                             </div>
                         </div>
@@ -386,7 +418,6 @@
                     <!-- 共通フッター -->
                     <footer class="bg-gray-900 text-white py-12 px-8 mt-auto border-t-4 border-pink-600">
                         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
-                            <!-- ★修正: 企業名が動的に反映されるようにクラスを付与 -->
                             <div class="site-logo-preview text-2xl font-bold mb-6 md:mb-0 tracking-widest cursor-pointer preview-nav-link hover:text-pink-400 transition-colors" data-target="page-home" style="font-family: 'Georgia', serif;">あなたのサイト名</div>
                             <div class="flex space-x-6 mb-6 md:mb-0">
                                 <a href="#" class="hover:text-pink-400 transition-colors"><i data-lucide="instagram" class="w-6 h-6"></i></a>
@@ -414,9 +445,80 @@
         let selectedElementNode = null;
         let selectedHeroImage = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop";
         let userKodawari = "";
-        
-        // ★追加: ユーザーが入力した企業名・店舗名を保持する変数
         let userCompanyName = "あなたのサイト名";
+        
+        // ★追加: 判定した業種を保存する変数（初期値はビジネス）
+        let currentIndustry = 'business';
+
+        // ★追加: 業種別のコンテンツ（画像とテキスト）の定義セット
+        const industryContent = {
+            restaurant: {
+                aboutImg: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop",
+                menuTitle: "おすすめの逸品", menuSubtitle: "SPECIALTIES",
+                menu1Img: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop", menu1Title: "特製ボロネーゼ", menu1Desc: "黒毛和牛をじっくり煮込んだ深い味わい", menu1Price: "¥1,800",
+                menu2Img: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop", menu2Title: "鮮魚のカルパッチョ", menu2Desc: "毎朝市場から仕入れる新鮮な海の幸", menu2Price: "¥1,400",
+                menu3Img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=800&auto=format&fit=crop", menu3Title: "マルゲリータ", menu3Desc: "石窯で焼き上げる本格ナポリピッツァ", menu3Price: "¥1,600",
+                conceptImg: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=800&auto=format&fit=crop",
+                conceptTitle: "01. Chef's Passion", conceptDesc: "本場イタリアで修行を積んだシェフが、伝統的なレシピを守りつつ、繊細なアレンジを加えます。一皿に込められた情熱を感じてください。",
+                gallery1: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=600&auto=format&fit=crop", gallery2: "https://images.unsplash.com/photo-1525610553991-2bede1a236e2?q=80&w=600&auto=format&fit=crop", gallery3: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=600&auto=format&fit=crop",
+                navMenu: "メニュー", btnMenu: "メニュー一覧を見る", btnContact: "予約する", btnHero: "RESERVE NOW", pageMenuTitle: "MENU", pageMenuSub: "Lunch Course", pageMenuItem1: "Pranzo A", pageMenuItem2: "Pranzo B"
+            },
+            beauty: {
+                aboutImg: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=800&auto=format&fit=crop",
+                menuTitle: "主要メニュー", menuSubtitle: "SERVICES",
+                menu1Img: "https://images.unsplash.com/photo-1620331311520-246422fd82f9?q=80&w=800&auto=format&fit=crop", menu1Title: "カット＆カラー", menu1Desc: "お客様の骨格や髪質に合わせた最適なスタイル提案", menu1Price: "¥12,000〜",
+                menu2Img: "https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?q=80&w=800&auto=format&fit=crop", menu2Title: "ネイルアート", menu2Desc: "指先から美しく。季節に合わせたトレンドデザイン", menu2Price: "¥8,000〜",
+                menu3Img: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=800&auto=format&fit=crop", menu3Title: "ヘッドスパ", menu3Desc: "極上のリラクゼーションで心身の疲れを癒やします", menu3Price: "¥6,000〜",
+                conceptImg: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=800&auto=format&fit=crop",
+                conceptTitle: "01. Counseling", conceptDesc: "施術前の丁寧なカウンセリングを最も大切にしています。お客様の理想や悩みをしっかりとヒアリングし、魅力を引き出します。",
+                gallery1: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80&w=600&auto=format&fit=crop", gallery2: "https://images.unsplash.com/photo-1596462502278-27bf85033e5a?q=80&w=600&auto=format&fit=crop", gallery3: "https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=600&auto=format&fit=crop",
+                navMenu: "メニュー", btnMenu: "メニュー・料金を見る", btnContact: "予約する", btnHero: "RESERVE", pageMenuTitle: "PRICE LIST", pageMenuSub: "Hair Menu", pageMenuItem1: "Cut & Blow", pageMenuItem2: "Color & Treatment"
+            },
+            manufacturing: {
+                aboutImg: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop",
+                menuTitle: "主要な技術・製品", menuSubtitle: "TECHNOLOGY",
+                menu1Img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=800&auto=format&fit=crop", menu1Title: "設計・開発", menu1Desc: "最新のCADシステムを用いた高精度な設計プロセス", menu1Price: "要お見積り",
+                menu2Img: "https://images.unsplash.com/photo-1610408544973-10d944c68dd0?q=80&w=800&auto=format&fit=crop", menu2Title: "精密部品加工", menu2Desc: "ミクロン単位の精度が求められる特殊加工に対応", menu2Price: "要お見積り",
+                menu3Img: "https://images.unsplash.com/photo-1580983546513-33e3870e28a5?q=80&w=800&auto=format&fit=crop", menu3Title: "徹底した品質管理", menu3Desc: "国際基準に準拠した厳格な検査体制で不良ゼロへ", menu3Price: "-",
+                conceptImg: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=800&auto=format&fit=crop",
+                conceptTitle: "01. Craftsmanship", conceptDesc: "創業以来培ってきた熟練の職人技と、最新の設備を融合。お客様の厳しい要求スペックに、技術力と品質でお応えします。",
+                gallery1: "https://images.unsplash.com/photo-1565347878086-455cb3b320db?q=80&w=600&auto=format&fit=crop", gallery2: "https://images.unsplash.com/photo-1581092335397-9583eb92d232?q=80&w=600&auto=format&fit=crop", gallery3: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=600&auto=format&fit=crop",
+                navMenu: "事業内容", btnMenu: "事業内容を見る", btnContact: "お問い合わせ", btnHero: "CONTACT US", pageMenuTitle: "BUSINESS", pageMenuSub: "加工サービス", pageMenuItem1: "金属切削加工", pageMenuItem2: "特殊表面処理"
+            },
+            logistics: {
+                aboutImg: "https://images.unsplash.com/photo-1586528116311-ad8ed7c83a7f?q=80&w=800&auto=format&fit=crop",
+                menuTitle: "物流ソリューション", menuSubtitle: "SOLUTIONS",
+                menu1Img: "https://images.unsplash.com/photo-1616423640778-28d1b53229bd?q=80&w=800&auto=format&fit=crop", menu1Title: "輸配送サービス", menu1Desc: "全国ネットワークを活用した迅速かつ安全な配送体制", menu1Price: "要お見積り",
+                menu2Img: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=800&auto=format&fit=crop", menu2Title: "倉庫・保管", menu2Desc: "徹底した温度管理とセキュリティを備えた物流センター", menu2Price: "要お見積り",
+                menu3Img: "https://images.unsplash.com/photo-1606185540834-d6e7483ee1a4?q=80&w=800&auto=format&fit=crop", menu3Title: "流通加工・梱包", menu3Desc: "検品、アソート、梱包までワンストップで対応可能", menu3Price: "要お見積り",
+                conceptImg: "https://images.unsplash.com/photo-1504194921103-f8b80cadd5e4?q=80&w=800&auto=format&fit=crop",
+                conceptTitle: "01. Supply Chain", conceptDesc: "お客様のサプライチェーンを最適化し、物流コストの削減とリードタイムの短縮を実現する、次世代のロジスティクスを提供します。",
+                gallery1: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=600&auto=format&fit=crop", gallery2: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?q=80&w=600&auto=format&fit=crop", gallery3: "https://images.unsplash.com/photo-1493946740644-2d8a1f1a6aff?q=80&w=600&auto=format&fit=crop",
+                navMenu: "サービス", btnMenu: "サービス詳細を見る", btnContact: "お問い合わせ", btnHero: "CONTACT US", pageMenuTitle: "SERVICE", pageMenuSub: "物流代行", pageMenuItem1: "EC向け発送代行", pageMenuItem2: "BtoB在庫管理"
+            },
+            realestate: {
+                aboutImg: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=800&auto=format&fit=crop",
+                menuTitle: "事業・サービス", menuSubtitle: "SERVICES",
+                menu1Img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800&auto=format&fit=crop", menu1Title: "新築・注文住宅", menu1Desc: "お客様のライフスタイルに合わせた理想の住まいを設計", menu1Price: "要相談",
+                menu2Img: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?q=80&w=800&auto=format&fit=crop", menu2Title: "リフォーム・リノベ", menu2Desc: "既存の空間を活かし、新たな価値と快適さを生み出します", menu2Price: "要相談",
+                menu3Img: "https://images.unsplash.com/photo-1554469384-e58fac16e23a?q=80&w=800&auto=format&fit=crop", menu3Title: "不動産売買・仲介", menu3Desc: "豊富な地域情報を元に、最適な物件探しをサポート", menu3Price: "ご相談無料",
+                conceptImg: "https://images.unsplash.com/photo-1503694978374-8a2fa686963a?q=80&w=800&auto=format&fit=crop",
+                conceptTitle: "01. Trust & Quality", conceptDesc: "家づくりは、一生に一度の大きなプロジェクトです。私たちは常にお客様に寄り添い、安心で安全な高品質な住環境を提供し続けます。",
+                gallery1: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop", gallery2: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=600&auto=format&fit=crop", gallery3: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=600&auto=format&fit=crop",
+                navMenu: "サービス", btnMenu: "事業内容を見る", btnContact: "ご相談予約", btnHero: "無料相談", pageMenuTitle: "SERVICES", pageMenuSub: "住宅事業", pageMenuItem1: "注文住宅設計", pageMenuItem2: "マンションリノベーション"
+            },
+            business: {
+                aboutImg: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop",
+                menuTitle: "提供サービス", menuSubtitle: "SERVICES",
+                menu1Img: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop", menu1Title: "コンサルティング", menu1Desc: "経営課題を可視化し、最適な戦略とアクションプランを策定", menu1Price: "要相談",
+                menu2Img: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?q=80&w=800&auto=format&fit=crop", menu2Title: "システム開発", menu2Desc: "業務効率化を実現するクラウドシステムの要件定義・開発", menu2Price: "要相談",
+                menu3Img: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=800&auto=format&fit=crop", menu3Title: "運用・サポート", menu3Desc: "導入後の定着化から、継続的な改善までを伴走支援", menu3Price: "月額ご契約",
+                conceptImg: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=800&auto=format&fit=crop",
+                conceptTitle: "01. Professional", conceptDesc: "各分野の専門家が集結し、お客様のビジネスの成長を強力にバックアップします。私たちは変化を恐れず、常に新しい価値を創造し続けます。",
+                gallery1: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=600&auto=format&fit=crop", gallery2: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?q=80&w=600&auto=format&fit=crop", gallery3: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=600&auto=format&fit=crop",
+                navMenu: "サービス", btnMenu: "サービス詳細を見る", btnContact: "お問い合わせ", btnHero: "CONTACT US", pageMenuTitle: "SERVICES", pageMenuSub: "法人向けプラン", pageMenuItem1: "DXコンサルティング", pageMenuItem2: "バックオフィス業務代行"
+            }
+        };
 
         const chatArea = document.getElementById('chat-area');
         const messageInput = document.getElementById('message-input');
@@ -604,7 +706,7 @@
             setTimeout(() => {
                 messages.push({ 
                     id: Date.now(), type: 'ai', 
-                    text: 'こんにちは！本格的なサイト制作に向けて、要件定義を行います。<br><br>まずは<b>「基本情報（会社名・店舗名など）」</b>と、サイトの<b>「業種・ターゲット（客層）」「目的・ゴール」</b>を教えてください。<br>（例：「〇〇工務店」、リフォーム業、30代ファミリー、問い合わせ増など）' 
+                    text: 'こんにちは！本格的なサイト制作に向けて、要件定義を行います。<br><br>まずは<b>「基本情報（会社名・店舗名など）」</b>と、サイトの<b>「業種・ターゲット（客層）」「目的・ゴール」</b>を教えてください。<br>（例：「〇〇製作所」、部品メーカー、BtoB新規開拓 など）' 
                 });
                 renderMessages();
                 enableInputOnly();
@@ -615,12 +717,10 @@
             if (currentStep === 1) {
                 currentStep = 2; 
                 
-                // ★追加: ユーザー入力から「企業名・店舗名」を抽出して記憶する
                 const nameMatch = userInput.match(/「(.+?)」/);
                 if (nameMatch) {
                     userCompanyName = nameMatch[1];
                 } else {
-                    // カギ括弧がない場合は最初のフレーズを簡易的に取得
                     const words = userInput.split(/[、。 　]/);
                     if(words.length > 0 && words[0].length > 1) {
                         userCompanyName = words[0];
@@ -643,8 +743,9 @@
                 const allUserText = messages.filter(m => m.type === 'user').map(m => m.text).join(' ') + " " + userInput;
                 
                 let suggestions = [];
-                // ★変更: 日本人向け、または人物なしの画像に最適化
+                // ★追加: ユーザー入力から業種を判定し、currentIndustry に保存
                 if (allUserText.includes("イタリアン") || allUserText.includes("パスタ") || allUserText.includes("レストラン") || allUserText.includes("カフェ") || allUserText.includes("居酒屋") || allUserText.includes("飲食")) {
+                    currentIndustry = 'restaurant';
                     suggestions = [
                         { url: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop", label: "モダンなダイニング" },
                         { url: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop", label: "本格パスタ" },
@@ -656,6 +757,7 @@
                         { url: "https://images.unsplash.com/photo-1525610553991-2bede1a236e2?q=80&w=800&auto=format&fit=crop", label: "おしゃれなテラス席" }
                     ];
                 } else if (allUserText.includes("美容") || allUserText.includes("サロン") || allUserText.includes("ヘア") || allUserText.includes("エステ") || allUserText.includes("ネイル")) {
+                    currentIndustry = 'beauty';
                     suggestions = [
                         { url: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=800&auto=format&fit=crop", label: "サロン内観" },
                         { url: "https://images.unsplash.com/photo-1620331311520-246422fd82f9?q=80&w=800&auto=format&fit=crop", label: "ヘアスタイリング" },
@@ -666,9 +768,10 @@
                         { url: "https://images.unsplash.com/photo-1596462502278-27bf85033e5a?q=80&w=800&auto=format&fit=crop", label: "コスメアイテム" },
                         { url: "https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=800&auto=format&fit=crop", label: "くつろぎの空間" }
                     ];
-                } else if (allUserText.includes("製造") || allUserText.includes("工場") || allUserText.includes("メーカー") || allUserText.includes("部品")) {
+                } else if (allUserText.includes("製造") || allUserText.includes("工場") || allUserText.includes("メーカー") || allUserText.includes("部品") || allUserText.includes("工業")) {
+                    currentIndustry = 'manufacturing';
                     suggestions = [
-                        { url: "https://images.unsplash.com/photo-1565814329452-e1efa11c5e8f?q=80&w=800&auto=format&fit=crop", label: "精密機械" },
+                        { url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop", label: "精密機械" },
                         { url: "https://images.unsplash.com/photo-1565347878086-455cb3b320db?q=80&w=800&auto=format&fit=crop", label: "工場内観" },
                         { url: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=800&auto=format&fit=crop", label: "職人の手元" },
                         { url: "https://images.unsplash.com/photo-1610408544973-10d944c68dd0?q=80&w=800&auto=format&fit=crop", label: "溶接・加工" },
@@ -678,6 +781,7 @@
                         { url: "https://images.unsplash.com/photo-1580983546513-33e3870e28a5?q=80&w=800&auto=format&fit=crop", label: "品質検査" }
                     ];
                 } else if (allUserText.includes("卸") || allUserText.includes("問屋") || allUserText.includes("物流") || allUserText.includes("倉庫")) {
+                    currentIndustry = 'logistics';
                     suggestions = [
                         { url: "https://images.unsplash.com/photo-1586528116311-ad8ed7c83a7f?q=80&w=800&auto=format&fit=crop", label: "巨大な倉庫" },
                         { url: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=800&auto=format&fit=crop", label: "段ボールとパレット" },
@@ -689,6 +793,7 @@
                         { url: "https://images.unsplash.com/photo-1504194921103-f8b80cadd5e4?q=80&w=800&auto=format&fit=crop", label: "物流ネットワーク" }
                     ];
                 } else if (allUserText.includes("建築") || allUserText.includes("不動産") || allUserText.includes("リフォーム") || allUserText.includes("工務店") || allUserText.includes("住宅") || allUserText.includes("建設")) {
+                    currentIndustry = 'realestate';
                     suggestions = [
                         { url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop", label: "モダンなビル群" },
                         { url: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=800&auto=format&fit=crop", label: "高級戸建て住宅" },
@@ -700,6 +805,7 @@
                         { url: "https://images.unsplash.com/photo-1541888086925-ebbc31a316eb?q=80&w=800&auto=format&fit=crop", label: "和モダンな家屋" }
                     ];
                 } else {
+                    currentIndustry = 'business';
                     suggestions = [
                         { url: "https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=800&auto=format&fit=crop", label: "明るいオフィス" },
                         { url: "https://images.unsplash.com/photo-1431540015161-0bf868a2d407?q=80&w=800&auto=format&fit=crop", label: "ミーティングルーム" },
@@ -770,10 +876,10 @@
                         id: Date.now(), type: 'ai', 
                         text: '構成と機能が確定しました！<br><br>最後に、<b>「SEO（検索エンジン対策）と集客キーワード」</b>について設定します。<br>Google検索などで、どのようなキーワードで検索されたいですか？',
                         options: [
-                            '「地域名 ＋ 業種 ＋ 特徴」で集客したい（例：越谷 イタリアン 個室）',
-                            '「店舗名・ブランド名」での検索を最優先したい',
+                            '「地域名 ＋ 業種 ＋ 特徴」で集客したい（例：東京 部品加工 高精度）',
+                            '「企業名・ブランド名」での検索を最優先したい',
                             'よく分からないので、AIに最適なキーワードを提案・設定してほしい',
-                            'SNS集客メインなので、基本的なSEO設定だけでよい'
+                            '名刺代わりなので、基本的なSEO設定だけでよい'
                         ]
                     });
                     renderMessages();
@@ -810,7 +916,8 @@
             isStarted = true;
             currentStep = 7; 
             
-            userCompanyName = "TRATTORIA VERA"; // デモ用の企業名
+            userCompanyName = "TRATTORIA VERA"; 
+            currentIndustry = 'restaurant';
             
             renderMessages();
 
@@ -893,29 +1000,69 @@
 
             setTimeout(() => {
                 messages = messages.filter(m => m.id !== loadingMsgId);
-                messages.push({ id: Date.now(), type: 'ai', text: '✅ <b>自動構築が完了しました！</b><br><br>プレビュー画面の<b>【キャッチコピー】</b>や<b>【CONCEPT】の文章</b>を見てみてください。入力していただいた強みを元に、AIが魅力的な文章を書き下ろして反映させています！' });
+                messages.push({ id: Date.now(), type: 'ai', text: '✅ <b>自動構築が完了しました！</b><br><br>プレビュー画面の<b>【画像】や【テキスト】</b>が、選択した業種（' + currentIndustry + '）に合わせて最適化されています。独自の強みも反映済みです！' });
                 renderMessages();
 
-                // ★追加: ヘッダーとフッターのロゴに企業名を反映
+                // ヘッダーとフッターのロゴに企業名を反映
                 document.querySelectorAll('.site-logo-preview').forEach(el => {
                     el.textContent = userCompanyName;
                 });
 
+                // メイン画像の反映
                 if (selectedHeroImage) {
                     document.getElementById('hero-bg').style.backgroundImage = `url('${selectedHeroImage}')`;
                 }
 
+                // ★追加: 判定した業種（currentIndustry）に基づいて、サイト内の全画像とテキストを一括置換
+                const content = industryContent[currentIndustry] || industryContent['business'];
+                
+                document.getElementById('preview-about-img').src = content.aboutImg;
+                document.getElementById('preview-menu-section-title').textContent = content.menuTitle;
+                document.getElementById('preview-menu-section-subtitle').textContent = content.menuSubtitle;
+                document.getElementById('preview-menu1-img').src = content.menu1Img;
+                document.getElementById('preview-menu1-title').textContent = content.menu1Title;
+                document.getElementById('preview-menu1-desc').textContent = content.menu1Desc;
+                document.getElementById('preview-menu1-price').textContent = content.menu1Price;
+                document.getElementById('preview-menu2-img').src = content.menu2Img;
+                document.getElementById('preview-menu2-title').textContent = content.menu2Title;
+                document.getElementById('preview-menu2-desc').textContent = content.menu2Desc;
+                document.getElementById('preview-menu2-price').textContent = content.menu2Price;
+                document.getElementById('preview-menu3-img').src = content.menu3Img;
+                document.getElementById('preview-menu3-title').textContent = content.menu3Title;
+                document.getElementById('preview-menu3-desc').textContent = content.menu3Desc;
+                document.getElementById('preview-menu3-price').textContent = content.menu3Price;
+                document.getElementById('preview-concept-img').src = content.conceptImg;
+                document.getElementById('preview-concept-title').textContent = content.conceptTitle;
+                document.getElementById('preview-concept-desc').textContent = content.conceptDesc;
+                document.getElementById('preview-gallery1-img').src = content.gallery1;
+                document.getElementById('preview-gallery2-img').src = content.gallery2;
+                document.getElementById('preview-gallery3-img').src = content.gallery3;
+                
+                // ボタンとメニュー名の反映
+                document.getElementById('preview-nav-menu').textContent = content.navMenu;
+                document.getElementById('preview-menu-btn-text').textContent = content.btnMenu;
+                document.getElementById('preview-header-btn').textContent = content.btnContact;
+                document.getElementById('preview-hero-btn-text').textContent = content.btnHero;
+                
+                // メニューページ(Page 3)の中身の反映
+                document.getElementById('preview-page-menu-title').textContent = content.pageMenuTitle;
+                document.getElementById('preview-page-menu-sub1').textContent = content.pageMenuSub;
+                document.getElementById('preview-page-menu-item1').textContent = content.pageMenuItem1;
+                document.getElementById('preview-page-menu-item2').textContent = content.pageMenuItem2;
+
+
+                // ユーザーの「こだわり」に基づくAIライティングの反映
                 if (userKodawari) {
                     if (userKodawari.includes('埼玉') || userKodawari.includes('無農薬') || userKodawari.includes('パスタ')) {
                         const catchcopy = document.getElementById('preview-catchcopy');
                         if (catchcopy) catchcopy.innerHTML = '地元の恵みを、<br/>自家製生パスタで。';
-
                         const aboutTitle = document.getElementById('preview-about-title');
                         if (aboutTitle) aboutTitle.innerHTML = '無農薬野菜と手打ちパスタの融合';
-
                         const aboutText = document.getElementById('preview-about-text');
                         if (aboutText) aboutText.innerHTML = '毎朝、地元の契約農家から届く新鮮な無農薬野菜と、職人が丹精込めて打つ自家製の生パスタ。素材本来の味を最大限に引き出すため、化学調味料は一切使用していません。当店でしか味わえない、心と体に優しいイタリアンをお楽しみください。';
                     } else {
+                        const aboutTitle = document.getElementById('preview-about-title');
+                        if (aboutTitle) aboutTitle.innerHTML = '私たちの強みと約束';
                         const aboutText = document.getElementById('preview-about-text');
                         if (aboutText) aboutText.innerHTML = `【AI自動生成文章】<br>「${userKodawari}」という私たちの強みを最大限に活かし、お客様に最高の体験をお届けします。妥協のない品質とサービスで、皆様の特別な時間を彩ります。`;
                     }
@@ -959,11 +1106,11 @@
             messages = [];
             isStarted = false;
             currentStep = 0;
+            currentIndustry = 'business';
             selectedHeroImage = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop"; 
             userKodawari = "";
-            userCompanyName = "あなたのサイト名"; // リセット
+            userCompanyName = "あなたのサイト名"; 
             
-            // プレビューのロゴリセット
             document.querySelectorAll('.site-logo-preview').forEach(el => {
                 el.textContent = userCompanyName;
             });
