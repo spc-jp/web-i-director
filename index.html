@@ -43,6 +43,39 @@
         .image-hover-zoom:hover img {
             transform: scale(1.05);
         }
+
+        /* ★追加: 初期状態（空画面）のワクワクアニメーション用 */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(8deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        @keyframes float-reverse {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(20px) rotate(-8deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.6; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-float-reverse { animation: float-reverse 7s ease-in-out infinite; }
+        .animate-float-delayed { animation: float 8s ease-in-out 3s infinite; }
+        
+        .ring-pulse::before, .ring-pulse::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid #ec4899;
+            animation: pulse-ring 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        .ring-pulse::after { animation-delay: 1.5s; }
+        
+        .sparkle-bg {
+            background-image: radial-gradient(circle at center, #fff0f6 0%, #f8fafc 100%);
+        }
     </style>
 </head>
 <body class="flex h-screen w-full bg-gray-50 font-sans text-gray-800 overflow-hidden">
@@ -170,10 +203,40 @@
                 </div>
             </div>
 
-            <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 z-0">
-                <i data-lucide="layout-dashboard" class="w-16 h-16 mb-4 text-gray-300"></i>
-                <p class="text-xl font-bold text-gray-500 mb-2">プロジェクトがありません</p>
-                <p class="text-sm">左側のチャットから要件定義を完了させてください</p>
+            <!-- ★変更: リッチでワクワクする初期状態のアニメーション -->
+            <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center sparkle-bg z-0 overflow-hidden">
+                
+                <!-- 背景の浮遊パーツ群（Webサイトの部品たち） -->
+                <div class="absolute inset-0 pointer-events-none overflow-hidden">
+                    <div class="absolute top-[20%] left-[20%] animate-float text-pink-300/40 drop-shadow-md"><i data-lucide="image" class="w-16 h-16"></i></div>
+                    <div class="absolute top-[15%] right-[25%] animate-float-reverse text-indigo-300/40 drop-shadow-md"><i data-lucide="type" class="w-12 h-12"></i></div>
+                    <div class="absolute bottom-[25%] left-[25%] animate-float-delayed text-purple-300/40 drop-shadow-md"><i data-lucide="layout-template" class="w-20 h-20"></i></div>
+                    <div class="absolute bottom-[20%] right-[20%] animate-float text-emerald-300/40 drop-shadow-md"><i data-lucide="mouse-pointer-2" class="w-14 h-14"></i></div>
+                    <div class="absolute top-[40%] left-[10%] animate-float-reverse text-yellow-400/30 drop-shadow-md"><i data-lucide="sparkles" class="w-10 h-10"></i></div>
+                    <div class="absolute bottom-[40%] right-[10%] animate-float-delayed text-blue-300/40 drop-shadow-md"><i data-lucide="code" class="w-16 h-16"></i></div>
+                </div>
+
+                <!-- 中央の魔法陣的なUI -->
+                <div class="relative w-40 h-40 mb-10 flex items-center justify-center">
+                    <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-pink-300 to-purple-400 opacity-30 blur-2xl animate-pulse"></div>
+                    <div class="ring-pulse absolute inset-8"></div>
+                    <div class="relative z-10 w-24 h-24 bg-white/90 backdrop-blur-sm rounded-full shadow-2xl flex items-center justify-center border-2 border-pink-100">
+                        <i data-lucide="wand-2" class="w-12 h-12 text-pink-500"></i>
+                    </div>
+                </div>
+
+                <!-- ワクワクするメッセージ -->
+                <div class="relative z-10 text-center px-4">
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 mb-6 tracking-tight">
+                        あなたのアイデアを、形にする準備ができました。
+                    </h2>
+                    <div class="inline-block bg-white/80 backdrop-blur-sm border border-gray-100 shadow-lg rounded-2xl p-6 px-10">
+                        <p class="text-gray-600 text-lg leading-relaxed font-medium">
+                            左側のAIディレクターに話しかけてください。<br>
+                            <span class="text-pink-600 font-bold tracking-wide">この空間に、魔法のようにWebサイトが生み出されます✨</span>
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <!-- キャンバス本体 -->
@@ -556,7 +619,6 @@
                 currentStep = 3; 
                 userKodawari = userInput;
                 
-                // ★追加: これまでの全ユーザー入力を結合して業種をより正確に判定する
                 const allUserText = messages.filter(m => m.type === 'user').map(m => m.text).join(' ') + " " + userInput;
                 
                 let suggestions = [];
