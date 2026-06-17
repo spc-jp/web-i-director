@@ -168,10 +168,7 @@
             </div>
             
             <div class="flex items-center space-x-3 opacity-50" id="toolbar-actions">
-                <button id="btn-seo" disabled class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm cursor-not-allowed hover:text-pink-600">
-                    <i data-lucide="settings" class="w-4 h-4 mr-2 text-gray-400 group-hover:text-pink-500"></i>
-                    SEO設定
-                </button>
+                <!-- ★変更: SEO設定ボタンを削除しました -->
                 <button id="btn-publish" disabled class="flex items-center px-5 py-2 text-sm font-medium text-white bg-gray-400 rounded-lg shadow-sm cursor-not-allowed">
                     <i data-lucide="globe" class="w-4 h-4 mr-2"></i>
                     ワンクリック公開
@@ -196,8 +193,12 @@
                     <h3 class="text-2xl font-bold mb-2 text-gray-800">公開完了！</h3>
                     <p class="text-sm text-gray-500 mb-6">あなたのウェブサイトが全世界に公開されました。<br>以下のURLからアクセスできます。</p>
                     <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg flex items-center justify-between mb-6">
-                        <span class="text-sm font-mono text-indigo-600 truncate mr-2">https://trattoria-vera.netlify.app</span>
-                        <button class="text-gray-400 hover:text-gray-600 p-1 bg-white border border-gray-200 rounded shadow-sm"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                        <span class="text-sm font-mono text-indigo-600 truncate mr-2" id="publish-url-text">https://yoursite.netlify.app</span>
+                        <!-- ★変更: コピーボタンにツールチップを追加 -->
+                        <button id="copy-url-btn" class="text-gray-400 hover:text-gray-600 p-1.5 bg-white border border-gray-200 rounded shadow-sm relative transition-colors">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                            <span id="copy-tooltip" class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity whitespace-nowrap pointer-events-none">コピーしました</span>
+                        </button>
                     </div>
                     <button id="close-publish-modal" class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold px-4 py-3 rounded-xl hover:shadow-lg transition-all">プレビューに戻る</button>
                 </div>
@@ -260,7 +261,6 @@
                     <header class="interactive-element sticky top-0 z-[60] flex items-center justify-between px-6 md:px-12 py-5 bg-white/95 backdrop-blur-sm border-b border-gray-100 hover:outline hover:outline-2 hover:outline-pink-400 transition-all cursor-pointer group" data-element-name="ヘッダー（ナビゲーション）">
                         <div class="site-logo-preview text-2xl font-bold tracking-widest text-gray-900 cursor-pointer preview-nav-link hover:text-pink-600 transition-colors" data-target="page-home" id="site-title-preview" style="font-family: 'Georgia', serif;">あなたのサイト名</div>
                         
-                        <!-- ★修正: idを追加してJavaScriptから表示非表示を制御できるように -->
                         <nav id="preview-desktop-nav" class="hidden lg:flex space-x-10 text-sm font-semibold text-gray-600 tracking-wider">
                             <a href="#" class="preview-nav-link text-gray-900 border-b-2 border-gray-900 pb-1" data-target="page-home">ホーム</a>
                             <a href="#" class="preview-nav-link hover:text-gray-900 transition-colors" data-target="page-concept">コンセプト</a>
@@ -450,7 +450,7 @@
         
         // 判定した業種を保存する変数
         let currentIndustry = 'business';
-        // ★追加: ユーザーが選んだ構成を保存する変数
+        // ユーザーが選んだ構成を保存する変数
         let selectedStructure = "本格的な複数ページ(5P)構成";
 
         // 業種別のコンテンツ（画像とテキスト）の定義セット
@@ -610,7 +610,6 @@
                     }
 
                     if (msg.imageOptions) {
-                        // ★修正3: 画像パネルの高さを h-20 から h-24 や sm:h-28 にして見やすく改善
                         optionsHtml = `<div class="grid grid-cols-2 gap-2 mt-3 w-full">` + 
                             msg.imageOptions.map(opt => `
                                 <button class="image-option-btn border border-pink-200 rounded-lg overflow-hidden hover:ring-2 hover:ring-pink-500 transition-all text-left bg-white shadow-sm" data-image-url="${opt.url}" data-image-label="${opt.label}">
@@ -670,7 +669,6 @@
             lucide.createIcons();
             chatArea.scrollTop = chatArea.scrollHeight;
 
-            // ★修正4: ボタンのクリック制御から messageInput.disabled を除外し、いつでも押せるように変更
             document.querySelectorAll('.option-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     if(!isStarted) return; 
@@ -875,7 +873,6 @@
             }
             else if (currentStep === 5) {
                 currentStep = 6;
-                // ★追加1: ユーザーが選んだ構成を記憶して反映
                 selectedStructure = userInput.replace(/ にします。$/, ""); 
 
                 setTimeout(() => {
@@ -898,7 +895,7 @@
                 setTimeout(() => {
                     messages.push({ 
                         id: Date.now(), type: 'ai', 
-                        text: `完璧です！必要な情報が全て揃いました。いただいた情報を整理しました。<br><br><div class="bg-pink-50 border border-pink-100 p-3 rounded text-xs mt-2 font-mono text-pink-800"><b>【プロジェクト要件定義】</b><br>・基本情報: <b>${userCompanyName}</b><br>・ターゲット・目的設定<br>・「独自の強み・こだわり」に基づくAIコピーライティング<br>・メイン画像の選定<br>・デザイン・配色ルールの適用<br>・用途に合わせた最適なページ構成（<b>${selectedStructure}</b>）<br>・必要なシステムの組み込み<br>・全ページ共通: ロゴクリックでHOMEへ戻る機能<br>・最適化されたSEO・メタタグ設定</div><br>これより、ビジネスの成果に直結するサイトを自動構築します！少々お待ちください。` 
+                        text: `完璧です！必要な情報が全て揃いました。いただいた情報を整理しました。<br><br><div class="bg-pink-50 border border-pink-100 p-3 rounded text-xs mt-2 font-mono text-pink-800"><b>【プロジェクト要件定義】</b><br>・基本情報: <b>${userCompanyName}</b><br>・ターゲット・目的設定<br>・「独自の強み・こだわり」に基づくAIコピーライティング<br>・メイン画像の選定<br>・デザイン・配色ルールの適用<br>・用途に合わせた最適なページ構成（<b>${selectedStructure}</b>）<br>・必要なシステムの組み込み<br>・全ページ共通: ロゴクリックでHOMEへ戻る機能</div><br>これより、ビジネスの成果に直結するサイトを自動構築します！少々お待ちください。` 
                     });
                     renderMessages();
                     setTimeout(showLoadingAndPreview, 2500);
@@ -987,7 +984,7 @@
             setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '「地域名 ＋ 業種 ＋ 特徴」で集客したい（例：越谷 イタリアン 個室）' }); renderMessages(); }, 17500);
 
             setTimeout(() => {
-                messages.push({ id: Date.now(), type: 'ai', text: '要件定義が完了しました！「ロゴクリックでHOMEへ戻る機能」や「最適なSEO設定」も必須要件として記憶・実装します。これよりサイトを自動構築します。' });
+                messages.push({ id: Date.now(), type: 'ai', text: '要件定義が完了しました！「ロゴクリックでHOMEへ戻る機能」も必須要件として記憶・実装します。これよりサイトを自動構築します。' });
                 renderMessages();
                 showLoadingAndPreview();
             }, 19500);
@@ -1000,7 +997,6 @@
             currentStep = 7; 
             let loadingMsgId = Date.now();
             
-            // ★追加1: 記憶した「構成」の名称をローディングメッセージに反映
             messages.push({ id: loadingMsgId, type: 'system', icon: 'loader-2', text: `要件定義書に基づき、${selectedStructure}のコードを生成中...` });
             renderMessages();
             
@@ -1018,7 +1014,7 @@
                     el.textContent = userCompanyName;
                 });
 
-                // ★追加2: 1ページ構成などの場合はヘッダーナビゲーションを隠す
+                // 1ページ構成などの場合はヘッダーナビゲーションを隠す
                 const desktopNav = document.getElementById('preview-desktop-nav');
                 if (selectedStructure.includes('1ページ') || selectedStructure.includes('LP') || selectedStructure.includes('ランディング')) {
                     if (desktopNav) desktopNav.style.display = 'none';
@@ -1086,6 +1082,10 @@
                     }
                 }
 
+                // ★追加: 発行するダミーURLを企業名に合わせて生成
+                const dummyUrlName = userCompanyName.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || 'my-awesome-site';
+                document.getElementById('publish-url-text').textContent = `https://${dummyUrlName}.netlify.app`;
+
                 document.getElementById('empty-state').classList.add('hidden');
                 const canvas = document.getElementById('preview-canvas');
                 canvas.classList.remove('hidden');
@@ -1104,8 +1104,7 @@
             messageInput.placeholder = "AIに指示を出す... (例: 赤色にして)";
             
             document.getElementById('toolbar-actions').classList.remove('opacity-50');
-            document.getElementById('btn-seo').disabled = false;
-            document.getElementById('btn-seo').classList.remove('cursor-not-allowed');
+            // ★変更: SEO設定ボタンの有効化処理を削除
             document.getElementById('btn-publish').disabled = false;
             document.getElementById('btn-publish').classList.remove('cursor-not-allowed', 'bg-gray-400');
             document.getElementById('btn-publish').classList.add('bg-gradient-to-r', 'from-emerald-500', 'to-teal-500');
@@ -1125,7 +1124,7 @@
             isStarted = false;
             currentStep = 0;
             currentIndustry = 'business';
-            selectedStructure = "本格的な複数ページ(5P)構成"; // リセット
+            selectedStructure = "本格的な複数ページ(5P)構成"; 
             selectedHeroImage = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop"; 
             userKodawari = "";
             userCompanyName = "あなたのサイト名"; 
@@ -1134,7 +1133,7 @@
                 el.textContent = userCompanyName;
             });
             const desktopNav = document.getElementById('preview-desktop-nav');
-            if(desktopNav) desktopNav.style.display = 'flex'; // ナビを戻す
+            if(desktopNav) desktopNav.style.display = 'flex'; 
             
             const catchcopy = document.getElementById('preview-catchcopy');
             if(catchcopy) catchcopy.innerHTML = '最高の体験を、<br/>あなたに。';
@@ -1295,15 +1294,6 @@
 
         document.getElementById('close-modal-btn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('dummy-modal').classList.add('hidden'); });
         
-        document.getElementById('btn-seo').addEventListener('click', () => {
-            messages.push({ 
-                id: Date.now(), 
-                type: 'ai', 
-                text: '✅ **SEO対策の微調整を完了しました**<br><br>ヒアリングで設定いただいたキーワードに基づき、以下を全自動で最適化しました。<br>・メタディスクリプションの追加<br>・全画像へのalt（オルト）属性の設定<br>・見出しタグ（h1〜h3）の階層構造の最適化' 
-            });
-            renderMessages();
-        });
-
         document.getElementById('btn-publish').addEventListener('click', () => {
             document.getElementById('deploy-overlay').classList.remove('hidden');
             setTimeout(() => {
@@ -1312,6 +1302,26 @@
             }, 2000);
         });
         document.getElementById('close-publish-modal').addEventListener('click', () => { document.getElementById('publish-success-modal').classList.add('hidden'); });
+
+        // ★追加: 発行されたURLをクリップボードにコピーする処理
+        document.getElementById('copy-url-btn').addEventListener('click', () => {
+            const urlText = document.getElementById('publish-url-text').textContent;
+            
+            // iFrame等の制限を考慮したセーフなコピー方法
+            const textArea = document.createElement('textarea');
+            textArea.value = urlText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                const tooltip = document.getElementById('copy-tooltip');
+                tooltip.classList.remove('opacity-0');
+                setTimeout(() => tooltip.classList.add('opacity-0'), 2000);
+            } catch (err) {
+                console.error('Failed to copy', err);
+            }
+            document.body.removeChild(textArea);
+        });
 
         renderMessages();
     </script>
