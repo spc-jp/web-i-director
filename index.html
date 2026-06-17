@@ -556,8 +556,11 @@
                 currentStep = 3; 
                 userKodawari = userInput;
                 
+                // ★追加: これまでの全ユーザー入力を結合して業種をより正確に判定する
+                const allUserText = messages.filter(m => m.type === 'user').map(m => m.text).join(' ') + " " + userInput;
+                
                 let suggestions = [];
-                if (userInput.includes("イタリアン") || userInput.includes("パスタ") || userInput.includes("野菜") || userInput.includes("レストラン")) {
+                if (allUserText.includes("イタリアン") || allUserText.includes("パスタ") || allUserText.includes("レストラン") || allUserText.includes("カフェ") || allUserText.includes("居酒屋") || allUserText.includes("飲食")) {
                     suggestions = [
                         { url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop", label: "モダンなダイニング" },
                         { url: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop", label: "本格パスタ" },
@@ -568,7 +571,7 @@
                         { url: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=800&auto=format&fit=crop", label: "シェフの調理風景" },
                         { url: "https://images.unsplash.com/photo-1525610553991-2bede1a236e2?q=80&w=800&auto=format&fit=crop", label: "おしゃれなテラス席" }
                     ];
-                } else if (userInput.includes("美容") || userInput.includes("サロン") || userInput.includes("ヘア")) {
+                } else if (allUserText.includes("美容") || allUserText.includes("サロン") || allUserText.includes("ヘア") || allUserText.includes("エステ") || allUserText.includes("ネイル")) {
                     suggestions = [
                         { url: "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=800&auto=format&fit=crop", label: "サロン内観" },
                         { url: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=800&auto=format&fit=crop", label: "ヘアスタイリング" },
@@ -578,6 +581,39 @@
                         { url: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=800&auto=format&fit=crop", label: "マッサージ・スパ" },
                         { url: "https://images.unsplash.com/photo-1596462502278-27bf85033e5a?q=80&w=800&auto=format&fit=crop", label: "コスメアイテム" },
                         { url: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=800&auto=format&fit=crop", label: "美容師と顧客" }
+                    ];
+                } else if (allUserText.includes("製造") || allUserText.includes("工場") || allUserText.includes("メーカー") || allUserText.includes("部品")) {
+                    suggestions = [
+                        { url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop", label: "精密機械" },
+                        { url: "https://images.unsplash.com/photo-1565347878086-455cb3b320db?q=80&w=800&auto=format&fit=crop", label: "工場内観" },
+                        { url: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=800&auto=format&fit=crop", label: "職人の手元" },
+                        { url: "https://images.unsplash.com/photo-1610408544973-10d944c68dd0?q=80&w=800&auto=format&fit=crop", label: "溶接・加工" },
+                        { url: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=800&auto=format&fit=crop", label: "設計・図面" },
+                        { url: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800&auto=format&fit=crop", label: "作業着のエンジニア" },
+                        { url: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=800&auto=format&fit=crop", label: "大型機械" },
+                        { url: "https://images.unsplash.com/photo-1580983546513-33e3870e28a5?q=80&w=800&auto=format&fit=crop", label: "品質検査" }
+                    ];
+                } else if (allUserText.includes("卸") || allUserText.includes("問屋") || allUserText.includes("物流") || allUserText.includes("倉庫")) {
+                    suggestions = [
+                        { url: "https://images.unsplash.com/photo-1586528116311-ad8ed7c83a7f?q=80&w=800&auto=format&fit=crop", label: "巨大な倉庫" },
+                        { url: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=800&auto=format&fit=crop", label: "段ボールとパレット" },
+                        { url: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=800&auto=format&fit=crop", label: "フォークリフト" },
+                        { url: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?q=80&w=800&auto=format&fit=crop", label: "在庫管理タブレット" },
+                        { url: "https://images.unsplash.com/photo-1616423640778-28d1b53229bd?q=80&w=800&auto=format&fit=crop", label: "配送トラック" },
+                        { url: "https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=800&auto=format&fit=crop", label: "梱包作業" },
+                        { url: "https://images.unsplash.com/photo-1493946740644-2d8a1f1a6aff?q=80&w=800&auto=format&fit=crop", label: "コンテナ・港" },
+                        { url: "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?q=80&w=800&auto=format&fit=crop", label: "物流ネットワーク" }
+                    ];
+                } else if (allUserText.includes("建築") || allUserText.includes("不動産") || allUserText.includes("リフォーム") || allUserText.includes("工務店") || allUserText.includes("住宅") || allUserText.includes("建設")) {
+                    suggestions = [
+                        { url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop", label: "モダンなビル群" },
+                        { url: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=800&auto=format&fit=crop", label: "高級戸建て住宅" },
+                        { url: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=800&auto=format&fit=crop", label: "建築現場・足場" },
+                        { url: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800&auto=format&fit=crop", label: "おしゃれな内装" },
+                        { url: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=800&auto=format&fit=crop", label: "マンションの外観" },
+                        { url: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?q=80&w=800&auto=format&fit=crop", label: "リフォーム空間" },
+                        { url: "https://images.unsplash.com/photo-1503694978374-8a2fa686963a?q=80&w=800&auto=format&fit=crop", label: "設計図とヘルメット" },
+                        { url: "https://images.unsplash.com/photo-1554469384-e58fac16e23a?q=80&w=800&auto=format&fit=crop", label: "新築のリビング" }
                     ];
                 } else {
                     suggestions = [
@@ -625,7 +661,6 @@
             else if (currentStep === 4) {
                 currentStep = 5;
                 setTimeout(() => {
-                    // ★修正: 用途別の8つの構成パターンを提示
                     messages.push({ 
                         id: Date.now(), type: 'ai', 
                         text: 'デザインの方向性が決まりましたね。<br><br>次に、<b>「サイト構成」</b>と導入したい<b>「機能」</b>を選んでください。用途に合わせて8つのパターンをご用意しています。',
@@ -744,7 +779,6 @@
             
             setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】サイト構成、機能を教えてください。' }); renderMessages(); }, 13000);
             
-            // ★修正: 追加した8パターンの中から選択するフローに変更
             setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '予約システム連動型の本格構成（カレンダー予約）でお願いします。' }); renderMessages(); }, 14500);
 
             setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】最後に、SEO・キーワードについて教えてください。' }); renderMessages(); }, 16000);
