@@ -50,7 +50,7 @@
             <div id="settings-menu" class="hidden absolute top-14 right-4 bg-white border border-gray-200 shadow-xl rounded-xl w-56 z-50 py-2 transform origin-top-right transition-all">
                 <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">開発者 / デモ用メニュー</div>
                 <button id="menu-auto-demo" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 flex items-center transition-colors">
-                    <i data-lucide="play-circle" class="w-4 h-4 mr-2"></i> デモ自動実行
+                    <i data-lucide="play-circle" class="w-4 h-4 mr-2"></i> デモ自動実行 (見学用)
                 </button>
                 <button id="menu-clear" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 flex items-center transition-colors">
                     <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i> デモデータクリア
@@ -193,7 +193,7 @@
                     </header>
                     <section class="relative h-[500px] bg-gray-900 flex items-center justify-center overflow-hidden">
                         <div id="hero-bg" class="interactive-element absolute inset-0 opacity-50 hover:outline hover:outline-4 hover:outline-inset hover:outline-pink-400 cursor-pointer transition-all duration-700 flex items-center justify-center group" style="background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center;" data-element-name="ヒーロー背景画像">
-                            <div class="absolute inset-0 bg-black/20 group-hover:bg-pink-900/40 transition-colors pointer-events-none"></div>
+                            <div class="absolute inset-0 bg-black/30 group-hover:bg-pink-900/40 transition-colors pointer-events-none"></div>
                         </div>
                         <div class="relative z-10 text-center px-4 flex flex-col items-center pointer-events-none">
                             <h1 class="interactive-element pointer-events-auto text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight hover:outline hover:outline-2 hover:outline-pink-400 p-2 rounded cursor-pointer transition-all" data-element-name="キャッチコピー">
@@ -223,11 +223,12 @@
         let messages = [];
         let isStarted = false;
         
-        // ★新しい状態管理: 手動ヒアリングのステップ (0:未開始, 1~3:ヒアリング中, 4:編集モード)
+        // ★新しい状態管理: 手動ヒアリングのステップ (0:未開始, 1~4:ヒアリング中, 5:編集モード)
         let currentStep = 0; 
         
         let selectedElementName = null;
         let selectedElementNode = null;
+        let selectedHeroImage = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop"; // 初期画像
 
         // DOM Elements
         const chatArea = document.getElementById('chat-area');
@@ -278,6 +279,27 @@
                 msgWrapper.className = `flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'} mb-5 fade-in-up`;
 
                 if (msg.type === 'ai') {
+                    let optionsHtml = '';
+                    
+                    // テキストの選択肢
+                    if (msg.options) {
+                        optionsHtml = `<div class="flex flex-col gap-2 mt-3 w-full">` + 
+                            msg.options.map(opt => `<button class="option-btn text-xs bg-pink-50 text-pink-700 border border-pink-200 px-3.5 py-2.5 rounded-lg hover:bg-pink-100 hover:shadow-sm transition-all font-medium text-left" data-option="${opt}">${opt}</button>`).join('') +
+                        `</div>`;
+                    }
+
+                    // ★画像の選択肢（業種別の提案）
+                    if (msg.imageOptions) {
+                        optionsHtml = `<div class="grid grid-cols-2 gap-2 mt-3 w-full">` + 
+                            msg.imageOptions.map(opt => `
+                                <button class="image-option-btn border border-pink-200 rounded-lg overflow-hidden hover:ring-2 hover:ring-pink-500 transition-all text-left bg-white shadow-sm" data-image-url="${opt.url}" data-image-label="${opt.label}">
+                                    <img src="${opt.url}" class="w-full h-20 object-cover" alt="${opt.label}">
+                                    <div class="p-2 text-xs text-pink-700 font-bold bg-pink-50/50">${opt.label}</div>
+                                </button>
+                            `).join('') +
+                        `</div>`;
+                    }
+
                     msgWrapper.innerHTML = `
                         <div class="flex items-start max-w-[95%]">
                             <div class="w-9 h-9 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1 shadow-sm text-white overflow-hidden border border-pink-200 bg-pink-50">
@@ -287,6 +309,7 @@
                                 <div class="bg-white border border-gray-100 shadow-sm p-4 rounded-2xl rounded-tl-sm text-sm leading-relaxed text-gray-700">
                                     ${msg.text}
                                 </div>
+                                ${optionsHtml}
                             </div>
                         </div>
                     `;
@@ -311,6 +334,29 @@
 
             lucide.createIcons();
             chatArea.scrollTop = chatArea.scrollHeight;
+
+            // テキスト選択肢ボタンのイベント
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if(!isStarted || messageInput.disabled) return; 
+                    const text = e.target.getAttribute('data-option');
+                    messageInput.value = text;
+                    handleSendMessage(); 
+                });
+            });
+
+            // ★画像選択肢ボタンのイベント
+            document.querySelectorAll('.image-option-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if(!isStarted || messageInput.disabled) return; 
+                    const url = e.currentTarget.getAttribute('data-image-url');
+                    const label = e.currentTarget.getAttribute('data-image-label');
+                    
+                    selectedHeroImage = url; // プレビュー用の変数に保存
+                    messageInput.value = `「${label}」の画像をメインビジュアルにします。`;
+                    handleSendMessage(); 
+                });
+            });
         }
 
         // ==========================================
@@ -322,38 +368,113 @@
             renderMessages();
 
             setTimeout(() => {
-                messages.push({ id: Date.now(), type: 'ai', text: 'こんにちは！本格的なサイト制作に向けて、要件定義を行います。<br><br>まずは<b>「基本情報（会社・業種）」</b>と、サイトの<b>「ターゲット（客層）」「目的・ゴール」</b>を教えてください。' });
+                messages.push({ 
+                    id: Date.now(), 
+                    type: 'ai', 
+                    text: 'こんにちは！本格的なサイト制作に向けて、要件定義を行います。<br><br>まずは<b>「基本情報（会社名・業種）」</b>と、サイトの<b>「ターゲット（客層）」「目的・ゴール」</b>をチャットで自由に教えてください。<br>（例：TRATTORIA VERA、カジュアルイタリアン、20代カップルなど）' 
+                });
                 renderMessages();
                 enableInputOnly();
             }, 500);
         }
 
+        // ユーザーが送信・選択したあとの処理
         function handleManualSteps(userInput) {
             if (currentStep === 1) {
+                currentStep = 2; // 画像提案ステップへ
+                
+                // ★業種キーワードの簡易判定ロジック
+                let suggestions = [];
+                if (userInput.includes("イタリアン") || userInput.includes("レストラン") || userInput.includes("パスタ")) {
+                    suggestions = [
+                        { url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop", label: "モダンなダイニング" },
+                        { url: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop", label: "本格パスタ" },
+                        { url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop", label: "焼きたてピザ" },
+                        { url: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop", label: "テーブルセッティング" }
+                    ];
+                } else if (userInput.includes("カフェ") || userInput.includes("コーヒー")) {
+                    suggestions = [
+                        { url: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop", label: "おしゃれなカフェ内観" },
+                        { url: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=800&auto=format&fit=crop", label: "ラテアート" },
+                        { url: "https://images.unsplash.com/photo-1495474472205-16284618a48b?q=80&w=800&auto=format&fit=crop", label: "カフェスペース" },
+                        { url: "https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=800&auto=format&fit=crop", label: "スイーツとコーヒー" }
+                    ];
+                } else if (userInput.includes("美容") || userInput.includes("サロン") || userInput.includes("ヘア")) {
+                    suggestions = [
+                        { url: "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=800&auto=format&fit=crop", label: "サロン内観" },
+                        { url: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=800&auto=format&fit=crop", label: "ヘアスタイリング" },
+                        { url: "https://images.unsplash.com/photo-1521590832167-7bfc17484d20?q=80&w=800&auto=format&fit=crop", label: "スキンケア" },
+                        { url: "https://images.unsplash.com/photo-1595476108010-b4d1f10d5e43?q=80&w=800&auto=format&fit=crop", label: "リラックス" }
+                    ];
+                } else {
+                    // デフォルト（オフィス・IT・ビジネス系など）
+                    suggestions = [
+                        { url: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop", label: "明るいオフィス" },
+                        { url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop", label: "ミーティングルーム" },
+                        { url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=800&auto=format&fit=crop", label: "チームワーク" },
+                        { url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop", label: "スタイリッシュなPC" }
+                    ];
+                }
+
                 setTimeout(() => {
-                    messages.push({ id: Date.now(), type: 'ai', text: 'ありがとうございます。ターゲットとゴールを確認しました。<br><br>次に、希望する<b>「デザイン要件（トーン＆マナー・配色）」</b>や、<b>「参考にしたいサイト（競合）」</b>はありますか？' });
+                    messages.push({ 
+                        id: Date.now(), 
+                        type: 'ai', 
+                        text: 'ありがとうございます。入力いただいた「業種」に合わせて、<b>サイトのメインビジュアル（一番上にくる大きな画像）</b>の候補をピックアップしました！<br><br>サイトの顔となる画像です。イメージに合うものを一つ選んでクリックしてください。',
+                        imageOptions: suggestions // ★ここで画像選択肢を渡す
+                    });
                     renderMessages();
                     enableInputOnly();
                 }, 1000);
-                currentStep = 2;
             } 
             else if (currentStep === 2) {
+                currentStep = 3; // デザイン要件ステップへ
                 setTimeout(() => {
-                    messages.push({ id: Date.now(), type: 'ai', text: '承知いたしました。デザインの方向性が見えました。<br><br>最後に、<b>「サイト構成・ページ数」</b>、導入したい<b>「機能（予約・お問い合わせ等）」</b>、狙いたい<b>「SEOキーワード」</b>を教えてください。' });
+                    messages.push({ 
+                        id: Date.now(), 
+                        type: 'ai', 
+                        text: '素敵な画像ですね！この画像をベースに構築します。<br><br>次に、<b>「デザイン要件（トーン＆マナー・配色）」</b>を決めていきましょう。ご希望のイメージに近いものを以下から選ぶか、チャットで教えてください。',
+                        options: [
+                            '白とダークグレー（モダン・洗練された印象）', 
+                            'ベージュや木目調（温かみ・アットホーム）', 
+                            '黒基調（高級感・シックな雰囲気）',
+                            '赤や黄色など（ポップ・元気なイメージ）'
+                        ]
+                    });
                     renderMessages();
                     enableInputOnly();
                 }, 1000);
-                currentStep = 3;
             }
             else if (currentStep === 3) {
+                currentStep = 4; // 構成ステップへ
                 setTimeout(() => {
-                    messages.push({ id: Date.now(), type: 'ai', text: '完璧です！いただいた情報を整理し、サイトの自動構築を開始します。少々お待ちください...' });
+                    messages.push({ 
+                        id: Date.now(), 
+                        type: 'ai', 
+                        text: 'デザインの方向性が決まりましたね。<br><br>最後に、<b>「サイト構成」</b>と導入したい<b>「機能」</b>を選んでください。',
+                        options: [
+                            '1ページ構成 ＋ カレンダー予約機能 ＋ SNS連携',
+                            '複数ページ構成（メニュー詳細等）＋ お問い合わせフォーム',
+                            'シンプルに名刺代わりの1ページ構成（機能なし）'
+                        ]
+                    });
+                    renderMessages();
+                    enableInputOnly();
+                }, 1000);
+            }
+            else if (currentStep === 4) {
+                currentStep = 5; // 編集モードへ移行
+                setTimeout(() => {
+                    messages.push({ 
+                        id: Date.now(), 
+                        type: 'ai', 
+                        text: '完璧です！必要な情報が全て揃いました。いただいた情報を整理しました。<br><br><div class="bg-pink-50 border border-pink-100 p-3 rounded text-xs mt-2 font-mono text-pink-800"><b>【プロジェクト要件定義】</b><br>・ターゲット・目的設定<br>・メイン画像の選定<br>・デザイン・配色ルールの適用<br>・サイト構成・機能の組み込み</div><br>これより、ビジネスの成果に直結するサイトを自動構築します！少々お待ちください。' 
+                    });
                     renderMessages();
                     
                     // ローディング＆プレビュー表示処理へ
-                    setTimeout(showLoadingAndPreview, 1500);
+                    setTimeout(showLoadingAndPreview, 2500);
                 }, 1000);
-                currentStep = 4; // 編集モードへ移行
             }
         }
 
@@ -367,25 +488,33 @@
         }
 
         // ==========================================
-        // モード2: デモ自動実行フロー（裏技用）
+        // モード2: デモ自動実行フロー（裏技・見学用）
         // ==========================================
         document.getElementById('menu-auto-demo').addEventListener('click', () => {
             resetData();
             isStarted = true;
-            currentStep = 4; // 一気に編集モードまで飛ばす
+            currentStep = 5; 
             renderMessages();
 
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ開始】まずは基本情報とターゲット・ゴールを教えてください。' }); renderMessages(); }, 500);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】まずは基本情報とターゲット・ゴールを教えてください。' }); renderMessages(); }, 500);
             setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '店舗名は「TRATTORIA VERA」、カジュアルイタリアン。ターゲットは20代カップル、ゴールは予約増。' }); renderMessages(); }, 2000);
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】次にデザイン要件や参考サイトを教えてください。' }); renderMessages(); }, 3500);
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '白とダークグレー基調でモダンに。' }); renderMessages(); }, 5000);
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】最後にサイト構成、機能、SEOを教えてください。' }); renderMessages(); }, 6500);
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '1ページ構成、カレンダー予約機能必須。キーワード「越谷 イタリアン 個室」' }); renderMessages(); }, 8000);
+            setTimeout(() => { 
+                messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】業種に合わせたメイン画像の候補です。', imageOptions: [{ url: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop", label: "モダンなダイニング" }]}); 
+                renderMessages(); 
+            }, 3500);
+            setTimeout(() => { 
+                selectedHeroImage = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop";
+                messages.push({ id: Date.now(), type: 'user', text: '「モダンなダイニング」の画像をメインビジュアルにします。' }); renderMessages(); 
+            }, 5000);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】次にデザイン要件や参考サイトを教えてください。' }); renderMessages(); }, 6500);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '白とダークグレー基調でモダンに。' }); renderMessages(); }, 8000);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】最後にサイト構成、機能、SEOを教えてください。' }); renderMessages(); }, 9500);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '1ページ構成、カレンダー予約機能必須。' }); renderMessages(); }, 11000);
             setTimeout(() => {
                 messages.push({ id: Date.now(), type: 'ai', text: '要件定義が完了しました！これよりサイトを自動構築します。' });
                 renderMessages();
                 showLoadingAndPreview();
-            }, 9500);
+            }, 12500);
         });
 
         // ==========================================
@@ -404,6 +533,11 @@
                 messages = messages.filter(m => m.id !== loadingMsgId);
                 messages.push({ id: Date.now(), type: 'ai', text: '✅ <b>自動構築が完了しました！</b><br><br><b>💡【次のステップ：見たまま編集】</b><br>右側のプレビュー画面で、気になる箇所を直接クリックして、修正や機能追加の指示を出してみてください！' });
                 renderMessages();
+
+                // ★ここで選んだ画像をプレビューの背景に反映させる
+                if (selectedHeroImage) {
+                    document.getElementById('hero-bg').style.backgroundImage = `url('${selectedHeroImage}')`;
+                }
 
                 document.getElementById('empty-state').classList.add('hidden');
                 const canvas = document.getElementById('preview-canvas');
@@ -442,6 +576,8 @@
             messages = [];
             isStarted = false;
             currentStep = 0;
+            selectedHeroImage = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop"; // リセット
+            
             document.getElementById('empty-state').classList.remove('hidden');
             document.getElementById('preview-canvas').classList.add('hidden', 'opacity-0');
             statusIndicator.className = "w-2 h-2 rounded-full bg-gray-300 mr-2";
@@ -460,7 +596,7 @@
         document.getElementById('menu-preview').addEventListener('click', () => {
             resetData();
             isStarted = true;
-            currentStep = 4;
+            currentStep = 5;
             messages.push({ id: Date.now(), type: 'system', icon: 'eye', text: 'プレビューを強制表示しました。' });
             renderMessages();
             
@@ -487,13 +623,13 @@
             messageInput.disabled = true;
             sendBtn.disabled = true;
 
-            // ヒアリング中（Step1~3）の場合
-            if (currentStep >= 1 && currentStep <= 3) {
+            // ヒアリング中（Step1~4）の場合はステップを進行する
+            if (currentStep >= 1 && currentStep <= 4) {
                 handleManualSteps(text);
                 return;
             }
 
-            // 編集モード（Step4）の場合のAI処理
+            // 編集モード（Step5）の場合のAI処理
             setTimeout(() => {
                 let aiResponseText = "";
                 if (selectedElementNode) {
@@ -557,7 +693,7 @@
 
         document.querySelectorAll('.interactive-element').forEach(el => {
             el.addEventListener('click', (e) => {
-                if(currentStep !== 4) return; // 編集モードでのみ発火
+                if(currentStep !== 5) return; // 編集モードでのみ発火
                 e.stopPropagation();
                 if (selectedElementNode) selectedElementNode.classList.remove('element-selected');
                 setEditingElement(el.getAttribute('data-element-name'), el);
