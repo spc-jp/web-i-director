@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Web Director UIモックアップ（稼働版）</title>
+    <title>Web i Director UIモックアップ（稼働版）</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -19,6 +19,14 @@
             animation: pulse-border 2s infinite;
             z-index: 40;
         }
+        /* ふわっと表示させるアニメーション */
+        .fade-in-up {
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         /* スクロールバーの非表示（見た目改善用） */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -27,16 +35,17 @@
 <body class="flex h-screen w-full bg-gray-50 font-sans text-gray-800 overflow-hidden">
 
     <!-- 左ペイン：AIチャット＆コントロールパネル -->
-    <div class="w-[420px] bg-white border-r border-gray-200 flex flex-col shadow-sm z-10 flex-shrink-0">
+    <div class="w-[420px] bg-white border-r border-gray-200 flex flex-col shadow-sm z-20 flex-shrink-0 relative">
         <!-- 左ペインヘッダー -->
         <div class="h-16 flex items-center px-6 border-b border-gray-100 bg-white flex-shrink-0">
-            <i data-lucide="sparkles" class="w-6 h-6 text-indigo-600 mr-2"></i>
-            <h1 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">AI Web Director</h1>
+            <!-- キャラクターアイコン -->
+            <img src="https://spc-jp.github.io/web-i-director/キャラクターI.png" onerror="this.src='https://ui-avatars.com/api/?name=i&background=ec4899&color=fff'" alt="Web i Director" class="w-8 h-8 rounded-full mr-3 object-cover border border-pink-200 shadow-sm">
+            <h1 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-600">Web i Director</h1>
         </div>
 
         <!-- チャットエリア -->
-        <div id="chat-area" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 pb-8 scroll-smooth">
-            <!-- メッセージはJavaScriptで動的に追加されます -->
+        <div id="chat-area" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 pb-8 scroll-smooth relative">
+            <!-- メッセージやスタート画面はJavaScriptで動的に追加されます -->
         </div>
 
         <!-- 入力エリア -->
@@ -48,21 +57,22 @@
                 <button id="clear-editing-btn" class="ml-auto text-gray-400 hover:text-gray-700 bg-white px-2 py-0.5 rounded shadow-sm border border-gray-200 transition-colors">解除</button>
             </div>
             
-            <div class="relative flex items-center">
+            <div class="relative flex items-center opacity-50 transition-opacity duration-300" id="input-container">
                 <textarea
                     id="message-input"
-                    placeholder="AIに指示を出す... (例: 赤色にして)"
-                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-4 pr-24 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 resize-none transition-all shadow-inner"
+                    disabled
+                    placeholder="制作をスタートしてください"
+                    class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-4 pr-24 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500 resize-none transition-all shadow-inner disabled:cursor-not-allowed"
                     rows="2"
                 ></textarea>
                 <div class="absolute right-2 flex items-center space-x-1">
-                    <button class="p-2 text-gray-400 hover:text-indigo-600 transition-colors rounded-lg">
+                    <button class="p-2 text-gray-400 hover:text-pink-600 transition-colors rounded-lg cursor-not-allowed" disabled id="mic-btn">
                         <i data-lucide="mic" class="w-5 h-5"></i>
                     </button>
                     <button 
                         id="send-btn"
                         disabled
-                        class="p-2 bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-gray-300 disabled:text-gray-100 transition-colors rounded-lg shadow-sm flex items-center justify-center"
+                        class="p-2 bg-pink-500 text-white hover:bg-pink-600 disabled:bg-gray-300 disabled:text-gray-100 transition-colors rounded-lg shadow-sm flex items-center justify-center cursor-not-allowed"
                     >
                         <i data-lucide="send" class="w-4 h-4 ml-0.5"></i>
                     </button>
@@ -72,15 +82,15 @@
             <!-- 下部ツールバー（機能ボタン） -->
             <div class="mt-3 flex justify-between items-center text-xs text-gray-500 font-medium">
                 <div class="flex space-x-4">
-                    <button id="btn-add-page" class="flex items-center hover:text-indigo-600 transition-colors py-1"><i data-lucide="file-plus-2" class="w-3.5 h-3.5 mr-1.5"></i> ページ追加</button>
-                    <button id="btn-design-rule" class="flex items-center hover:text-indigo-600 transition-colors py-1"><i data-lucide="layout-template" class="w-3.5 h-3.5 mr-1.5"></i> 共通ルール</button>
+                    <button id="btn-add-page" class="flex items-center hover:text-pink-600 transition-colors py-1 cursor-not-allowed opacity-50" disabled><i data-lucide="file-plus-2" class="w-3.5 h-3.5 mr-1.5"></i> ページ追加</button>
+                    <button id="btn-design-rule" class="flex items-center hover:text-pink-600 transition-colors py-1 cursor-not-allowed opacity-50" disabled><i data-lucide="layout-template" class="w-3.5 h-3.5 mr-1.5"></i> 共通ルール</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- 右ペイン：リアルタイムプレビュー -->
-    <div class="flex-1 flex flex-col bg-gray-100 h-full overflow-hidden">
+    <div class="flex-1 flex flex-col bg-gray-100 h-full overflow-hidden relative">
         
         <!-- プレビューツールバー -->
         <div class="h-16 flex items-center justify-between px-6 bg-white border-b border-gray-200 shadow-sm z-10 flex-shrink-0">
@@ -90,33 +100,67 @@
                     <button class="p-1.5 text-gray-500 hover:text-gray-800 rounded transition-all"><i data-lucide="smartphone" class="w-4 h-4"></i></button>
                 </div>
                 <div class="text-sm text-gray-500 flex items-center font-medium">
-                    <span class="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
-                    リアルタイムプレビュー
+                    <span class="w-2 h-2 rounded-full bg-gray-300 mr-2" id="status-indicator"></span>
+                    <span id="status-text">プロジェクト未作成</span>
                 </div>
             </div>
             
-            <div class="flex items-center space-x-3">
-                <button id="btn-seo" class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-indigo-600 transition-colors shadow-sm">
-                    <i data-lucide="settings" class="w-4 h-4 mr-2 text-gray-400 group-hover:text-indigo-500"></i>
+            <div class="flex items-center space-x-3 opacity-50" id="toolbar-actions">
+                <button id="btn-seo" disabled class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm cursor-not-allowed hover:text-pink-600">
+                    <i data-lucide="settings" class="w-4 h-4 mr-2 text-gray-400 group-hover:text-pink-500"></i>
                     SEO設定
                 </button>
-                <button id="btn-publish" class="flex items-center px-5 py-2 text-sm font-medium text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg transition-all shadow-md hover:shadow-lg">
+                <button id="btn-publish" disabled class="flex items-center px-5 py-2 text-sm font-medium text-white bg-gray-400 rounded-lg shadow-sm cursor-not-allowed">
                     <i data-lucide="globe" class="w-4 h-4 mr-2"></i>
                     ワンクリック公開
                 </button>
             </div>
         </div>
 
-        <!-- プレビューキャンバス -->
-        <div class="flex-1 overflow-auto p-4 md:p-8 flex justify-center items-start relative">
+        <!-- プレビュー領域 -->
+        <div class="flex-1 overflow-auto p-4 md:p-8 flex justify-center items-start relative bg-gray-100">
             
-            <!-- キャンバス本体 -->
-            <div id="preview-canvas" class="w-full max-w-[1000px] bg-white rounded-t-xl shadow-2xl min-h-full border border-gray-200 overflow-hidden relative group/canvas">
+            <!-- 【追加】公開中のオーバーレイ（初期は非表示） -->
+            <div id="deploy-overlay" class="hidden absolute inset-0 bg-white/90 z-50 flex items-center justify-center backdrop-blur-sm flex-col">
+                <div class="w-16 h-16 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin mb-4"></div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Netlifyへデプロイ中...</h3>
+                <p class="text-sm text-gray-500">数秒で全世界に公開されます</p>
+            </div>
+
+            <!-- 【追加】公開完了のモーダル（初期は非表示） -->
+            <div id="publish-success-modal" class="hidden absolute inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+                <div class="bg-white p-8 rounded-2xl text-center w-96 shadow-2xl transform scale-100 transition-transform">
+                    <div class="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="check-circle-2" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2 text-gray-800">公開完了！</h3>
+                    <p class="text-sm text-gray-500 mb-6">あなたのウェブサイトが全世界に公開されました。<br>以下のURLからアクセスできます。</p>
+                    
+                    <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg flex items-center justify-between mb-6">
+                        <span class="text-sm font-mono text-indigo-600 truncate mr-2" id="published-url">https://trattoria-vera.netlify.app</span>
+                        <button class="text-gray-400 hover:text-gray-600 p-1 bg-white border border-gray-200 rounded shadow-sm" title="URLをコピー">
+                            <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <button id="close-publish-modal" class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold px-4 py-3 rounded-xl hover:shadow-lg transition-all">プレビューに戻る</button>
+                </div>
+            </div>
+
+            <!-- 初期状態のプレースホルダー（空状態） -->
+            <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 z-0">
+                <i data-lucide="layout-dashboard" class="w-16 h-16 mb-4 text-gray-300"></i>
+                <p class="text-xl font-bold text-gray-500 mb-2">プロジェクトがありません</p>
+                <p class="text-sm">左側のチャットから「制作をスタート」してください</p>
+            </div>
+
+            <!-- キャンバス本体（初期は非表示） -->
+            <div id="preview-canvas" class="hidden w-full max-w-[1000px] bg-white rounded-t-xl shadow-2xl min-h-full border border-gray-200 overflow-hidden relative group/canvas z-10 opacity-0">
                 
-                <!-- 【ステップ4用】予約カレンダーのダミーモーダル（初期は非表示） -->
+                <!-- 【ステップ4用】予約カレンダーのダミーモーダル -->
                 <div id="dummy-modal" class="hidden absolute inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
                     <div class="bg-white p-8 rounded-2xl text-center w-80 shadow-2xl transform scale-100 transition-transform">
-                        <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <div class="w-12 h-12 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i data-lucide="calendar-clock" class="w-6 h-6"></i>
                         </div>
                         <h3 class="text-xl font-bold mb-2 text-gray-800">予約カレンダー</h3>
@@ -136,7 +180,7 @@
                     
                     <!-- ヘッダー -->
                     <header 
-                        class="interactive-element flex items-center justify-between px-8 py-6 border-b border-gray-100 hover:outline hover:outline-2 hover:outline-indigo-400 transition-all cursor-pointer relative group bg-white"
+                        class="interactive-element flex items-center justify-between px-8 py-6 border-b border-gray-100 hover:outline hover:outline-2 hover:outline-pink-400 transition-all cursor-pointer relative group bg-white"
                         data-element-name="ヘッダーナビゲーション"
                     >
                         <div class="text-2xl font-bold tracking-wider pointer-events-none">TRATTORIA VERA</div>
@@ -145,7 +189,7 @@
                             <span class="hover:text-gray-900">メニュー</span>
                             <span class="hover:text-gray-900">店舗情報</span>
                         </nav>
-                        <div class="absolute top-2 right-2 hidden group-hover:flex bg-indigo-600 text-white text-xs px-2 py-1 rounded shadow pointer-events-none">ここをクリックして選択</div>
+                        <div class="absolute top-2 right-2 hidden group-hover:flex bg-pink-500 text-white text-xs px-2 py-1 rounded shadow pointer-events-none">ここをクリックして選択</div>
                     </header>
 
                     <!-- ヒーローセクション -->
@@ -153,12 +197,12 @@
                         <!-- 背景画像のダミー -->
                         <div 
                             id="hero-bg"
-                            class="interactive-element absolute inset-0 opacity-50 hover:outline hover:outline-4 hover:outline-inset hover:outline-indigo-400 cursor-pointer transition-all duration-700 flex items-center justify-center group"
+                            class="interactive-element absolute inset-0 opacity-50 hover:outline hover:outline-4 hover:outline-inset hover:outline-pink-400 cursor-pointer transition-all duration-700 flex items-center justify-center group"
                             style="background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop'); background-size: cover; background-position: center;"
                             data-element-name="ヒーロー背景画像"
                         >
-                            <div class="absolute inset-0 bg-black/20 group-hover:bg-indigo-900/40 transition-colors pointer-events-none"></div>
-                            <div class="hidden group-hover:flex flex-col items-center justify-center bg-white/90 text-indigo-700 px-4 py-2 rounded-lg shadow-lg backdrop-blur-sm z-10 relative pointer-events-none">
+                            <div class="absolute inset-0 bg-black/20 group-hover:bg-pink-900/40 transition-colors pointer-events-none"></div>
+                            <div class="hidden group-hover:flex flex-col items-center justify-center bg-white/90 text-pink-600 px-4 py-2 rounded-lg shadow-lg backdrop-blur-sm z-10 relative pointer-events-none">
                                 <i data-lucide="image" class="w-5 h-5 mb-1"></i>
                                 <span class="text-xs font-bold">画像を選択</span>
                             </div>
@@ -166,7 +210,7 @@
 
                         <div class="relative z-10 text-center px-4 flex flex-col items-center pointer-events-none">
                             <h1 
-                                class="interactive-element pointer-events-auto text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight hover:outline hover:outline-2 hover:outline-indigo-400 p-2 rounded cursor-pointer transition-all"
+                                class="interactive-element pointer-events-auto text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight hover:outline hover:outline-2 hover:outline-pink-400 p-2 rounded cursor-pointer transition-all"
                                 data-element-name="キャッチコピー"
                             >
                                 極上のパスタを、<br/>カジュアルに。
@@ -175,11 +219,11 @@
                             <!-- 注目の予約ボタン -->
                             <button 
                                 id="reserve-btn"
-                                class="interactive-element pointer-events-auto mt-4 px-8 py-4 bg-white text-gray-900 font-bold rounded-sm text-lg transition-all duration-300 shadow-xl hover:outline hover:outline-4 hover:outline-indigo-400 hover:scale-105 relative group"
+                                class="interactive-element pointer-events-auto mt-4 px-8 py-4 bg-white text-gray-900 font-bold rounded-sm text-lg transition-all duration-300 shadow-xl hover:outline hover:outline-4 hover:outline-pink-400 hover:scale-105 relative group"
                                 data-element-name="「WEBで予約する」ボタン"
                             >
                                 WEBで予約する
-                                <div class="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:flex bg-indigo-600 text-white text-xs px-3 py-1.5 rounded shadow whitespace-nowrap pointer-events-none">
+                                <div class="absolute -top-10 left-1/2 -translate-x-1/2 hidden group-hover:flex bg-pink-500 text-white text-xs px-3 py-1.5 rounded shadow whitespace-nowrap pointer-events-none">
                                     ボタンを選択
                                 </div>
                             </button>
@@ -189,14 +233,14 @@
                     <!-- コンセプトセクション -->
                     <section class="py-24 px-8 max-w-4xl mx-auto text-center bg-white">
                         <h2 
-                            class="interactive-element text-3xl font-bold mb-8 hover:outline hover:outline-2 hover:outline-indigo-400 p-2 inline-block cursor-pointer transition-all"
+                            class="interactive-element text-3xl font-bold mb-8 hover:outline hover:outline-2 hover:outline-pink-400 p-2 inline-block cursor-pointer transition-all"
                             data-element-name="コンセプト見出し"
                         >
                             Concept
                         </h2>
                         <div class="flex justify-center">
                             <p 
-                                class="interactive-element text-gray-600 leading-relaxed text-lg hover:outline hover:outline-2 hover:outline-indigo-400 p-4 rounded cursor-pointer transition-all inline-block"
+                                class="interactive-element text-gray-600 leading-relaxed text-lg hover:outline hover:outline-2 hover:outline-pink-400 p-4 rounded cursor-pointer transition-all inline-block"
                                 data-element-name="コンセプト本文"
                             >
                                 本場イタリアの味を、もっと身近に。<br/>
@@ -218,15 +262,9 @@
         // Lucideアイコンの初期化
         lucide.createIcons();
 
-        // ★修正点：ヒアリングの流れを具体化（企業名、業種、配色、ページ数など）
-        let messages = [
-            { id: 1, type: 'ai', text: 'こんにちは！AI Web Directorです。新しいWebサイトを作成します。<br>まずは、作成するサイトの<b>「企業名（または店舗名）」</b>と<b>「業種」</b>を教えてください。' },
-            { id: 2, type: 'user', text: '店舗名は「TRATTORIA VERA」、業種はカジュアルなイタリアンレストランです。' },
-            { id: 3, type: 'ai', text: 'ありがとうございます！<br>次に、サイトの<b>「メインカラー（配色）」</b>と、作成したい<b>「ページ構成」</b>を教えてください。<br>※スマホ対応（レスポンシブ）は標準で適用されます。', options: ['白とグレー基調 / トップページのみ(5セクション)', '黒基調で高級感 / 複数ページ', 'おまかせ'] },
-            { id: 4, type: 'user', text: '白とダークグレーを基調にしてください。構成はトップページのみ（ヒーロー、コンセプトなど5セクション）でお願いします。' },
-            { id: 5, type: 'ai', text: '承知いたしました！いただいた要件を元に、最適なHTML/CSSを自動構築しました。<br><br><b>【初期構成】</b><br>・店舗名：TRATTORIA VERA<br>・業種：カジュアルイタリアン<br>・配色：白とダークグレー<br>・構成：トップ1ページ（5セクション）<br><br><b>💡【次のステップ：見たまま編集】</b><br>右側のプレビュー画面で、気になる箇所（ボタンや文字、画像など）を直接クリックして、修正や機能追加の指示を出してみてください！' },
-        ];
-        
+        // 状態管理
+        let messages = [];
+        let isStarted = false;
         let selectedElementName = null;
         let selectedElementNode = null;
 
@@ -240,26 +278,66 @@
         const dummyModal = document.getElementById('dummy-modal');
         const closeModalBtn = document.getElementById('close-modal-btn');
 
+        // ヘッダーやツールバーの要素
+        const inputContainer = document.getElementById('input-container');
+        const micBtn = document.getElementById('mic-btn');
+        const toolbarActions = document.getElementById('toolbar-actions');
+        const btnSeo = document.getElementById('btn-seo');
+        const btnPublish = document.getElementById('btn-publish');
+        const btnAddPage = document.getElementById('btn-add-page');
+        const btnDesignRule = document.getElementById('btn-design-rule');
+        const statusIndicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+        
+        // 追加したDOM要素
+        const deployOverlay = document.getElementById('deploy-overlay');
+        const publishSuccessModal = document.getElementById('publish-success-modal');
+        const closePublishModal = document.getElementById('close-publish-modal');
+
         // チャットを描画する関数
         function renderMessages() {
             chatArea.innerHTML = '';
             
+            // ★初期状態：スタートボタン画面
+            if (messages.length === 0 && !isStarted) {
+                chatArea.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-center px-4 mt-12 fade-in-up">
+                        <!-- スタート画面のキャラクターアイコン -->
+                        <div class="w-24 h-24 rounded-full flex items-center justify-center mb-6 shadow-lg border-4 border-white overflow-hidden bg-pink-50">
+                            <img src="https://spc-jp.github.io/web-i-director/キャラクターI.png" onerror="this.src='https://ui-avatars.com/api/?name=i&background=ec4899&color=fff'" alt="Web i Director" class="w-full h-full object-cover">
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-3 tracking-tight">Web i Director</h2>
+                        <p class="text-sm text-gray-500 mb-10 leading-relaxed">
+                            専属のAIアシスタントと対話するだけで、<br>プロ品質のホームページを誰でも簡単に作成できます。
+                        </p>
+                        <button id="start-demo-btn" class="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-4 rounded-full font-bold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center hover:scale-105 transform">
+                            <i data-lucide="play" class="w-5 h-5 mr-2 fill-current"></i>
+                            ホームページ制作をスタート
+                        </button>
+                    </div>
+                `;
+                lucide.createIcons();
+                document.getElementById('start-demo-btn').addEventListener('click', startDemoFlow);
+                return;
+            }
+
             messages.forEach(msg => {
                 const msgWrapper = document.createElement('div');
-                msgWrapper.className = `flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'} mb-5`;
+                msgWrapper.className = `flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'} mb-5 fade-in-up`;
 
                 if (msg.type === 'ai') {
                     let optionsHtml = '';
                     if (msg.options) {
                         optionsHtml = `<div class="flex flex-col gap-2 mt-3 w-full">` + 
-                            msg.options.map(opt => `<button class="option-btn text-xs bg-indigo-50 text-indigo-700 border border-indigo-200 px-3.5 py-2.5 rounded-lg hover:bg-indigo-100 hover:shadow-sm transition-all font-medium text-left" data-option="${opt}">${opt}</button>`).join('') +
+                            msg.options.map(opt => `<button class="option-btn text-xs bg-pink-50 text-pink-700 border border-pink-200 px-3.5 py-2.5 rounded-lg hover:bg-pink-100 hover:shadow-sm transition-all font-medium text-left" data-option="${opt}">${opt}</button>`).join('') +
                         `</div>`;
                     }
 
                     msgWrapper.innerHTML = `
                         <div class="flex items-start max-w-[95%]">
-                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center mr-3 flex-shrink-0 mt-1 shadow-sm text-white">
-                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            <!-- チャットのAIキャラクターアイコン -->
+                            <div class="w-9 h-9 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-1 shadow-sm text-white overflow-hidden border border-pink-200 bg-pink-50">
+                                <img src="https://spc-jp.github.io/web-i-director/キャラクターI.png" onerror="this.src='https://ui-avatars.com/api/?name=i&background=ec4899&color=fff'" alt="AI" class="w-full h-full object-cover">
                             </div>
                             <div class="w-full">
                                 <div class="bg-white border border-gray-100 shadow-sm p-4 rounded-2xl rounded-tl-sm text-sm leading-relaxed text-gray-700">
@@ -271,7 +349,7 @@
                     `;
                 } else if (msg.type === 'user') {
                     msgWrapper.innerHTML = `
-                        <div class="bg-indigo-600 text-white p-3.5 px-5 rounded-2xl rounded-tr-sm text-sm leading-relaxed max-w-[85%] shadow-md font-medium">
+                        <div class="bg-gray-800 text-white p-3.5 px-5 rounded-2xl rounded-tr-sm text-sm leading-relaxed max-w-[85%] shadow-md font-medium">
                             ${msg.text}
                         </div>
                     `;
@@ -279,7 +357,7 @@
                     msgWrapper.innerHTML = `
                         <div class="w-full flex justify-center my-3 opacity-90">
                             <div class="bg-pink-50 text-pink-700 border border-pink-200 text-xs px-4 py-2 rounded-full flex items-center shadow-sm font-bold">
-                                <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 mr-1.5"></i>
+                                <i data-lucide="${msg.icon || 'mouse-pointer-click'}" class="w-3.5 h-3.5 mr-1.5"></i>
                                 ${msg.text}
                             </div>
                         </div>
@@ -292,9 +370,10 @@
             lucide.createIcons();
             chatArea.scrollTop = chatArea.scrollHeight;
 
-            // 選択肢ボタンにイベントを追加（再レンダリング後にバインド）
+            // 選択肢ボタン（デモ中は押せないように制御）
             document.querySelectorAll('.option-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
+                    if(!isStarted) return; // デモ完了までは発火させない
                     const text = e.target.getAttribute('data-option');
                     messageInput.value = text;
                     updateSendButtonState();
@@ -303,48 +382,130 @@
             });
         }
 
+        // --- ★ 自動デモンストレーション機能（スタートボタン押下後） ---
+        function startDemoFlow() {
+            isStarted = true;
+            renderMessages(); // スタート画面を消す
+
+            // 1. 初期のAIヒアリング
+            setTimeout(() => {
+                messages.push({ id: Date.now(), type: 'ai', text: 'こんにちは！Web i Directorです。<br>新しいWebサイトを作成しますね。<br>まずは、作成するサイトの<b>「企業名（または店舗名）」</b>と<b>「業種」</b>を教えてください。' });
+                renderMessages();
+            }, 500);
+
+            // 2. ユーザーの回答（自動入力）
+            setTimeout(() => {
+                messages.push({ id: Date.now(), type: 'user', text: '店舗名は「TRATTORIA VERA」、業種はカジュアルなイタリアンレストランです。' });
+                renderMessages();
+            }, 2500);
+
+            // 3. AIの追加ヒアリング
+            setTimeout(() => {
+                messages.push({ id: Date.now(), type: 'ai', text: 'ありがとうございます！<br>次に、サイトの<b>「メインカラー（配色）」</b>と、作成したい<b>「ページ構成」</b>を教えてください。<br>※スマホ対応（レスポンシブ）は標準で適用されます。', options: ['白とグレー基調 / トップページのみ(5セクション)', '黒基調で高級感 / 複数ページ', 'おまかせ'] });
+                renderMessages();
+            }, 4500);
+
+            // 4. ユーザーの回答（自動入力）
+            setTimeout(() => {
+                messages.push({ id: Date.now(), type: 'user', text: '白とダークグレーを基調にしてください。構成はトップページのみ（ヒーロー、コンセプトなど5セクション）でお願いします。' });
+                renderMessages();
+            }, 7000);
+
+            // 5. 生成中システムメッセージ
+            let loadingMsgId = Date.now();
+            setTimeout(() => {
+                messages.push({ id: loadingMsgId, type: 'system', icon: 'loader-2', text: 'いただいた要件をもとにホームページを自動生成しています...' });
+                renderMessages();
+                
+                // 右上インジケーターを変更
+                statusIndicator.classList.remove('bg-gray-300');
+                statusIndicator.classList.add('bg-yellow-400', 'animate-pulse');
+                statusText.textContent = "サイト構築中...";
+            }, 9000);
+
+            // 6. 生成完了！プレビュー表示＆UI有効化
+            setTimeout(() => {
+                // 生成中メッセージを消す
+                messages = messages.filter(m => m.id !== loadingMsgId);
+
+                messages.push({ id: Date.now(), type: 'ai', text: 'お待たせいたしました！最適なHTML/CSSを自動構築しました。<br><br><b>💡【次のステップ：見たまま編集】</b><br>右側のプレビュー画面で、気になる箇所（ボタンや文字、画像など）を直接クリックして、修正や機能追加の指示を出してみてください！' });
+                renderMessages();
+
+                // キャンバスの表示切り替え
+                document.getElementById('empty-state').classList.add('hidden');
+                const canvas = document.getElementById('preview-canvas');
+                canvas.classList.remove('hidden');
+                // 少し遅延させてopacityを1にし、ふわっと見せる
+                setTimeout(() => {
+                    canvas.classList.remove('opacity-0');
+                    canvas.classList.add('opacity-100', 'fade-in-up');
+                }, 100);
+
+                // UIのロックを解除
+                enableUI();
+            }, 11500);
+        }
+
+        // デモ完了後にUIを操作可能にする
+        function enableUI() {
+            // 入力欄
+            inputContainer.classList.remove('opacity-50');
+            messageInput.disabled = false;
+            messageInput.placeholder = "AIに指示を出す... (例: 赤色にして)";
+            micBtn.disabled = false;
+            micBtn.classList.remove('cursor-not-allowed');
+            updateSendButtonState();
+
+            // 下部ツールバー
+            btnAddPage.disabled = false;
+            btnAddPage.classList.remove('cursor-not-allowed', 'opacity-50');
+            btnAddPage.classList.add('hover:text-pink-600');
+            btnDesignRule.disabled = false;
+            btnDesignRule.classList.remove('cursor-not-allowed', 'opacity-50');
+
+            // プレビューツールバー
+            toolbarActions.classList.remove('opacity-50');
+            btnSeo.disabled = false;
+            btnSeo.classList.remove('cursor-not-allowed');
+            btnPublish.disabled = false;
+            btnPublish.classList.remove('cursor-not-allowed', 'bg-gray-400');
+            btnPublish.classList.add('bg-gradient-to-r', 'from-emerald-500', 'to-teal-500', 'hover:from-emerald-600', 'hover:to-teal-600');
+
+            // インジケーター
+            statusIndicator.classList.remove('bg-yellow-400');
+            statusIndicator.classList.add('bg-green-500');
+            statusText.textContent = "リアルタイムプレビュー (稼働中)";
+        }
+
         // --- 簡易AIロジック（DOM操作で要件フローを再現） ---
         function applyAIAmendments(userInput, targetNode) {
             let changed = false;
             let aiResponse = `「${selectedElementName}」を更新しました！プレビューをご確認ください。`;
 
-            // 【ステップ4: 機能追加・動作設定の指示】
+            // 【機能追加・動作設定】
             if (userInput.includes("ポップアップ") || userInput.includes("カレンダー") || userInput.includes("モーダル")) {
                 if (targetNode.getAttribute('data-element-name') === '「WEBで予約する」ボタン') {
-                    // ボタンにクリックイベントを追加してモーダルを表示させる
                     targetNode.addEventListener('click', (e) => {
                         e.preventDefault();
-                        e.stopPropagation(); // 編集モードにさせない
+                        e.stopPropagation();
                         dummyModal.classList.remove('hidden');
                     });
-                    
-                    // すぐにモーダルをプレビュー表示してみせる
                     dummyModal.classList.remove('hidden');
-                    
                     aiResponse = "✅ **機能追加が完了しました**<br>ご指示通り、ボタン押下時に「カレンダーで日付選択→時間選択」ができる予約ポップアップ機能（JavaScript連携）を実装しました。プレビューのボタンを押して動作を確認してください！";
                     changed = true;
                 }
             }
 
-            // 【ステップ3: デザイン・レイアウト微調整】
+            // 【デザイン微調整】
             if (userInput.includes("赤")) {
-                targetNode.style.backgroundColor = "#ef4444"; // bg-red-500
-                targetNode.style.color = "#ffffff";
-                changed = true;
+                targetNode.style.backgroundColor = "#ef4444"; targetNode.style.color = "#ffffff"; changed = true;
             } else if (userInput.includes("青")) {
-                targetNode.style.backgroundColor = "#3b82f6"; // bg-blue-500
-                targetNode.style.color = "#ffffff";
-                changed = true;
+                targetNode.style.backgroundColor = "#3b82f6"; targetNode.style.color = "#ffffff"; changed = true;
             } else if (userInput.includes("黒") || userInput.includes("ダーク")) {
-                targetNode.style.backgroundColor = "#1f2937"; // bg-gray-800
-                targetNode.style.color = "#ffffff";
-                changed = true;
+                targetNode.style.backgroundColor = "#1f2937"; targetNode.style.color = "#ffffff"; changed = true;
             }
 
-            if (userInput.includes("丸く")) {
-                targetNode.style.borderRadius = "9999px"; // pills形状
-                changed = true;
-            }
+            if (userInput.includes("丸く")) { targetNode.style.borderRadius = "9999px"; changed = true; }
 
             if (userInput.includes("大きく")) {
                 let currentSize = window.getComputedStyle(targetNode).fontSize;
@@ -354,34 +515,26 @@
                 changed = true;
             }
 
-            // 【ステップ5: コンテンツ差し替え - テキスト】
+            // 【コンテンツ差し替え（テキスト・画像）】
             let textMatch = userInput.match(/「(.+)」/);
             if (!textMatch) textMatch = userInput.match(/『(.+)』/);
-            
             if (textMatch && textMatch[1]) {
                 if (targetNode.getAttribute('data-element-name') !== 'ヒーロー背景画像') {
-                    targetNode.innerHTML = textMatch[1];
-                    changed = true;
+                    targetNode.innerHTML = textMatch[1]; changed = true;
                 }
             }
-
-            // 【ステップ5: コンテンツ差し替え - 画像】
             if (userInput.includes("画像") || userInput.includes("写真")) {
                 if (targetNode.getAttribute('data-element-name') === 'ヒーロー背景画像') {
-                    // Unsplashからパスタの画像に変更する処理
-                    targetNode.style.backgroundImage = "url('https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=2000&auto=format&fit=crop')"; // パスタの画像
-                    aiResponse = "✅ **画像を差し替えました**<br>Unsplashから最適なフリー素材を検索し、設定しました。";
-                    changed = true;
+                    targetNode.style.backgroundImage = "url('https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=2000&auto=format&fit=crop')";
+                    aiResponse = "✅ **画像を差し替えました**<br>Unsplashから最適なフリー素材を検索し、設定しました。"; changed = true;
                 } else {
-                    aiResponse = "画像を変更できるのは「ヒーロー背景画像」のみです。プレビューの背景をクリックして選択してください。";
-                    changed = true;
+                    aiResponse = "画像を変更できるのは「ヒーロー背景画像」のみです。プレビューの背景をクリックして選択してください。"; changed = true;
                 }
             }
 
             if (!changed) {
                 aiResponse = "すみません、その指示はうまく解釈できませんでした。<br><b>「赤色にして」「角を丸くして」「カレンダー予約のポップアップにして」「パスタの画像にして」</b>などでお試しください。";
             }
-
             return aiResponse;
         }
 
@@ -390,18 +543,16 @@
             const text = messageInput.value.trim();
             if (!text) return;
 
-            // ユーザーメッセージを追加
             messages.push({ id: Date.now(), type: 'user', text: text });
             messageInput.value = '';
             updateSendButtonState();
             renderMessages();
 
             messageInput.disabled = true;
+            sendBtn.disabled = true;
 
-            // AIの処理遅延（ちょっと長めに待たせて作業してる感を出す）
             setTimeout(() => {
                 let aiResponseText = "";
-
                 if (selectedElementNode) {
                     aiResponseText = applyAIAmendments(text, selectedElementNode);
                     clearSelection();
@@ -420,12 +571,14 @@
         function updateSendButtonState() {
             if (messageInput.value.trim() !== '') {
                 sendBtn.removeAttribute('disabled');
+                sendBtn.classList.remove('cursor-not-allowed');
             } else {
                 sendBtn.setAttribute('disabled', 'true');
+                sendBtn.classList.add('cursor-not-allowed');
             }
         }
 
-        // 編集対象の要素をセットする関数
+        // 編集対象のセットと解除
         function setEditingElement(elementName, node) {
             selectedElementName = elementName;
             selectedElementNode = node;
@@ -442,76 +595,74 @@
         }
 
         function clearSelection() {
-            if (selectedElementNode) {
-                selectedElementNode.classList.remove('element-selected');
-            }
+            if (selectedElementNode) selectedElementNode.classList.remove('element-selected');
             setEditingElement(null, null);
         }
 
         // === イベントリスナーの登録 ===
-
         messageInput.addEventListener('input', updateSendButtonState);
-
         messageInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSendMessage();
-            }
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); }
         });
-
         sendBtn.addEventListener('click', handleSendMessage);
         clearEditingBtn.addEventListener('click', clearSelection);
 
         // 要素クリックで編集モードに
         document.querySelectorAll('.interactive-element').forEach(el => {
             el.addEventListener('click', (e) => {
+                if(!isStarted) return; // デモ完了前は触らせない
                 e.stopPropagation();
                 
-                if (selectedElementNode) {
-                    selectedElementNode.classList.remove('element-selected');
-                }
-
+                if (selectedElementNode) selectedElementNode.classList.remove('element-selected');
                 const elementName = el.getAttribute('data-element-name');
                 setEditingElement(elementName, el);
-                
                 el.classList.add('element-selected');
                 
-                messages.push({ 
-                    id: Date.now(), 
-                    type: 'system', 
-                    text: `プレビューから「${elementName}」を選択しました。指示を出してください！` 
-                });
+                messages.push({ id: Date.now(), type: 'system', text: `プレビューから「${elementName}」を選択しました。指示を出してください！` });
                 renderMessages();
             });
         });
 
-        // モーダルを閉じる
         closeModalBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dummyModal.classList.add('hidden');
+            e.stopPropagation(); dummyModal.classList.add('hidden');
         });
 
-        // 【ステップ6：SEO設定ボタンの挙動】
-        document.getElementById('btn-seo').addEventListener('click', () => {
-            messages.push({ 
-                id: Date.now(), 
-                type: 'ai', 
-                text: '✅ **SEO対策を完了しました**<br><br>納品前の仕上げとして、以下の最適化を全自動で行いました。<br>・メタディスクリプションの追加<br>・全画像へのalt（オルト）属性の設定<br>・見出しタグ（h1〜h3）の階層構造の最適化' 
-            });
+        // ツールバーボタン
+        btnSeo.addEventListener('click', () => {
+            messages.push({ id: Date.now(), type: 'ai', text: '✅ **SEO対策を完了しました**<br><br>納品前の仕上げとして、以下の最適化を全自動で行いました。<br>・メタディスクリプションの追加<br>・全画像へのalt（オルト）属性の設定<br>・見出しタグ（h1〜h3）の階層構造の最適化' });
             renderMessages();
         });
 
-        // 【ステップ7：複数ページ展開ボタンの挙動】
-        document.getElementById('btn-add-page').addEventListener('click', () => {
-            messages.push({ 
-                id: Date.now(), 
-                type: 'ai', 
-                text: '📄 **複数ページ展開モード（スキル・メモリ機能）**<br><br>現在作成したトップページのコードから、<b>共通デザインルール（カラー、フォント、余白ルールなど）を抽出・保存</b>しました。<br><br>このルールを引き継いで新しい下層ページを作成します。追加したいページ名（例：「メニュー詳細」「店舗アクセス」）を入力してください。' 
-            });
+        btnAddPage.addEventListener('click', () => {
+            messages.push({ id: Date.now(), type: 'ai', text: '📄 **複数ページ展開モード（スキル・メモリ機能）**<br><br>現在作成したトップページのコードから、<b>共通デザインルール（カラー、フォント、余白ルールなど）を抽出・保存</b>しました。<br><br>このルールを引き継いで新しい下層ページを作成します。追加したいページ名（例：「メニュー詳細」「店舗アクセス」）を入力してください。' });
             renderMessages();
         });
 
-        // 初回描画
+        // 【追加】ワンクリック公開ボタンの挙動
+        btnPublish.addEventListener('click', () => {
+            // ローディング画面を表示
+            deployOverlay.classList.remove('hidden');
+            
+            // 約2.5秒後に公開完了とする
+            setTimeout(() => {
+                deployOverlay.classList.add('hidden');
+                publishSuccessModal.classList.remove('hidden');
+                
+                messages.push({ 
+                    id: Date.now(), 
+                    type: 'ai', 
+                    text: '🚀 **Webサイトの公開が完了しました！**<br><br>Netlify（ホスティングサービス）との連携処理が完了し、あなたのサイトが全世界からアクセス可能になりました！<br><br><b>発行されたURL：</b><br><a href="#" class="text-blue-500 underline">https://trattoria-vera.netlify.app</a>' 
+                });
+                renderMessages();
+            }, 2500);
+        });
+
+        // 公開完了モーダルを閉じる
+        closePublishModal.addEventListener('click', () => {
+            publishSuccessModal.classList.add('hidden');
+        });
+
+        // 初回描画（スタート画面）
         renderMessages();
 
     </script>
