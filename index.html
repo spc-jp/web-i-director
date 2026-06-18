@@ -168,7 +168,6 @@
             </div>
             
             <div class="flex items-center space-x-3 opacity-50" id="toolbar-actions">
-                <!-- ★変更: SEO設定ボタンを削除しました -->
                 <button id="btn-publish" disabled class="flex items-center px-5 py-2 text-sm font-medium text-white bg-gray-400 rounded-lg shadow-sm cursor-not-allowed">
                     <i data-lucide="globe" class="w-4 h-4 mr-2"></i>
                     ワンクリック公開
@@ -194,7 +193,6 @@
                     <p class="text-sm text-gray-500 mb-6">あなたのウェブサイトが全世界に公開されました。<br>以下のURLからアクセスできます。</p>
                     <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg flex items-center justify-between mb-6">
                         <span class="text-sm font-mono text-indigo-600 truncate mr-2" id="publish-url-text">https://yoursite.netlify.app</span>
-                        <!-- ★変更: コピーボタンにツールチップを追加 -->
                         <button id="copy-url-btn" class="text-gray-400 hover:text-gray-600 p-1.5 bg-white border border-gray-200 rounded shadow-sm relative transition-colors">
                             <i data-lucide="copy" class="w-4 h-4"></i>
                             <span id="copy-tooltip" class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity whitespace-nowrap pointer-events-none">コピーしました</span>
@@ -1082,7 +1080,7 @@
                     }
                 }
 
-                // ★追加: 発行するダミーURLを企業名に合わせて生成
+                // 発行するダミーURLを企業名に合わせて生成
                 const dummyUrlName = userCompanyName.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || 'my-awesome-site';
                 document.getElementById('publish-url-text').textContent = `https://${dummyUrlName}.netlify.app`;
 
@@ -1101,10 +1099,9 @@
 
         function enableFullUI() {
             enableInputOnly();
-            messageInput.placeholder = "AIに指示を出す... (例: 赤色にして)";
+            messageInput.placeholder = "AIに指示を出す... (例: 別のコピーを考えて)";
             
             document.getElementById('toolbar-actions').classList.remove('opacity-50');
-            // ★変更: SEO設定ボタンの有効化処理を削除
             document.getElementById('btn-publish').disabled = false;
             document.getElementById('btn-publish').classList.remove('cursor-not-allowed', 'bg-gray-400');
             document.getElementById('btn-publish').classList.add('bg-gradient-to-r', 'from-emerald-500', 'to-teal-500');
@@ -1212,27 +1209,29 @@
             let changed = false;
             let aiResponse = `「${selectedElementName}」を更新しました！`;
 
+            // 1. カレンダー予約の機能実装
             if (userInput.includes("カレンダー") || userInput.includes("予約")) {
-                if (targetNode.getAttribute('data-element-name')?.includes('予約')) {
+                if (targetNode.getAttribute('data-element-name')?.includes('予約') || targetNode.getAttribute('data-element-name')?.includes('ボタン')) {
                     targetNode.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); document.getElementById('dummy-modal').classList.remove('hidden'); });
                     document.getElementById('dummy-modal').classList.remove('hidden');
-                    aiResponse = "✅ カレンダー予約機能を実装しました！"; changed = true;
+                    aiResponse = "✅ ボタンにカレンダー予約機能（モーダル表示）を実装・連携しました！"; changed = true;
                 }
             }
+            
+            // 2. 色や形のスタイル変更
             if (userInput.includes("赤")) { targetNode.style.backgroundColor = "#ef4444"; targetNode.style.color = "#ffffff"; changed = true; } 
             else if (userInput.includes("青")) { targetNode.style.backgroundColor = "#3b82f6"; targetNode.style.color = "#ffffff"; changed = true; }
             if (userInput.includes("丸く")) { targetNode.style.borderRadius = "9999px"; changed = true; }
 
-            // 画像差し替えのロジック
+            // 3. 画像の差し替え
             if (userInput.includes("画像") || userInput.includes("写真") || userInput.includes("差し替え") || userInput.includes("変え")) {
                 if (targetNode.id === 'hero-bg' || targetNode.tagName.toLowerCase() === 'img') {
-                    // 簡単なキーワード判定でダミー画像を出し分ける
                     let newImgUrl = "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop"; 
                     
                     if (userInput.includes("海")) newImgUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop";
                     else if (userInput.includes("街") || userInput.includes("ビル") || userInput.includes("都市")) newImgUrl = "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=800&auto=format&fit=crop";
                     else if (userInput.includes("自然") || userInput.includes("森") || userInput.includes("緑")) newImgUrl = "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=800&auto=format&fit=crop";
-                    else if (userInput.includes("料理") || userInput.includes("食事")) newImgUrl = "https://images.unsplash.com/photo-1414235077428-338988692f40?q=80&w=800&auto=format&fit=crop";
+                    else if (userInput.includes("料理") || userInput.includes("食事") || userInput.includes("ご飯")) newImgUrl = "https://images.unsplash.com/photo-1414235077428-338988692f40?q=80&w=800&auto=format&fit=crop";
                     else if (userInput.includes("カフェ") || userInput.includes("コーヒー")) newImgUrl = "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?q=80&w=800&auto=format&fit=crop";
 
                     if (targetNode.id === 'hero-bg') {
@@ -1245,13 +1244,57 @@
                 }
             }
 
+            // ★追加4: AIによるテキストの自動生成・提案機能
+            if (userInput.includes("考えて") || userInput.includes("提案して") || userInput.includes("もっとよく") || userInput.includes("良い") || userInput.includes("変えて")) {
+                if (targetNode.tagName.toLowerCase() !== 'img' && targetNode.id !== 'hero-bg') {
+                    const elementName = targetNode.getAttribute('data-element-name');
+                    let newText = "";
+                    
+                    if (elementName === "キャッチコピー") {
+                        const copyCandidates = [
+                            "あなたの想像を超える体験を。",
+                            "次世代のスタンダードがここに。",
+                            "心を満たす、特別なひととき。",
+                            "革新的なアプローチで未来を創る。",
+                            "確かな技術で、新しい価値を。"
+                        ];
+                        newText = copyCandidates[Math.floor(Math.random() * copyCandidates.length)];
+                        targetNode.innerHTML = newText.replace("、", "、<br/>");
+                    } else if (elementName.includes("見出し")) {
+                        newText = "新たな価値の創造";
+                        targetNode.innerHTML = newText;
+                    } else if (elementName.includes("本文") || elementName.includes("テキスト")) {
+                        newText = "私たちはお客様の期待を超えるサービスを提供するため、日々技術の向上と革新に努めています。どのような課題も一緒に解決へと導きます。";
+                        targetNode.innerHTML = newText;
+                    } else if (elementName.includes("ボタン")) {
+                        newText = "詳しく見る";
+                        if(targetNode.querySelector('span')) {
+                            targetNode.querySelector('span').innerText = newText;
+                        } else {
+                            targetNode.innerText = newText;
+                        }
+                    } else {
+                         newText = "AIが提案する新しいテキストです。";
+                         targetNode.innerHTML = newText;
+                    }
+                    
+                    aiResponse = `✅ AIが文脈に合わせて「${elementName}」のテキストを考案し、更新しました！`;
+                    changed = true;
+                }
+            }
+
+            // 5. 「〇〇」というカギ括弧による直接の文字指定変更
             let textMatch = userInput.match(/「(.+)」/);
             if (textMatch && targetNode.getAttribute('data-element-name') !== 'メインビジュアル（ヒーロー画像）' && targetNode.tagName.toLowerCase() !== 'img') { 
-                targetNode.innerHTML = textMatch[1]; 
+                if (targetNode.querySelector('span') && targetNode.tagName.toLowerCase() === 'button') {
+                    targetNode.querySelector('span').innerHTML = textMatch[1];
+                } else {
+                    targetNode.innerHTML = textMatch[1]; 
+                }
                 changed = true; 
             }
 
-            if (!changed) aiResponse = "指示が解釈できませんでした。例：「赤色にして」「海の画像に変えて」「『こんにちは』に変更して」";
+            if (!changed) aiResponse = "指示が解釈できませんでした。例：「赤色にして」「海の画像に変えて」「もっと良いコピーを考えて」";
             return aiResponse;
         }
 
@@ -1303,11 +1346,9 @@
         });
         document.getElementById('close-publish-modal').addEventListener('click', () => { document.getElementById('publish-success-modal').classList.add('hidden'); });
 
-        // ★追加: 発行されたURLをクリップボードにコピーする処理
         document.getElementById('copy-url-btn').addEventListener('click', () => {
             const urlText = document.getElementById('publish-url-text').textContent;
             
-            // iFrame等の制限を考慮したセーフなコピー方法
             const textArea = document.createElement('textarea');
             textArea.value = urlText;
             document.body.appendChild(textArea);
