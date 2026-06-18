@@ -235,16 +235,31 @@
             <!-- キャンバス本体 -->
             <div id="preview-canvas" class="hidden w-full max-w-[1200px] bg-white md:rounded-t-xl shadow-2xl min-h-full border-x border-t border-gray-200 overflow-x-hidden relative group/canvas z-10 opacity-0 transition-opacity duration-500">
                 
+                <!-- 実際に動作する予約・お問い合わせモーダル -->
                 <div id="dummy-modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center backdrop-blur-md transition-opacity">
-                    <div class="bg-white p-8 rounded-2xl text-center w-full max-w-md shadow-2xl transform scale-100 transition-transform m-4">
-                        <div class="flex justify-between items-center mb-6 border-b pb-4">
-                            <h3 class="text-xl font-bold text-gray-800">お問い合わせ / 予約</h3>
-                            <button id="close-modal-btn" class="text-gray-400 hover:text-gray-800"><i data-lucide="x" class="w-6 h-6"></i></button>
+                    <div class="bg-white p-8 rounded-2xl text-center w-full max-w-md shadow-2xl transform scale-100 transition-transform m-4 relative">
+                        <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+                        <h2 class="text-xl font-bold mb-6 flex items-center justify-center text-gray-800"><i data-lucide="calendar" class="w-6 h-6 mr-2 text-pink-500"></i> 予約 / お問い合わせ</h2>
+                        
+                        <div id="bookingContent" class="text-left">
+                            <form id="reservationForm" class="space-y-5">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-1">お名前</label>
+                                    <input type="text" id="bookingName" placeholder="山田 太郎" class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-all" required />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-1">ご希望日時</label>
+                                    <input type="datetime-local" id="bookingDate" class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-all" required />
+                                </div>
+                                <button type="submit" class="w-full bg-gray-900 text-white py-3.5 rounded-xl font-bold hover:bg-gray-800 transition-colors mt-2 shadow-lg hover:shadow-xl">送信する</button>
+                            </form>
                         </div>
-                        <div class="w-full h-48 bg-gray-100 rounded-lg mb-4 flex items-center justify-center text-gray-400 border border-gray-200">
-                            <i data-lucide="calendar" class="w-10 h-10 mb-2 mr-2"></i> フォームUIがここに表示されます
+                        <div id="bookingStatus" class="hidden text-green-600 font-bold text-center py-10 flex flex-col items-center">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="check-circle-2" class="w-8 h-8 text-green-500"></i>
+                            </div>
+                            <span id="bookingStatusText" class="text-lg leading-relaxed text-gray-800"></span>
                         </div>
-                        <button class="w-full bg-gray-900 text-white font-bold px-4 py-4 rounded-xl hover:bg-gray-800 transition-colors shadow-md text-lg">次へ進む</button>
                     </div>
                 </div>
 
@@ -267,7 +282,7 @@
                             <a href="#" class="preview-nav-link hover:text-gray-900 transition-colors" data-target="page-access">アクセス</a>
                         </nav>
                         <div class="hidden md:block pointer-events-none">
-                            <button class="bg-gray-900 text-white px-6 py-2.5 rounded text-sm font-bold tracking-wider hover:bg-gray-800 transition-colors" id="preview-header-btn">お問い合わせ</button>
+                            <button class="bg-gray-900 text-white px-6 py-2.5 rounded text-sm font-bold tracking-wider hover:bg-gray-800 transition-colors pointer-events-auto" id="preview-header-btn">お問い合わせ</button>
                         </div>
                     </header>
 
@@ -1255,7 +1270,7 @@
                 }
             }
 
-            // ★修正4: AIによるテキストの自動生成・提案機能（他のページの要素にも対応）
+            // 4. AIによるテキストの自動生成・提案機能（他のページの要素にも対応）
             if (userInput.includes("考えて") || userInput.includes("提案して") || userInput.includes("もっとよく") || userInput.includes("良い") || userInput.includes("変えて")) {
                 if (targetNode.tagName.toLowerCase() !== 'img' && targetNode.id !== 'hero-bg') {
                     const elementName = targetNode.getAttribute('data-element-name');
@@ -1343,11 +1358,48 @@
             });
         });
 
+        // ==========================================
+        // 予約機能の統合ロジック
+        // ==========================================
         document.getElementById('reserve-btn-main')?.addEventListener('click', (e)=>{ if(currentStep===7){ e.stopPropagation(); document.getElementById('dummy-modal').classList.remove('hidden'); }});
         document.getElementById('reserve-btn-access')?.addEventListener('click', (e)=>{ if(currentStep===7){ e.stopPropagation(); document.getElementById('dummy-modal').classList.remove('hidden'); }});
+        document.getElementById('preview-header-btn')?.addEventListener('click', (e)=>{ if(currentStep===7){ e.stopPropagation(); document.getElementById('dummy-modal').classList.remove('hidden'); }});
 
-        document.getElementById('close-modal-btn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('dummy-modal').classList.add('hidden'); });
-        
+        document.getElementById('close-modal-btn').addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            document.getElementById('dummy-modal').classList.add('hidden'); 
+        });
+
+        const reservationForm = document.getElementById('reservationForm');
+        const bookingContent = document.getElementById('bookingContent');
+        const bookingStatus = document.getElementById('bookingStatus');
+        const bookingStatusText = document.getElementById('bookingStatusText');
+
+        reservationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('bookingName').value;
+            const date = document.getElementById('bookingDate').value;
+
+            if (name && date) {
+                bookingContent.classList.add('hidden');
+                bookingStatusText.innerHTML = `${name}様<br>${date.replace('T', ' ')}の<br>ご予約(お問い合わせ)を承りました！`;
+                bookingStatus.classList.remove('hidden');
+                bookingStatus.classList.add('flex'); // 表示するためにflexを追加
+                lucide.createIcons();
+
+                setTimeout(() => {
+                    document.getElementById('dummy-modal').classList.add('hidden');
+                    bookingStatus.classList.add('hidden');
+                    bookingStatus.classList.remove('flex');
+                    bookingContent.classList.remove('hidden');
+                    reservationForm.reset();
+                }, 3000);
+            }
+        });
+
+        // ==========================================
+        // 公開・コピー機能
+        // ==========================================
         document.getElementById('btn-publish').addEventListener('click', () => {
             document.getElementById('deploy-overlay').classList.remove('hidden');
             setTimeout(() => {
