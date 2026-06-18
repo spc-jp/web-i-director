@@ -98,7 +98,7 @@
             <div id="settings-menu" class="hidden absolute top-14 right-4 bg-white border border-gray-200 shadow-xl rounded-xl w-56 z-50 py-2 transform origin-top-right transition-all">
                 <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">開発者 / デモ用メニュー</div>
                 <button id="menu-auto-demo" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 flex items-center transition-colors">
-                    <i data-lucide="play-circle" class="w-4 h-4 mr-2"></i> デモ自動実行 (見学用)
+                    <i data-lucide="play-circle" class="w-4 h-4 mr-2"></i> デモ自動実行
                 </button>
                 <button id="menu-clear" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 flex items-center transition-colors">
                     <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i> デモデータクリア
@@ -330,6 +330,7 @@
                                     <h3 class="interactive-element text-3xl md:text-4xl font-bold text-gray-900 hover:outline hover:outline-2 hover:outline-pink-400 p-1 inline-block cursor-pointer transition-all" style="font-family: 'Georgia', serif;" id="preview-menu-section-title" data-element-name="サービスセクション 見出し">主要なサービス</h3>
                                 </div>
                                 <div class="grid md:grid-cols-3 gap-8">
+                                    <!-- カード1 -->
                                     <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400" data-element-name="サービスカード1">
                                         <div class="h-64 image-hover-zoom"><img id="preview-menu1-img" src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 1"></div>
                                         <div class="p-8 text-center">
@@ -338,6 +339,7 @@
                                             <p class="font-bold text-lg" id="preview-menu1-price">お見積り</p>
                                         </div>
                                     </div>
+                                    <!-- カード2 -->
                                     <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400" data-element-name="サービスカード2">
                                         <div class="h-64 image-hover-zoom"><img id="preview-menu2-img" src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 2"></div>
                                         <div class="p-8 text-center">
@@ -346,6 +348,7 @@
                                             <p class="font-bold text-lg" id="preview-menu2-price">お見積り</p>
                                         </div>
                                     </div>
+                                    <!-- カード3 -->
                                     <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400" data-element-name="サービスカード3">
                                         <div class="h-64 image-hover-zoom"><img id="preview-menu3-img" src="https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 3"></div>
                                         <div class="p-8 text-center">
@@ -472,9 +475,9 @@
         let userKodawari = "";
         let userCompanyName = "あなたのサイト名";
         
-        // 判定した業種を保存する変数
+        // 判定した業種と悩みを保存する変数
         let currentIndustry = 'business';
-        // ユーザーが選んだ構成を保存する変数
+        let userOnayami = ''; // ★追加: 悩みを保存する変数
         let selectedStructure = "本格的な複数ページ(5P)構成";
 
         // 業種別のコンテンツ（画像とテキスト）の定義セット
@@ -733,7 +736,7 @@
             setTimeout(() => {
                 messages.push({ 
                     id: Date.now(), type: 'ai', 
-                    text: 'こんにちは！本格的なサイト制作に向けて、要件定義を行います。<br><br>まずは<b>「基本情報（会社名・店舗名など）」</b>と、サイトの<b>「業種・ターゲット（客層）」「目的・ゴール」</b>を教えてください。<br>（例：「〇〇製作所」、部品メーカー、BtoB新規開拓 など）' 
+                    text: 'こんにちは！本格的なサイト制作に向けて、要件定義を行います。<br><br>まずは<b>「基本情報（会社名・店舗名など）」</b>と、サイトの<b>「業種・ターゲット（客層）」</b>を教えてください。<br>（例：「〇〇製作所」、部品メーカー、BtoB新規開拓 など）' 
                 });
                 renderMessages();
                 enableInputOnly();
@@ -742,7 +745,7 @@
 
         function handleManualSteps(userInput) {
             if (currentStep === 1) {
-                currentStep = 2; 
+                currentStep = 1.5; // ★追加: お悩みを聞く新しいステップ
                 
                 const nameMatch = userInput.match(/「(.+?)」/);
                 if (nameMatch) {
@@ -757,7 +760,26 @@
                 setTimeout(() => {
                     messages.push({ 
                         id: Date.now(), type: 'ai', 
-                        text: `ありがとうございます！<b>${userCompanyName}</b>様のターゲットと目的を把握しました。<br><br>次に、他社にはない<b>「あなたのビジネスの強み」や「こだわり（アピールポイント）」</b>を自由に教えてください。AIがサイトに掲載する魅力的なキャッチコピーや文章を自動作成します。<br>（例：創業50年の確かな技術、地域密着の丁寧なサポート など）` 
+                        text: `ありがとうございます！<b>${userCompanyName}</b>様の基本情報を把握しました。<br><br>さて、今回ホームページを作成・リニューアルするにあたり、<b>一番解決したい「ビジネスのお悩み」</b>は何でしょうか？最も近いものを選んでください。`,
+                        options: [
+                            '新規顧客・売上を増やしたい（集客強化）',
+                            '人手不足・採用を強化したい（求人強化）',
+                            'ブランド価値や認知度を高めたい（ブランディング）',
+                            '問い合わせ対応などの業務を効率化したい（業務効率化）'
+                        ]
+                    });
+                    renderMessages();
+                    enableInputOnly();
+                }, 1000);
+            }
+            else if (currentStep === 1.5) { // ★追加: お悩みに対する返答
+                currentStep = 2;
+                userOnayami = userInput;
+
+                setTimeout(() => {
+                    messages.push({ 
+                        id: Date.now(), type: 'ai', 
+                        text: `承知いたしました。<b>「${userOnayami}」</b>ですね！<br>その課題を解決するために、サイトの構成やキャッチコピー、ボタンの配置（CTA）を最適化して構築します。<br><br>次に、他社にはない<b>「あなたのビジネスの強み」や「こだわり（アピールポイント）」</b>を自由に教えてください。AIがサイトに掲載する魅力的な文章を自動作成します。<br>（例：創業50年の確かな技術、地域密着の丁寧なサポート など）` 
                     });
                     renderMessages();
                     enableInputOnly();
@@ -919,7 +941,7 @@
                 setTimeout(() => {
                     messages.push({ 
                         id: Date.now(), type: 'ai', 
-                        text: `完璧です！必要な情報が全て揃いました。いただいた情報を整理しました。<br><br><div class="bg-pink-50 border border-pink-100 p-3 rounded text-xs mt-2 font-mono text-pink-800"><b>【プロジェクト要件定義】</b><br>・基本情報: <b>${userCompanyName}</b><br>・ターゲット・目的設定<br>・「独自の強み・こだわり」に基づくAIコピーライティング<br>・メイン画像の選定<br>・デザイン・配色ルールの適用<br>・用途に合わせた最適なページ構成（<b>${selectedStructure}</b>）<br>・必要なシステムの組み込み<br>・全ページ共通: ロゴクリックでHOMEへ戻る機能</div><br>これより、ビジネスの成果に直結するサイトを自動構築します！少々お待ちください。` 
+                        text: `完璧です！必要な情報が全て揃いました。いただいた情報を整理しました。<br><br><div class="bg-pink-50 border border-pink-100 p-3 rounded text-xs mt-2 font-mono text-pink-800"><b>【プロジェクト要件定義】</b><br>・基本情報: <b>${userCompanyName}</b><br>・解決したい悩み: <b>${userOnayami}</b><br>・「独自の強み・こだわり」に基づくAIコピーライティング<br>・メイン画像の選定<br>・デザイン・配色ルールの適用<br>・用途に合わせた最適なページ構成（<b>${selectedStructure}</b>）<br>・必要なシステムの組み込み<br>・全ページ共通: ロゴクリックでHOMEへ戻る機能</div><br>これより、ビジネスの成果に直結するサイトを自動構築します！少々お待ちください。` 
                     });
                     renderMessages();
                     setTimeout(showLoadingAndPreview, 2500);
@@ -946,18 +968,23 @@
             
             userCompanyName = "TRATTORIA VERA"; 
             currentIndustry = 'restaurant';
+            userOnayami = '新規顧客・売上を増やしたい（集客強化）'; // ★デモ用のお悩み
             selectedStructure = '予約システム連動型の本格構成（カレンダー予約）';
             
             renderMessages();
 
             setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】まずは基本情報とターゲット・ゴールを教えてください。' }); renderMessages(); }, 500);
             setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: `店舗名は「${userCompanyName}」、カジュアルイタリアン。ターゲットは20代カップル、ゴールは予約増。` }); renderMessages(); }, 2000);
+
+            // ★追加: デモフローにお悩みヒアリングを追加
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】現在、ビジネスにおいて一番解決したい「お悩み」は何ですか？' }); renderMessages(); }, 3500);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: userOnayami }); renderMessages(); }, 5000);
             
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】ありがとうございます。次に、他社にはない「強み」や「こだわり」を教えてください。AIが魅力的な文章を作成します。' }); renderMessages(); }, 3500);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】ありがとうございます。次に、他社にはない「強み」や「こだわり」を教えてください。AIが魅力的な文章を作成します。' }); renderMessages(); }, 6500);
             setTimeout(() => { 
                 userKodawari = '地元埼玉の無農薬野菜をたっぷり使っていることと、毎朝手作りする自家製生パスタです。';
                 messages.push({ id: Date.now(), type: 'user', text: userKodawari }); renderMessages(); 
-            }, 5500);
+            }, 8000);
 
             setTimeout(() => { 
                 messages.push({ 
@@ -974,11 +1001,11 @@
                     ]
                 }); 
                 renderMessages(); 
-            }, 7000);
+            }, 9500);
             setTimeout(() => { 
                 selectedHeroImage = "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop";
                 messages.push({ id: Date.now(), type: 'user', text: '「モダンなダイニング」の画像をメインビジュアルにします。' }); renderMessages(); 
-            }, 8500);
+            }, 11000);
             
             setTimeout(() => { 
                 messages.push({ 
@@ -997,21 +1024,21 @@
                     ]
                 }); 
                 renderMessages(); 
-            }, 10000);
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: 'モダン＆ミニマル (白黒/洗練) にします。' }); renderMessages(); }, 11500);
+            }, 12500);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: 'モダン＆ミニマル (白黒/洗練) にします。' }); renderMessages(); }, 14000);
             
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】サイト構成、機能を教えてください。' }); renderMessages(); }, 13000);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】サイト構成、機能を教えてください。' }); renderMessages(); }, 15500);
             
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '予約システム連動型の本格構成（カレンダー予約）でお願いします。' }); renderMessages(); }, 14500);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '予約システム連動型の本格構成（カレンダー予約）でお願いします。' }); renderMessages(); }, 17000);
 
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】最後に、SEO・キーワードについて教えてください。' }); renderMessages(); }, 16000);
-            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '「地域名 ＋ 業種 ＋ 特徴」で集客したい（例：越谷 イタリアン 個室）' }); renderMessages(); }, 17500);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'ai', text: '【自動デモ】最後に、SEO・キーワードについて教えてください。' }); renderMessages(); }, 18500);
+            setTimeout(() => { messages.push({ id: Date.now(), type: 'user', text: '「地域名 ＋ 業種 ＋ 特徴」で集客したい（例：越谷 イタリアン 個室）' }); renderMessages(); }, 20000);
 
             setTimeout(() => {
                 messages.push({ id: Date.now(), type: 'ai', text: '要件定義が完了しました！「ロゴクリックでHOMEへ戻る機能」や「最適なSEO設定」も必須要件として記憶・実装します。これよりサイトを自動構築します。' });
                 renderMessages();
                 showLoadingAndPreview();
-            }, 19500);
+            }, 22000);
         });
 
         // ==========================================
@@ -1030,7 +1057,7 @@
 
             setTimeout(() => {
                 messages = messages.filter(m => m.id !== loadingMsgId);
-                messages.push({ id: Date.now(), type: 'ai', text: '✅ <b>自動構築が完了しました！</b><br><br>プレビュー画面の<b>【画像】や【テキスト】</b>が、選択した業種（' + currentIndustry + '）に合わせて最適化されています。独自の強みも反映済みです！<br><br>★メニューから他のページに移動し、気になる要素をクリックして編集指示を出してみてください！' });
+                messages.push({ id: Date.now(), type: 'ai', text: `✅ <b>自動構築が完了しました！</b><br><br>プレビュー画面をご確認ください。<b>「${userOnayami}」</b>という課題を解決するため、CTAボタンの配置や見出しの構成を最適化しています。<br><br>★メニューから他のページに移動し、気になる要素をクリックして編集指示を出してみてください！` });
                 renderMessages();
 
                 // ヘッダーとフッターのロゴに企業名を反映
@@ -1078,9 +1105,6 @@
                 
                 // ボタンとメニュー名の反映
                 document.getElementById('preview-nav-menu').textContent = content.navMenu;
-                document.getElementById('preview-menu-btn-text').textContent = content.btnMenu;
-                document.getElementById('preview-header-btn').textContent = content.btnContact;
-                document.getElementById('preview-hero-btn-text').textContent = content.btnHero;
                 
                 // メニューページ(Page 3)の中身の反映
                 document.getElementById('preview-page-menu-title').textContent = content.pageMenuTitle;
@@ -1088,9 +1112,34 @@
                 document.getElementById('preview-page-menu-item1').textContent = content.pageMenuItem1;
                 document.getElementById('preview-page-menu-item2').textContent = content.pageMenuItem2;
 
+                // ★追加: 「お悩み（userOnayami）」に応じたCTAボタン・見出しの最適化
+                if (userOnayami.includes("採用") || userOnayami.includes("求人") || userOnayami.includes("人手")) {
+                    document.getElementById('preview-hero-btn-text').textContent = "エントリーする";
+                    document.getElementById('preview-header-btn').textContent = "採用情報";
+                    document.getElementById('preview-menu-btn-text').textContent = "募集要項を見る";
+                    document.getElementById('preview-about-title').innerHTML = '一緒に働く仲間を<br/>募集しています';
+                    document.getElementById('preview-catchcopy').innerHTML = 'あなたの可能性を、<br/>ここで咲かせよう。';
+                } else if (userOnayami.includes("業務を効率化") || userOnayami.includes("問い合わせ")) {
+                    document.getElementById('preview-hero-btn-text').textContent = "よくあるご質問 (FAQ)";
+                    document.getElementById('preview-header-btn').textContent = "資料ダウンロード";
+                    document.getElementById('preview-menu-btn-text').textContent = "導入事例を見る";
+                    document.getElementById('preview-about-title').innerHTML = 'スムーズな導入と<br/>安心のサポート';
+                    document.getElementById('preview-catchcopy').innerHTML = '業務のムダを省き、<br/>本来の仕事に集中。';
+                } else if (userOnayami.includes("ブランド") || userOnayami.includes("認知度")) {
+                    document.getElementById('preview-hero-btn-text').textContent = "私たちの想い";
+                    document.getElementById('preview-header-btn').textContent = "ブランドストーリー";
+                    document.getElementById('preview-menu-btn-text').textContent = "実績一覧を見る";
+                    document.getElementById('preview-about-title').innerHTML = '品質とデザインへの<br/>絶対的な自信';
+                    document.getElementById('preview-catchcopy').innerHTML = '洗練された価値を、<br/>あなたのもとへ。';
+                } else {
+                    // デフォルト（集客・売上アップ想定）
+                    document.getElementById('preview-menu-btn-text').textContent = content.btnMenu;
+                    document.getElementById('preview-header-btn').textContent = content.btnContact;
+                    document.getElementById('preview-hero-btn-text').textContent = content.btnHero;
+                }
 
                 // ユーザーの「こだわり」に基づくAIライティングの反映
-                if (userKodawari) {
+                if (userKodawari && !userOnayami.includes("採用") && !userOnayami.includes("業務を効率化") && !userOnayami.includes("ブランド")) {
                     if (userKodawari.includes('埼玉') || userKodawari.includes('無農薬') || userKodawari.includes('パスタ')) {
                         const catchcopy = document.getElementById('preview-catchcopy');
                         if (catchcopy) catchcopy.innerHTML = '地元の恵みを、<br/>自家製生パスタで。';
@@ -1147,6 +1196,7 @@
             isStarted = false;
             currentStep = 0;
             currentIndustry = 'business';
+            userOnayami = '';
             selectedStructure = "本格的な複数ページ(5P)構成"; 
             selectedHeroImage = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop"; 
             userKodawari = "";
