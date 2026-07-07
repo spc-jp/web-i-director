@@ -19,6 +19,7 @@
             outline-offset: 2px;
             animation: pulse-border 2s infinite;
             z-index: 40;
+            position: relative;
         }
         .fade-in-up {
             animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -339,31 +340,31 @@
                                     <h2 class="interactive-element text-sm font-bold text-pink-500 tracking-[0.2em] mb-2 hover:outline hover:outline-2 hover:outline-pink-400 p-1 inline-block cursor-pointer transition-all" id="preview-menu-section-subtitle" data-element-name="サービスセクション サブ見出し">OUR SERVICES</h2>
                                     <h3 class="interactive-element text-3xl md:text-4xl font-bold text-gray-900 hover:outline hover:outline-2 hover:outline-pink-400 p-1 inline-block cursor-pointer transition-all" style="font-family: 'Georgia', serif;" id="preview-menu-section-title" data-element-name="サービスセクション 見出し">主要なサービス</h3>
                                 </div>
-                                <div class="grid md:grid-cols-3 gap-8">
+                                <div class="grid md:grid-cols-3 gap-8" id="preview-service-cards">
                                     <!-- カード1 -->
-                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400" data-element-name="サービスカード1">
-                                        <div class="h-64 image-hover-zoom"><img id="preview-menu1-img" src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 1"></div>
-                                        <div class="p-8 text-center">
+                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400 flex flex-col" data-element-name="サービスカード1">
+                                        <div class="h-64 image-hover-zoom flex-shrink-0"><img id="preview-menu1-img" src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 1"></div>
+                                        <div class="p-8 text-center flex-1 flex flex-col">
                                             <h4 class="text-xl font-bold mb-2" id="preview-menu1-title">サービスA</h4>
-                                            <p class="text-gray-500 text-sm mb-4" id="preview-menu1-desc">高品質なサービスをご提供します。</p>
+                                            <p class="text-gray-500 text-sm mb-4 flex-1" id="preview-menu1-desc">高品質なサービスをご提供します。</p>
                                             <p class="font-bold text-lg" id="preview-menu1-price">お見積り</p>
                                         </div>
                                     </div>
                                     <!-- カード2 -->
-                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400" data-element-name="サービスカード2">
-                                        <div class="h-64 image-hover-zoom"><img id="preview-menu2-img" src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 2"></div>
-                                        <div class="p-8 text-center">
+                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400 flex flex-col" data-element-name="サービスカード2">
+                                        <div class="h-64 image-hover-zoom flex-shrink-0"><img id="preview-menu2-img" src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 2"></div>
+                                        <div class="p-8 text-center flex-1 flex flex-col">
                                             <h4 class="text-xl font-bold mb-2" id="preview-menu2-title">サービスB</h4>
-                                            <p class="text-gray-500 text-sm mb-4" id="preview-menu2-desc">お客様のニーズに柔軟に対応いたします。</p>
+                                            <p class="text-gray-500 text-sm mb-4 flex-1" id="preview-menu2-desc">お客様のニーズに柔軟に対応いたします。</p>
                                             <p class="font-bold text-lg" id="preview-menu2-price">お見積り</p>
                                         </div>
                                     </div>
                                     <!-- カード3 -->
-                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400" data-element-name="サービスカード3">
-                                        <div class="h-64 image-hover-zoom"><img id="preview-menu3-img" src="https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 3"></div>
-                                        <div class="p-8 text-center">
+                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400 flex flex-col" data-element-name="サービスカード3">
+                                        <div class="h-64 image-hover-zoom flex-shrink-0"><img id="preview-menu3-img" src="https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 3"></div>
+                                        <div class="p-8 text-center flex-1 flex flex-col">
                                             <h4 class="text-xl font-bold mb-2" id="preview-menu3-title">サービスC</h4>
-                                            <p class="text-gray-500 text-sm mb-4" id="preview-menu3-desc">アフターサポートも万全の体制です。</p>
+                                            <p class="text-gray-500 text-sm mb-4 flex-1" id="preview-menu3-desc">アフターサポートも万全の体制です。</p>
                                             <p class="font-bold text-lg" id="preview-menu3-price">お見積り</p>
                                         </div>
                                     </div>
@@ -425,7 +426,7 @@
                         <div class="text-center w-full">
                             <h2 class="interactive-element text-4xl font-bold text-gray-900 mb-12 hover:outline hover:outline-2 hover:outline-pink-400 p-2 inline-block cursor-pointer transition-all" style="font-family: 'Georgia', serif;" data-element-name="ギャラリーページ タイトル">GALLERY</h2>
                         </div>
-                        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-4" id="preview-gallery-container">
                             <img id="preview-gallery1-img" src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=600&auto=format&fit=crop" class="interactive-element w-full h-64 object-cover rounded hover:outline hover:outline-2 hover:outline-pink-400 transition-all cursor-pointer" data-element-name="ギャラリー画像1">
                             <img id="preview-gallery2-img" src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=600&auto=format&fit=crop" class="interactive-element w-full h-64 object-cover rounded hover:outline hover:outline-2 hover:outline-pink-400 transition-all cursor-pointer" data-element-name="ギャラリー画像2">
                             <img id="preview-gallery3-img" src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=600&auto=format&fit=crop" class="interactive-element w-full h-64 object-cover rounded hover:outline hover:outline-2 hover:outline-pink-400 transition-all cursor-pointer" data-element-name="ギャラリー画像3">
@@ -487,10 +488,10 @@
         
         // 判定した業種と悩みを保存する変数
         let currentIndustry = 'business';
-        let userOnayami = ''; // ★追加: 悩みを保存する変数
+        let userOnayami = ''; 
         let selectedStructure = "本格的な複数ページ(5P)構成";
 
-        // 追加: 入力文字列から選択肢の番号を抽出する関数
+        // 入力文字列から選択肢の番号を抽出する関数
         function extractSelectedIndex(input, maxIndex) {
             const numMatch = input.match(/[0-9０-９]+/);
             if (numMatch) {
@@ -765,7 +766,6 @@
             }, 500);
         }
 
-        // 現在表示されている選択肢を一時保存する変数
         let currentOptions = [];
 
         function handleManualSteps(userInput) {
@@ -776,7 +776,7 @@
                 if (nameMatch) {
                     userCompanyName = nameMatch[1];
                 } else {
-                    const words = userInput.split(/[、。 　]/);
+                    const words = userInput.split(/[、。  ]/);
                     if(words.length > 0 && words[0].length > 1) {
                         userCompanyName = words[0];
                     }
@@ -802,7 +802,6 @@
             else if (currentStep === 1.5) { 
                 currentStep = 2;
                 
-                // 数字入力の判定と変換（「2にします」等にも対応）
                 let selectedValue = userInput;
                 let index = extractSelectedIndex(userInput, currentOptions.length - 1);
                 
@@ -905,10 +904,8 @@
                     ];
                 }
                 
-                // 画像選択用のオプションを保存
                 currentOptions = suggestions;
 
-                // 選択肢のラベルに番号を付与して分かりやすくする
                 const numberedSuggestions = suggestions.map((s, i) => ({
                     url: s.url,
                     label: `${i + 1}. ${s.label}`
@@ -927,7 +924,6 @@
             else if (currentStep === 3) {
                 currentStep = 4;
 
-                // 数字入力の判定（「3にします」「画像は4」等にも対応）
                 let index = extractSelectedIndex(userInput, currentOptions.length - 1);
                 
                 if (index !== -1) {
@@ -935,7 +931,6 @@
                     const label = currentOptions[index].label;
                     messages[messages.length - 1].text = `「${label}」の画像をメインビジュアルにします。`;
                 } else if (userInput.match(/^\d+\.\s/)) {
-                    // 「1. 〇〇」ボタンをクリックした場合
                     const labelText = userInput.replace(/^\d+\.\s/, "");
                     const selectedOpt = currentOptions.find(opt => opt.label === labelText);
                     if (selectedOpt) {
@@ -973,7 +968,6 @@
             else if (currentStep === 4) {
                 currentStep = 5;
 
-                // 数字入力の判定
                 let index = extractSelectedIndex(userInput, currentOptions.length - 1);
                 
                 if (index !== -1) {
@@ -1010,14 +1004,12 @@
                 
                 let selectedValue = userInput.replace(/でお願いします。$/, "").replace(/ にします。$/, "");
                 
-                // 数字入力の判定
                 let index = extractSelectedIndex(userInput, currentOptions.length - 1);
                 
                 if (index !== -1) {
                     selectedValue = currentOptions[index];
                     messages[messages.length - 1].text = `${selectedValue}でお願いします。`;
                 } else if (userInput.match(/^\d+\.\s/)) {
-                    // ボタンクリック時の「1. 〇〇」というテキストから番号部分を削除
                     selectedValue = userInput.replace(/^\d+\.\s/, "").replace(/でお願いします。$/, "").replace(/ にします。$/, "");
                     messages[messages.length - 1].text = `${selectedValue}でお願いします。`;
                 }
@@ -1044,7 +1036,6 @@
             else if (currentStep === 6) {
                 currentStep = 7; 
                 
-                // 数字入力の判定（SEO設定の確定）
                 let selectedSeo = userInput;
                 let index = extractSelectedIndex(userInput, currentOptions.length - 1);
                 
@@ -1267,12 +1258,10 @@
                 messages.push({ id: Date.now(), type: 'ai', text: `✅ <b>自動構築が完了しました！</b><br><br>プレビュー画面をご確認ください。<b>「${userOnayami.split('（')[0]}」</b>という課題を解決するため、CTAボタンの配置や見出しの構成を最適化しています。<br><br>★メニューから他のページに移動し、気になる要素をクリックして編集指示を出してみてください！` });
                 renderMessages();
 
-                // ヘッダーとフッターのロゴに企業名を反映
                 document.querySelectorAll('.site-logo-preview').forEach(el => {
                     el.textContent = userCompanyName;
                 });
 
-                // 1ページ構成などの場合はヘッダーナビゲーションを隠す
                 const desktopNav = document.getElementById('preview-desktop-nav');
                 if (selectedStructure.includes('1ページ') || selectedStructure.includes('LP') || selectedStructure.includes('ランディング')) {
                     if (desktopNav) desktopNav.style.display = 'none';
@@ -1280,12 +1269,10 @@
                     if (desktopNav) desktopNav.style.display = 'flex';
                 }
 
-                // メイン画像の反映
                 if (selectedHeroImage) {
                     document.getElementById('hero-bg').style.backgroundImage = `url('${selectedHeroImage}')`;
                 }
 
-                // 判定した業種（currentIndustry）に基づいて、サイト内の全画像とテキストを一括置換
                 const content = industryContent[currentIndustry] || industryContent['business'];
                 
                 document.getElementById('preview-about-img').src = content.aboutImg;
@@ -1310,16 +1297,13 @@
                 document.getElementById('preview-gallery2-img').src = content.gallery2;
                 document.getElementById('preview-gallery3-img').src = content.gallery3;
                 
-                // ボタンとメニュー名の反映
                 document.getElementById('preview-nav-menu').textContent = content.navMenu;
                 
-                // メニューページ(Page 3)の中身の反映
                 document.getElementById('preview-page-menu-title').textContent = content.pageMenuTitle;
                 document.getElementById('preview-page-menu-sub1').textContent = content.pageMenuSub;
                 document.getElementById('preview-page-menu-item1').textContent = content.pageMenuItem1;
                 document.getElementById('preview-page-menu-item2').textContent = content.pageMenuItem2;
 
-                // CTAボタン・見出しの最適化（悩みに応じて）
                 if (userOnayami.includes("採用") || userOnayami.includes("求人") || userOnayami.includes("人手")) {
                     document.getElementById('preview-hero-btn-text').textContent = "エントリーする";
                     document.getElementById('preview-header-btn').textContent = "採用情報";
@@ -1344,7 +1328,6 @@
                     document.getElementById('modal-date-label').textContent = 'ご希望日時';
                 }
 
-                // 業種と「こだわり」に基づくより具体的なAIライティングの上書き（デモ特化）
                 if (currentIndustry === 'restaurant' && userKodawari.includes('前田')) {
                     const catchcopy = document.getElementById('preview-catchcopy');
                     if (catchcopy) catchcopy.innerHTML = '極上の素材を、<br/>自家製生パスタで。'; 
@@ -1375,7 +1358,6 @@
 
                 lucide.createIcons();
 
-                // 発行するダミーURLを企業名に合わせて生成
                 const dummyUrlName = userCompanyName.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || 'my-awesome-site';
                 document.getElementById('publish-url-text').textContent = `https://${dummyUrlName}.netlify.app`;
 
@@ -1394,7 +1376,7 @@
 
         function enableFullUI() {
             enableInputOnly();
-            messageInput.placeholder = "AIに指示を出す... (例: 別のコピーを考えて)";
+            messageInput.placeholder = "AIに指示を出す... (例: 左に移動して)";
             
             document.getElementById('toolbar-actions').classList.remove('opacity-50');
             document.getElementById('btn-publish').disabled = false;
@@ -1479,13 +1461,11 @@
             messageInput.disabled = true;
             sendBtn.disabled = true;
 
-            // ヒアリング中（Step 1~6）の場合
             if (currentStep >= 1 && currentStep <= 6) {
                 handleManualSteps(text);
                 return;
             }
 
-            // プレビュー編集中のAI指示処理
             setTimeout(() => {
                 let aiResponseText = "";
                 if (selectedElementNode) {
@@ -1540,20 +1520,52 @@
                 }
             }
 
-            // 4. AIによるテキストの自動生成・提案機能
-            if (userInput.includes("考えて") || userInput.includes("提案して") || userInput.includes("もっとよく") || userInput.includes("良い") || userInput.includes("変えて")) {
-                if (targetNode.tagName.toLowerCase() !== 'img' && targetNode.id !== 'hero-bg') {
+            // 4. 並び替え機能 (NEW!)
+            if (userInput.includes("上") || userInput.includes("前") || userInput.includes("左")) {
+                if (targetNode.previousElementSibling) {
+                    targetNode.parentNode.insertBefore(targetNode, targetNode.previousElementSibling);
+                    aiResponse = "✅ ご指示通り、要素を前に（上/左に）移動しました！";
+                    changed = true;
+                } else {
+                    aiResponse = "これ以上前（上/左）には移動できません。";
+                    changed = true; 
+                }
+            } else if (userInput.includes("下") || userInput.includes("後") || userInput.includes("右")) {
+                if (targetNode.nextElementSibling) {
+                    targetNode.parentNode.insertBefore(targetNode.nextElementSibling, targetNode);
+                    aiResponse = "✅ ご指示通り、要素を後ろに（下/右に）移動しました！";
+                    changed = true;
+                } else {
+                    aiResponse = "これ以上後（下/右）には移動できません。";
+                    changed = true;
+                }
+            }
+
+            // 5. テキスト変更 (条件緩和)
+            if (!changed && targetNode.tagName.toLowerCase() !== 'img' && targetNode.id !== 'hero-bg') {
+                let textMatch = userInput.match(/「(.+)」/);
+                
+                // カギ括弧がない場合、「〇〇にして」「〇〇に変更して」を拾う
+                if (!textMatch) {
+                    const alterMatch = userInput.match(/(.+?)(にして|に変えて|に変更|に修正)/);
+                    if (alterMatch && !userInput.includes("画像") && !userInput.includes("色") && !userInput.includes("丸く")) {
+                         textMatch = [null, alterMatch[1].replace(/テキストを|文字を|文章を/g, "").trim()];
+                    }
+                }
+
+                if (textMatch) {
+                    if (targetNode.querySelector('span') && targetNode.tagName.toLowerCase() === 'button') {
+                        targetNode.querySelector('span').innerHTML = textMatch[1];
+                    } else {
+                        targetNode.innerHTML = textMatch[1]; 
+                    }
+                    changed = true;
+                } else if (userInput.includes("考えて") || userInput.includes("提案して") || userInput.includes("もっとよく") || userInput.includes("良い")) {
                     const elementName = targetNode.getAttribute('data-element-name');
                     let newText = "";
                     
                     if (elementName === "キャッチコピー") {
-                        const copyCandidates = [
-                            "あなたの想像を超える体験を。",
-                            "次世代のスタンダードがここに。",
-                            "心を満たす、特別なひととき。",
-                            "革新的なアプローチで未来を創る。",
-                            "確かな技術で、新しい価値を。"
-                        ];
+                        const copyCandidates = ["あなたの想像を超える体験を。","次世代のスタンダードがここに。","心を満たす、特別なひととき。","革新的なアプローチで未来を創る。","確かな技術で、新しい価値を。"];
                         newText = copyCandidates[Math.floor(Math.random() * copyCandidates.length)];
                         targetNode.innerHTML = newText.replace("、", "、<br/>");
                     } else if (elementName.includes("見出し") || elementName.includes("タイトル") || elementName.includes("名前")) {
@@ -1564,33 +1576,18 @@
                         targetNode.innerHTML = newText;
                     } else if (elementName.includes("ボタン")) {
                         newText = "詳しく見る";
-                        if(targetNode.querySelector('span')) {
-                            targetNode.querySelector('span').innerText = newText;
-                        } else {
-                            targetNode.innerText = newText;
-                        }
+                        if(targetNode.querySelector('span')) targetNode.querySelector('span').innerText = newText;
+                        else targetNode.innerText = newText;
                     } else {
                          newText = "AIが提案する新しいテキストです。";
                          targetNode.innerHTML = newText;
                     }
-                    
                     aiResponse = `✅ AIが文脈に合わせて「${elementName}」のテキストを考案し、更新しました！`;
                     changed = true;
                 }
             }
 
-            // 5. 「〇〇」というカギ括弧による直接の文字指定変更
-            let textMatch = userInput.match(/「(.+)」/);
-            if (textMatch && targetNode.getAttribute('data-element-name') !== 'メインビジュアル（ヒーロー画像）' && targetNode.tagName.toLowerCase() !== 'img') { 
-                if (targetNode.querySelector('span') && targetNode.tagName.toLowerCase() === 'button') {
-                    targetNode.querySelector('span').innerHTML = textMatch[1];
-                } else {
-                    targetNode.innerHTML = textMatch[1]; 
-                }
-                changed = true; 
-            }
-
-            if (!changed) aiResponse = "指示が解釈できませんでした。例：「赤色にして」「海の画像に変えて」「もっと良いコピーを考えて」";
+            if (!changed) aiResponse = "指示が解釈できませんでした。例：「左に移動して」「〇〇に変更して」「海の画像に変えて」";
             return aiResponse;
         }
 
