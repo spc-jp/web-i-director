@@ -77,6 +77,21 @@
         .sparkle-bg {
             background-image: radial-gradient(circle at center, #fff0f6 0%, #f8fafc 100%);
         }
+
+        /* ドラッグ中のスタイル追加 */
+        .dragging-item {
+            opacity: 0.4;
+        }
+        .drag-target {
+            border-left: 4px solid #ec4899;
+            transform: scale(1.02);
+            transition: all 0.2s ease;
+        }
+        .drag-target-right {
+            border-right: 4px solid #ec4899;
+            transform: scale(1.02);
+            transition: all 0.2s ease;
+        }
     </style>
 </head>
 <body class="flex h-screen w-full bg-gray-50 font-sans text-gray-800 overflow-hidden">
@@ -275,7 +290,7 @@
                 </div>
 
                 <div class="fixed top-20 right-8 bg-gray-900/90 text-white text-xs px-4 py-2 rounded-full opacity-0 group-hover/canvas:opacity-100 transition-opacity flex items-center pointer-events-none z-50 shadow-xl border border-gray-700">
-                    <i data-lucide="mouse-pointer-click" class="w-4 h-4 mr-2 text-pink-400"></i> 要素をクリックしてAIに編集指示
+                    <i data-lucide="mouse-pointer-click" class="w-4 h-4 mr-2 text-pink-400"></i> 要素をクリックしてAIに編集指示。またはマウスで直接ドラッグして移動。
                 </div>
 
                 <!-- 生成されたWebサイトの中身 -->
@@ -342,27 +357,27 @@
                                 </div>
                                 <div class="grid md:grid-cols-3 gap-8" id="preview-service-cards">
                                     <!-- カード1 -->
-                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400 flex flex-col" data-element-name="サービスカード1">
-                                        <div class="h-64 image-hover-zoom flex-shrink-0"><img id="preview-menu1-img" src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 1"></div>
-                                        <div class="p-8 text-center flex-1 flex flex-col">
+                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400 flex flex-col" data-element-name="サービスカード1">
+                                        <div class="h-64 image-hover-zoom flex-shrink-0 pointer-events-none"><img id="preview-menu1-img" src="https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 1"></div>
+                                        <div class="p-8 text-center flex-1 flex flex-col pointer-events-none">
                                             <h4 class="text-xl font-bold mb-2" id="preview-menu1-title">サービスA</h4>
                                             <p class="text-gray-500 text-sm mb-4 flex-1" id="preview-menu1-desc">高品質なサービスをご提供します。</p>
                                             <p class="font-bold text-lg" id="preview-menu1-price">お見積り</p>
                                         </div>
                                     </div>
                                     <!-- カード2 -->
-                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400 flex flex-col" data-element-name="サービスカード2">
-                                        <div class="h-64 image-hover-zoom flex-shrink-0"><img id="preview-menu2-img" src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 2"></div>
-                                        <div class="p-8 text-center flex-1 flex flex-col">
+                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400 flex flex-col" data-element-name="サービスカード2">
+                                        <div class="h-64 image-hover-zoom flex-shrink-0 pointer-events-none"><img id="preview-menu2-img" src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 2"></div>
+                                        <div class="p-8 text-center flex-1 flex flex-col pointer-events-none">
                                             <h4 class="text-xl font-bold mb-2" id="preview-menu2-title">サービスB</h4>
                                             <p class="text-gray-500 text-sm mb-4 flex-1" id="preview-menu2-desc">お客様のニーズに柔軟に対応いたします。</p>
                                             <p class="font-bold text-lg" id="preview-menu2-price">お見積り</p>
                                         </div>
                                     </div>
                                     <!-- カード3 -->
-                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400 flex flex-col" data-element-name="サービスカード3">
-                                        <div class="h-64 image-hover-zoom flex-shrink-0"><img id="preview-menu3-img" src="https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 3"></div>
-                                        <div class="p-8 text-center flex-1 flex flex-col">
+                                    <div class="interactive-element bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all cursor-pointer hover:outline hover:outline-2 hover:outline-pink-400 flex flex-col" data-element-name="サービスカード3">
+                                        <div class="h-64 image-hover-zoom flex-shrink-0 pointer-events-none"><img id="preview-menu3-img" src="https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover" alt="Service 3"></div>
+                                        <div class="p-8 text-center flex-1 flex flex-col pointer-events-none">
                                             <h4 class="text-xl font-bold mb-2" id="preview-menu3-title">サービスC</h4>
                                             <p class="text-gray-500 text-sm mb-4 flex-1" id="preview-menu3-desc">アフターサポートも万全の体制です。</p>
                                             <p class="font-bold text-lg" id="preview-menu3-price">お見積り</p>
@@ -776,7 +791,7 @@
                 if (nameMatch) {
                     userCompanyName = nameMatch[1];
                 } else {
-                    const words = userInput.split(/[、。  ]/);
+                    const words = userInput.split(/[、。 　]/);
                     if(words.length > 0 && words[0].length > 1) {
                         userCompanyName = words[0];
                     }
@@ -1368,10 +1383,96 @@
                 document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
                 document.getElementById('page-home').classList.remove('hidden');
                 
-                setTimeout(() => { canvas.classList.remove('opacity-0'); canvas.classList.add('opacity-100'); }, 100);
+                setTimeout(() => { 
+                    canvas.classList.remove('opacity-0'); 
+                    canvas.classList.add('opacity-100'); 
+                    setupDragAndDrop(); // ドラッグ&ドロップの初期化
+                }, 100);
 
                 enableFullUI();
             }, 3500);
+        }
+
+        // ==========================================
+        // マウスでのドラッグ＆ドロップ並び替え機能
+        // ==========================================
+        function setupDragAndDrop() {
+            const containers = [
+                document.getElementById('preview-service-cards'),
+                document.getElementById('preview-gallery-container')
+            ];
+
+            containers.forEach(container => {
+                if (!container) return;
+                
+                let draggedItem = null;
+
+                const items = Array.from(container.children);
+                items.forEach(item => {
+                    item.setAttribute('draggable', 'true');
+                    item.style.cursor = 'grab';
+                    
+                    item.addEventListener('dragstart', function(e) {
+                        if (currentStep !== 7) {
+                            e.preventDefault();
+                            return;
+                        }
+                        draggedItem = item;
+                        setTimeout(() => item.classList.add('dragging-item'), 0);
+                    });
+
+                    item.addEventListener('dragend', function() {
+                        item.classList.remove('dragging-item');
+                        draggedItem = null;
+                        Array.from(container.children).forEach(child => {
+                            child.classList.remove('drag-target', 'drag-target-right');
+                        });
+                    });
+
+                    item.addEventListener('dragover', function(e) {
+                        e.preventDefault(); 
+                        if (item === draggedItem || !draggedItem) return;
+                        
+                        const bounding = item.getBoundingClientRect();
+                        const offset = bounding.x + (bounding.width / 2);
+                        
+                        if (e.clientX - offset > 0) {
+                            item.classList.add('drag-target-right');
+                            item.classList.remove('drag-target');
+                        } else {
+                            item.classList.add('drag-target');
+                            item.classList.remove('drag-target-right');
+                        }
+                    });
+                    
+                    item.addEventListener('dragleave', function() {
+                        item.classList.remove('drag-target', 'drag-target-right');
+                    });
+
+                    item.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        item.classList.remove('drag-target', 'drag-target-right');
+                        
+                        if (item === draggedItem || !draggedItem) return;
+                        
+                        const bounding = item.getBoundingClientRect();
+                        const offset = bounding.x + (bounding.width / 2);
+                        
+                        if (e.clientX - offset > 0) {
+                            container.insertBefore(draggedItem, item.nextSibling);
+                        } else {
+                            container.insertBefore(draggedItem, item);
+                        }
+
+                        // AIチャットにシステムメッセージを出して連動感を演出
+                        const elementName = draggedItem.getAttribute('data-element-name');
+                        if(elementName) {
+                            messages.push({ id: Date.now(), type: 'system', icon: 'move', text: `マウス操作で「${elementName}」を移動しました。AIが裏側のコードを自動修正しました。` });
+                            renderMessages();
+                        }
+                    });
+                });
+            });
         }
 
         function enableFullUI() {
@@ -1445,6 +1546,8 @@
             
             document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
             document.getElementById('page-home').classList.remove('hidden');
+
+            setTimeout(() => { setupDragAndDrop(); }, 100);
 
             enableFullUI();
         });
@@ -1520,7 +1623,7 @@
                 }
             }
 
-            // 4. 並び替え機能 (NEW!)
+            // 4. チャット指示での並び替え機能
             if (userInput.includes("上") || userInput.includes("前") || userInput.includes("左")) {
                 if (targetNode.previousElementSibling) {
                     targetNode.parentNode.insertBefore(targetNode, targetNode.previousElementSibling);
@@ -1545,7 +1648,6 @@
             if (!changed && targetNode.tagName.toLowerCase() !== 'img' && targetNode.id !== 'hero-bg') {
                 let textMatch = userInput.match(/「(.+)」/);
                 
-                // カギ括弧がない場合、「〇〇にして」「〇〇に変更して」を拾う
                 if (!textMatch) {
                     const alterMatch = userInput.match(/(.+?)(にして|に変えて|に変更|に修正)/);
                     if (alterMatch && !userInput.includes("画像") && !userInput.includes("色") && !userInput.includes("丸く")) {
