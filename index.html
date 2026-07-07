@@ -3,272 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web i Director UIモックアップ（稼働版）</title>
-    <link rel="icon" href="https://spc-jp.github.io/web-i-director/favicon.png" type="image/png">
-    
+    <title>Web i Director</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @keyframes pulse-border {
-            0% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
-            70% { box-shadow: 0 0 0 6px rgba(236, 72, 153, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
-        }
-        .element-selected {
-            outline: 3px solid #ec4899 !important;
-            outline-offset: 2px;
-            animation: pulse-border 2s infinite;
-            z-index: 40;
-            position: relative;
-        }
-        .fade-in-up {
-            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        
-        .preview-hero-text {
-            animation: fadeInUp 1s ease-out forwards;
-        }
-        .image-hover-zoom {
-            overflow: hidden;
-        }
-        .image-hover-zoom img {
-            transition: transform 0.5s ease;
-        }
-        .image-hover-zoom:hover img {
-            transform: scale(1.05);
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-25px) rotate(8deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
-        @keyframes float-reverse {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(20px) rotate(-8deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
-        }
-        @keyframes pulse-ring {
-            0% { transform: scale(0.8); opacity: 0.6; }
-            100% { transform: scale(2.5); opacity: 0; }
-        }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-        .animate-float-reverse { animation: float-reverse 7s ease-in-out infinite; }
-        .animate-float-delayed { animation: float 8s ease-in-out 3s infinite; }
-        
-        .ring-pulse::before, .ring-pulse::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: 2px solid #ec4899;
-            animation: pulse-ring 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-        }
-        .ring-pulse::after { animation-delay: 1.5s; }
-        
-        .sparkle-bg {
-            background-image: radial-gradient(circle at center, #fff0f6 0%, #f8fafc 100%);
-        }
-
-        .dragging-item {
-            opacity: 0.4;
-        }
-        .drag-target {
-            border-left: 4px solid #ec4899;
-            transform: scale(1.02);
-            transition: all 0.2s ease;
-        }
-        .drag-target-right {
-            border-right: 4px solid #ec4899;
-            transform: scale(1.02);
-            transition: all 0.2s ease;
-        }
+        .sparkle-bg { background-image: radial-gradient(circle at center, #fff0f6 0%, #f8fafc 100%); }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.6; } 100% { transform: scale(2.5); opacity: 0; } }
+        .ring-pulse::before { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 2px solid #ec4899; animation: pulse-ring 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
     </style>
 </head>
-<body class="flex h-screen w-full bg-gray-50 font-sans text-gray-800 overflow-hidden">
+<body class="bg-gray-50 h-screen flex overflow-hidden">
 
-    <div class="w-[420px] bg-white border-r border-gray-200 flex flex-col shadow-sm z-20 flex-shrink-0 relative">
-        <div class="h-16 flex items-center justify-between px-6 border-b border-gray-100 bg-white flex-shrink-0 relative">
-            <div class="flex items-center">
-                <img src="https://spc-jp.github.io/web-i-director/キャラクターI.png" onerror="this.src='https://ui-avatars.com/api/?name=i&background=ec4899&color=fff'" alt="Web i Director" class="w-8 h-8 rounded-full mr-3 object-cover border border-pink-200 shadow-sm">
-                <h1 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-600">Web i Director</h1>
+    <!-- サイドバー -->
+    <aside class="w-[300px] bg-white border-r border-gray-200 flex flex-col">
+        <div class="h-16 px-6 flex items-center justify-between border-b border-gray-100">
+            <div class="flex items-center gap-2">
+                <img src="https://ui-avatars.com/api/?name=i&background=ec4899&color=fff" class="w-8 h-8 rounded-full">
+                <span class="font-bold text-gray-800">Web i Director</span>
             </div>
-            <button id="settings-btn" class="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors relative">
+            <button id="settings-btn" class="p-2 text-gray-400 hover:text-gray-700 rounded-full transition-colors">
                 <i data-lucide="settings" class="w-5 h-5"></i>
             </button>
-
-            <div id="settings-menu" class="hidden absolute top-14 right-4 bg-white border border-gray-200 shadow-xl rounded-xl w-64 z-50 py-2 transform origin-top-right transition-all">
-                <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">自動デモ用メニュー</div>
-                <button id="menu-auto-demo-restaurant" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 flex items-center transition-colors border-l-4 border-transparent hover:border-pink-500"><i data-lucide="utensils" class="w-4 h-4 mr-2"></i> デモ実行 (飲食業・集客)</button>
-                <button id="menu-auto-demo-manufacturing" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center transition-colors border-l-4 border-transparent hover:border-blue-500"><i data-lucide="factory" class="w-4 h-4 mr-2"></i> デモ実行 (製造業・BtoB)</button>
-                <button id="menu-auto-demo-realestate" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 flex items-center transition-colors border-l-4 border-transparent hover:border-orange-500"><i data-lucide="hard-hat" class="w-4 h-4 mr-2"></i> デモ実行 (建設業・採用)</button>
-                <div class="border-t border-gray-100 mt-2 pt-2">
-                    <button id="menu-clear" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 flex items-center transition-colors"><i data-lucide="trash-2" class="w-4 h-4 mr-2"></i> データをリセット</button>
-                    <button id="menu-preview" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 flex items-center transition-colors"><i data-lucide="eye" class="w-4 h-4 mr-2"></i> 強制プレビュー表示</button>
-                </div>
-            </div>
         </div>
-
-        <div id="chat-area" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 pb-8 scroll-smooth relative"></div>
-
-        <div class="p-4 bg-white border-t border-gray-100 flex-shrink-0">
-            <div id="editing-status" class="hidden mb-2 text-xs text-gray-500 flex items-center bg-pink-50 p-2 rounded-md border border-pink-100">
-                <i data-lucide="mouse-pointer-click" class="w-3 h-3 text-pink-500 mr-1.5"></i>
-                <span id="editing-element-name" class="font-bold text-pink-600 mr-1"></span>を選択中
-                <button id="clear-editing-btn" class="ml-auto text-gray-400 hover:text-gray-700 bg-white px-2 py-0.5 rounded shadow-sm border border-gray-200 transition-colors">解除</button>
-            </div>
-            
-            <div class="relative flex items-center opacity-50 transition-opacity duration-300" id="input-container">
-                <textarea id="message-input" disabled placeholder="制作をスタートしてください" class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-4 pr-24 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500 resize-none transition-all shadow-inner disabled:cursor-not-allowed" rows="2"></textarea>
-                <div class="absolute right-2 flex items-center space-x-1">
-                    <button class="p-2 text-gray-400 hover:text-pink-600 transition-colors rounded-lg cursor-not-allowed" disabled id="mic-btn"><i data-lucide="mic" class="w-5 h-5"></i></button>
-                    <button id="send-btn" disabled class="p-2 bg-pink-500 text-white hover:bg-pink-600 disabled:bg-gray-300 disabled:text-gray-100 transition-colors rounded-lg shadow-sm flex items-center justify-center cursor-not-allowed"><i data-lucide="send" class="w-4 h-4 ml-0.5"></i></button>
-                </div>
-            </div>
-            <div class="mt-3 flex justify-between items-center text-xs text-gray-500 font-medium">
-                <div class="flex space-x-4">
-                    <button id="btn-add-page" class="flex items-center hover:text-pink-600 transition-colors py-1 cursor-not-allowed opacity-50" disabled><i data-lucide="file-plus-2" class="w-3.5 h-3.5 mr-1.5"></i> ページ追加</button>
-                    <button id="btn-design-rule" class="flex items-center hover:text-pink-600 transition-colors py-1 cursor-not-allowed opacity-50" disabled><i data-lucide="layout-template" class="w-3.5 h-3.5 mr-1.5"></i> 共通ルール</button>
-                </div>
-            </div>
+        
+        <!-- 設定メニュー -->
+        <div id="settings-menu" class="hidden absolute top-16 left-64 bg-white border border-gray-200 shadow-xl rounded-xl w-64 z-50 py-2">
+            <button class="w-full text-left px-4 py-2.5 text-sm hover:bg-pink-50 text-gray-700">01 診断 (飲食業)</button>
+            <button class="w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 text-gray-700">02 サイト自動作成</button>
+            <button class="w-full text-left px-4 py-2.5 text-sm hover:bg-orange-50 text-gray-700">03 チラシミッケ</button>
         </div>
-    </div>
+    </aside>
 
-    <div class="flex-1 flex flex-col bg-gray-100 h-full overflow-hidden relative">
-        <div class="h-16 flex items-center justify-between px-6 bg-white border-b border-gray-200 shadow-sm z-10 flex-shrink-0">
-            <div class="flex items-center space-x-4">
-                <div class="flex items-center bg-gray-100 rounded-lg p-1">
-                    <button id="btn-monitor" class="p-1.5 bg-white text-gray-800 rounded shadow-sm transition-all"><i data-lucide="monitor" class="w-4 h-4"></i></button>
-                    <button id="btn-smartphone" class="p-1.5 text-gray-500 hover:text-gray-800 rounded transition-all"><i data-lucide="smartphone" class="w-4 h-4"></i></button>
-                </div>
-                <div class="text-sm text-gray-500 flex items-center font-medium"><span class="w-2 h-2 rounded-full bg-gray-300 mr-2" id="status-indicator"></span><span id="status-text">プロジェクト未作成</span></div>
+    <!-- メインコンテンツ -->
+    <main class="flex-1 flex flex-col h-full bg-gray-50">
+        <!-- 上部バー -->
+        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8">
+            <div class="flex items-center gap-4 text-gray-500">
+                <i data-lucide="monitor" class="w-5 h-5"></i>
+                <i data-lucide="smartphone" class="w-5 h-5"></i>
+                <span class="text-sm border-l pl-4 border-gray-300">プロジェクト未作成</span>
             </div>
-            <div class="flex items-center space-x-3 opacity-50" id="toolbar-actions">
-                <button id="btn-publish" disabled class="flex items-center px-5 py-2 text-sm font-medium text-white bg-gray-400 rounded-lg shadow-sm cursor-not-allowed"><i data-lucide="globe" class="w-4 h-4 mr-2"></i> ワンクリック公開</button>
-            </div>
-        </div>
+            <button class="px-4 py-2 bg-gray-200 text-gray-600 rounded-md text-sm font-bold">
+                <i data-lucide="globe" class="w-4 h-4 inline mr-2"></i>ワンクリック公開
+            </button>
+        </header>
 
-        <div class="flex-1 overflow-auto p-4 md:p-0 flex justify-center items-start relative bg-gray-100 transition-all duration-500" id="preview-container">
-            <div id="deploy-overlay" class="hidden absolute inset-0 bg-white/90 z-50 flex items-center justify-center backdrop-blur-sm flex-col">
-                <div class="w-16 h-16 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin mb-4"></div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Netlifyへデプロイ中...</h3>
-            </div>
-            
-            <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center sparkle-bg z-0 overflow-hidden">
+        <!-- 中央表示エリア -->
+        <div class="flex-1 flex items-center justify-center sparkle-bg">
+            <div class="flex flex-col items-center">
                 <div class="relative w-40 h-40 mb-10 flex items-center justify-center">
-                    <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-pink-300 to-purple-400 opacity-30 blur-2xl animate-pulse"></div>
                     <div class="ring-pulse absolute inset-8"></div>
-                    <div class="relative z-10 w-24 h-24 bg-white/90 backdrop-blur-sm rounded-full shadow-2xl flex items-center justify-center border-2 border-pink-100"><i data-lucide="wand-2" class="w-12 h-12 text-pink-500"></i></div>
-                </div>
-                <h2 class="text-3xl font-extrabold text-gray-800 mb-6">準備完了です！AIディレクターに指示を出してください</h2>
-            </div>
-
-            <div id="preview-canvas" class="hidden w-full max-w-[1200px] bg-white md:rounded-t-xl shadow-2xl min-h-full border-x border-t border-gray-200 overflow-x-hidden relative group/canvas z-10 opacity-0 transition-all duration-500">
-                <div id="dummy-modal" class="hidden fixed inset-0 bg-black/80 z-[100] flex items-center justify-center backdrop-blur-md">
-                    <div class="bg-white p-8 rounded-2xl text-center w-full max-w-md shadow-2xl m-4 relative">
-                        <button id="close-modal-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800"><i data-lucide="x" class="w-6 h-6"></i></button>
-                        <h2 class="text-xl font-bold mb-6 text-gray-800" id="modal-title">予約 / お問い合わせ</h2>
-                        <div id="bookingContent"><form id="reservationForm" class="space-y-4"><input type="text" placeholder="お名前" class="w-full border p-3 rounded" required><input type="datetime-local" class="w-full border p-3 rounded" required><button type="submit" class="w-full bg-gray-900 text-white py-3 rounded">送信</button></form></div>
-                        <div id="bookingStatus" class="hidden text-green-600 font-bold">送信完了！</div>
+                    <div class="relative z-10 w-24 h-24 bg-white rounded-full shadow-2xl flex items-center justify-center">
+                        <i data-lucide="wand-2" class="w-12 h-12 text-pink-500"></i>
                     </div>
                 </div>
-                <div class="font-sans text-gray-800 h-full flex flex-col min-h-screen relative" id="generated-site-content">
-                    <header class="interactive-element sticky top-0 z-[60] flex items-center justify-between px-6 py-5 bg-white/95 border-b cursor-pointer" data-element-name="ヘッダー">
-                        <div class="site-logo-preview text-2xl font-bold tracking-widest" id="site-title-preview">サイト名</div>
-                        <nav id="preview-desktop-nav" class="hidden lg:flex space-x-10 text-sm font-semibold text-gray-600"></nav>
-                    </header>
-                    <main id="page-home" class="page-content flex-1">
-                        <section class="relative h-[80vh] flex items-center justify-center">
-                            <div id="hero-bg" class="interactive-element absolute inset-0 bg-cover bg-center" data-element-name="メインビジュアル"></div>
-                            <div class="relative z-10 text-center text-white"><h1 id="preview-catchcopy" class="text-6xl font-bold">最高の体験を</h1></div>
-                        </section>
-                        <section class="py-24 max-w-6xl mx-auto"><div class="grid md:grid-cols-3 gap-8" id="preview-service-cards"></div></section>
-                    </main>
-                </div>
+                <h2 class="text-2xl font-bold text-gray-800">準備完了です！AIディレクターに指示を出してください</h2>
             </div>
         </div>
-    </div>
+    </main>
 
     <script>
         lucide.createIcons();
-        // (Logic here is same as previously refined version for stability)
-        let messages = [];
-        let isStarted = false;
-        let currentStep = 0;
-        let selectedElementNode = null;
-        let selectedHeroImage = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=2000&auto=format&fit=crop";
-        let userCompanyName = "あなたのサイト名";
-        let currentIndustry = 'business';
-        let userOnayami = '';
-        let selectedStructure = "本格的な複数ページ(5P)構成";
-        let currentOptions = [];
 
-        function extractSelectedIndex(input, maxIndex) {
-            const numMatch = input.match(/[0-9０-９]+/);
-            if (numMatch) {
-                const index = parseInt(numMatch[0].replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))) - 1;
-                return (index >= 0 && index <= maxIndex) ? index : -1;
-            }
-            return -1;
-        }
-
-        function setupDragAndDrop() {
-            const container = document.getElementById('preview-service-cards');
-            if (!container) return;
-            let draggedItem = null;
-            Array.from(container.children).forEach(item => {
-                item.setAttribute('draggable', 'true');
-                item.addEventListener('dragstart', (e) => { draggedItem = item; item.classList.add('dragging-item'); });
-                item.addEventListener('dragend', () => item.classList.remove('dragging-item'));
-                item.addEventListener('dragover', (e) => e.preventDefault());
-                item.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    if (draggedItem !== item) container.insertBefore(draggedItem, item);
-                });
-            });
-        }
-
-        function runAutoDemo(industryType) {
-            resetData();
-            isStarted = true;
-            currentStep = 7;
-            userCompanyName = industryType === 'restaurant' ? "TRATTORIA MAEDA" : industryType === 'manufacturing' ? "前田金属加工株式会社" : "株式会社前田建設";
-            currentIndustry = industryType;
-            showLoadingAndPreview();
-        }
-
-        function showLoadingAndPreview() {
-            // ... (Logic remains identical to previous functional version)
-            document.getElementById('empty-state').classList.add('hidden');
-            document.getElementById('preview-canvas').classList.remove('hidden', 'opacity-0');
-            document.getElementById('preview-canvas').classList.add('opacity-100');
-            setupDragAndDrop();
-            enableFullUI();
-        }
-
-        function enableFullUI() {
-            document.getElementById('input-container').classList.remove('opacity-50');
-            document.getElementById('message-input').disabled = false;
-            document.getElementById('send-btn').disabled = false;
-        }
-
-        function resetData() { /* Standard reset */ }
-        function handleManualSteps(text) { /* Logic */ }
-        function handleSendMessage() { /* Logic */ }
-        function applyAIAmendments(text, node) { /* Logic */ }
-
-        document.getElementById('menu-auto-demo-restaurant').addEventListener('click', () => runAutoDemo('restaurant'));
-        document.getElementById('menu-auto-demo-manufacturing').addEventListener('click', () => runAutoDemo('manufacturing'));
-        document.getElementById('menu-auto-demo-realestate').addEventListener('click', () => runAutoDemo('realestate'));
-        document.getElementById('menu-clear').addEventListener('click', resetData);
-        
-        renderMessages();
+        // 設定ボタンの開閉
+        document.getElementById('settings-btn').addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            document.getElementById('settings-menu').classList.toggle('hidden'); 
+        });
+        document.addEventListener('click', () => document.getElementById('settings-menu').classList.add('hidden'));
     </script>
 </body>
 </html>
