@@ -77,10 +77,30 @@
         .sparkle-bg {
             background-image: radial-gradient(circle at center, #fff0f6 0%, #f8fafc 100%);
         }
+        .drop-active { outline: 3px dashed #ec4899; outline-offset: -8px; background: #fff0f6; }
     </style>
 </head>
-<body class="flex h-screen w-full bg-gray-50 font-sans text-gray-800 overflow-hidden">
+<body class="flex flex-col h-screen w-full bg-gray-50 font-sans text-gray-800 overflow-hidden">
 
+    <!-- モード切替バナー -->
+    <div class="h-14 flex items-center gap-3 px-5 bg-white border-b-2 border-pink-100 shadow-sm flex-shrink-0 z-30">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center text-white">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+        </div>
+        <span class="text-base font-bold text-gray-800">みっけ Studio</span>
+        <span class="text-xs text-gray-400 hidden md:inline">← モードを切り替えて使えます</span>
+        <div class="ml-auto flex items-center bg-gray-100 rounded-full p-1 gap-1 border border-gray-200">
+            <button id="tab-director" class="px-5 py-2 rounded-full text-sm font-bold transition-all bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow">
+                <i data-lucide="wand-2" class="w-4 h-4 inline-block -mt-0.5 mr-1"></i>AIディレクター
+            </button>
+            <button id="tab-editor" class="px-5 py-2 rounded-full text-sm font-bold transition-all text-gray-500 hover:text-gray-800">
+                <i data-lucide="pencil-ruler" class="w-4 h-4 inline-block -mt-0.5 mr-1"></i>読み込み編集
+            </button>
+        </div>
+    </div>
+
+    <!-- モードA：AIディレクター（既存デモ） -->
+    <div id="mode-director" class="flex-1 flex overflow-hidden">
     <!-- 左ペイン：AIチャット＆コントロールパネル -->
     <div class="w-[420px] bg-white border-r border-gray-200 flex flex-col shadow-sm z-20 flex-shrink-0 relative">
         
@@ -90,7 +110,7 @@
                 <img src="https://spc-jp.github.io/web-i-director/キャラクターI.png" onerror="this.src='https://ui-avatars.com/api/?name=i&background=ec4899&color=fff'" alt="Web i Director" class="w-8 h-8 rounded-full mr-3 object-cover border border-pink-200 shadow-sm">
                 <h1 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-600">Web i Director</h1>
             </div>
-            
+
             <button id="settings-btn" class="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors relative">
                 <i data-lucide="settings" class="w-5 h-5"></i>
             </button>
@@ -98,23 +118,28 @@
             <!-- 設定ドロップダウンメニュー -->
             <div id="settings-menu" class="hidden absolute top-14 right-4 bg-white border border-gray-200 shadow-xl rounded-xl w-64 z-50 py-2 transform origin-top-right transition-all">
                 <div class="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">自動デモ用メニュー</div>
-                
+
                 <button id="menu-auto-demo-restaurant" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-pink-50 hover:text-pink-600 flex items-center transition-colors border-l-4 border-transparent hover:border-pink-500">
                     <i data-lucide="utensils" class="w-4 h-4 mr-2"></i> デモ実行 (飲食業・集客)
+                    <span class="ml-auto text-[11px] font-bold text-gray-400 bg-gray-100 border border-gray-200 rounded px-1.5 py-0.5">1</span>
                 </button>
                 <button id="menu-auto-demo-manufacturing" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 flex items-center transition-colors border-l-4 border-transparent hover:border-blue-500">
                     <i data-lucide="factory" class="w-4 h-4 mr-2"></i> デモ実行 (製造業・BtoB)
+                    <span class="ml-auto text-[11px] font-bold text-gray-400 bg-gray-100 border border-gray-200 rounded px-1.5 py-0.5">2</span>
                 </button>
                 <button id="menu-auto-demo-realestate" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 flex items-center transition-colors border-l-4 border-transparent hover:border-orange-500">
                     <i data-lucide="hard-hat" class="w-4 h-4 mr-2"></i> デモ実行 (建設業・採用)
+                    <span class="ml-auto text-[11px] font-bold text-gray-400 bg-gray-100 border border-gray-200 rounded px-1.5 py-0.5">3</span>
                 </button>
-                
+
                 <div class="border-t border-gray-100 mt-2 pt-2">
                     <button id="menu-clear" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 flex items-center transition-colors">
                         <i data-lucide="trash-2" class="w-4 h-4 mr-2"></i> データをリセット
+                        <span class="ml-auto text-[11px] font-bold text-gray-400 bg-gray-100 border border-gray-200 rounded px-1.5 py-0.5">0</span>
                     </button>
                     <button id="menu-preview" class="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 flex items-center transition-colors">
                         <i data-lucide="eye" class="w-4 h-4 mr-2"></i> 強制プレビュー表示
+                        <span class="ml-auto text-[11px] font-bold text-gray-400 bg-gray-100 border border-gray-200 rounded px-1.5 py-0.5">9</span>
                     </button>
                 </div>
             </div>
@@ -472,6 +497,114 @@
             </div>
         </div>
     </div>
+    </div><!-- /mode-director -->
+
+    <!-- モードB：読み込み編集 -->
+    <div id="mode-editor" class="flex-1 flex overflow-hidden hidden">
+    <!-- 左：操作パネル -->
+        <div class="w-[380px] bg-white border-r border-gray-200 flex flex-col shadow-sm z-20 flex-shrink-0">
+            <div class="h-16 flex items-center px-6 border-b border-gray-100 flex-shrink-0">
+                <div class="w-8 h-8 rounded-full mr-3 bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center text-white shadow-sm">
+                    <i data-lucide="wand-2" class="w-4 h-4"></i>
+                </div>
+                <h1 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-purple-600">みっけ HTMLエディター</h1>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-5 space-y-6">
+
+                <!-- STEP1 読み込み -->
+                <div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">STEP 1　HTMLを読み込む</p>
+                    <label id="ed-drop-zone" class="block border-2 border-dashed border-gray-300 rounded-xl p-5 text-center cursor-pointer hover:border-pink-400 hover:bg-pink-50/40 transition-all">
+                        <i data-lucide="upload-cloud" class="w-8 h-8 mx-auto text-pink-400 mb-2"></i>
+                        <span class="text-sm text-gray-600">クリック、またはここにHTMLをドロップ</span>
+                        <input id="ed-file-input" type="file" accept=".html,.htm" class="hidden">
+                    </label>
+                    <details class="mt-2">
+                        <summary class="text-xs text-gray-400 cursor-pointer hover:text-gray-600">HTMLを貼り付けて読み込む</summary>
+                        <textarea id="ed-paste-area" rows="4" placeholder="ここにHTMLソースを貼り付け" class="w-full mt-2 border border-gray-200 rounded-lg p-2 text-xs font-mono focus:ring-2 focus:ring-pink-500/40 outline-none resize-none"></textarea>
+                        <button id="ed-btn-load-paste" class="mt-2 w-full py-2 text-sm bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors">貼り付けたHTMLを読み込む</button>
+                    </details>
+                </div>
+
+                <!-- STEP2 編集 -->
+                <div id="ed-edit-panel" class="opacity-40 pointer-events-none transition-opacity">
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">STEP 2　要素を選んで直す</p>
+
+                    <div id="ed-no-selection" class="text-sm text-gray-400 bg-gray-50 border border-gray-100 rounded-lg p-3">
+                        右のプレビューで、直したい部分をクリックしてください。
+                    </div>
+
+                    <div id="ed-selection-box" class="hidden space-y-4">
+                        <div class="flex items-center text-xs bg-pink-50 border border-pink-100 rounded-lg px-3 py-2">
+                            <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-pink-500 mr-1.5"></i>
+                            選択中：<span id="ed-sel-tag" class="font-bold text-pink-600 ml-1"></span>
+                            <button id="ed-btn-clear-sel" class="ml-auto text-gray-400 hover:text-gray-700">解除</button>
+                        </div>
+
+                        <!-- 文字編集 -->
+                        <div id="ed-text-editor">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">文字を直す</label>
+                            <textarea id="ed-text-input" rows="3" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-pink-500/40 outline-none resize-none"></textarea>
+                            <p id="ed-container-note" class="hidden text-[11px] text-orange-500 mt-1">※この要素は入れ物です。中身が消える場合は、文字だけの要素を選び直してください。</p>
+                        </div>
+
+                        <!-- 画像編集 -->
+                        <div id="ed-image-editor" class="hidden">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">画像を差し替える</label>
+                            <input id="ed-img-url" type="text" placeholder="画像URLを貼り付け" class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-pink-500/40 outline-none">
+                            <label class="mt-2 flex items-center justify-center gap-2 py-2 text-sm border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                                <i data-lucide="image-plus" class="w-4 h-4 text-pink-500"></i> 端末から画像を選ぶ
+                                <input id="ed-img-file" type="file" accept="image/*" class="hidden">
+                            </label>
+                        </div>
+
+                        <!-- 色 -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 mb-1">文字色</label>
+                                <input id="ed-color-text" type="color" value="#111111" class="w-full h-9 rounded-lg border border-gray-200 cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 mb-1">背景色</label>
+                                <input id="ed-color-bg" type="color" value="#ffffff" class="w-full h-9 rounded-lg border border-gray-200 cursor-pointer">
+                            </div>
+                        </div>
+
+                        <button id="ed-btn-apply" class="w-full py-2.5 bg-pink-500 text-white text-sm font-bold rounded-lg hover:bg-pink-600 transition-colors shadow-sm">この内容で反映する</button>
+                        <button id="ed-btn-delete" class="w-full py-2 text-sm text-red-500 rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-1.5">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i> この要素を削除
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP3 書き出し -->
+            <div class="p-4 border-t border-gray-100 flex-shrink-0 space-y-2">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">STEP 3　書き出す</p>
+                <button id="ed-btn-export" disabled class="w-full py-3 bg-gray-300 text-white text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2 disabled:cursor-not-allowed">
+                    <i data-lucide="download" class="w-4 h-4"></i> 編集後のHTMLをダウンロード
+                </button>
+            </div>
+        </div>
+
+        <!-- 右：プレビュー -->
+        <div class="flex-1 flex flex-col bg-gray-100 h-full overflow-hidden">
+            <div class="h-16 flex items-center px-6 bg-white border-b border-gray-200 shadow-sm flex-shrink-0">
+                <span class="w-2 h-2 rounded-full bg-gray-300 mr-2" id="ed-status-dot"></span>
+                <span id="ed-status-text" class="text-sm text-gray-500 font-medium">HTMLが読み込まれていません</span>
+            </div>
+            <div class="flex-1 relative bg-gray-200 p-4">
+                <div id="ed-empty-preview" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+                    <i data-lucide="layout-template" class="w-14 h-14 mb-3 opacity-40"></i>
+                    <p class="text-sm">左からHTMLを読み込むと、ここに表示されます</p>
+                </div>
+                <iframe id="ed-preview" class="w-full h-full bg-white rounded-lg shadow-inner hidden" title="preview"></iframe>
+            </div>
+        </div>
+
+    
+    </div><!-- /mode-editor -->
 
     <script>
         lucide.createIcons();
@@ -576,13 +709,13 @@
         const chatArea = document.getElementById('chat-area');
         const messageInput = document.getElementById('message-input');
         const sendBtn = document.getElementById('send-btn');
-        const settingsBtn = document.getElementById('settings-btn');
-        const settingsMenu = document.getElementById('settings-menu');
         const inputContainer = document.getElementById('input-container');
         const micBtn = document.getElementById('mic-btn');
         const statusIndicator = document.getElementById('status-indicator');
         const statusText = document.getElementById('status-text');
         
+        const settingsBtn = document.getElementById('settings-btn');
+        const settingsMenu = document.getElementById('settings-menu');
         settingsBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             settingsMenu.classList.toggle('hidden');
@@ -1235,9 +1368,45 @@
             }, 23000); 
         }
 
+        // ==========================================
+        // 本番デモ用 隠しショートカット（画面には一切表示されません）
+        // Ctrl+Shift+1:飲食  2:製造  3:建設  0:リセット  9:強制プレビュー
+        // ==========================================
+        function forcePreview() {
+            resetData();
+            isStarted = true;
+            currentStep = 7;
+            messages.push({ id: Date.now(), type: 'system', icon: 'eye', text: 'プレビューを強制表示しました。上部メニューからページ遷移をお試しください。' });
+            renderMessages();
+
+            document.getElementById('empty-state').classList.add('hidden');
+            const canvas = document.getElementById('preview-canvas');
+            canvas.classList.remove('hidden', 'opacity-0');
+            canvas.classList.add('opacity-100');
+
+            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+            document.getElementById('page-home').classList.remove('hidden');
+
+            enableFullUI();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!(e.ctrlKey && e.shiftKey)) return;
+            switch (e.code) {
+                case 'Digit1': e.preventDefault(); runAutoDemo('restaurant'); break;
+                case 'Digit2': e.preventDefault(); runAutoDemo('manufacturing'); break;
+                case 'Digit3': e.preventDefault(); runAutoDemo('realestate'); break;
+                case 'Digit0': e.preventDefault(); resetData(); break;
+                case 'Digit9': e.preventDefault(); forcePreview(); break;
+            }
+        });
+
+        // 歯車メニューからのクリック操作（キー操作と同じ動き）
         document.getElementById('menu-auto-demo-restaurant').addEventListener('click', () => runAutoDemo('restaurant'));
         document.getElementById('menu-auto-demo-manufacturing').addEventListener('click', () => runAutoDemo('manufacturing'));
         document.getElementById('menu-auto-demo-realestate').addEventListener('click', () => runAutoDemo('realestate'));
+        document.getElementById('menu-clear').addEventListener('click', resetData);
+        document.getElementById('menu-preview').addEventListener('click', forcePreview);
 
         // ==========================================
         // サイト生成とAIコピーライティングの反映
@@ -1429,25 +1598,6 @@
             renderMessages();
         }
 
-        document.getElementById('menu-clear').addEventListener('click', resetData);
-
-        document.getElementById('menu-preview').addEventListener('click', () => {
-            resetData();
-            isStarted = true;
-            currentStep = 7;
-            messages.push({ id: Date.now(), type: 'system', icon: 'eye', text: 'プレビューを強制表示しました。上部メニューからページ遷移をお試しください。' });
-            renderMessages();
-            
-            document.getElementById('empty-state').classList.add('hidden');
-            const canvas = document.getElementById('preview-canvas');
-            canvas.classList.remove('hidden', 'opacity-0');
-            canvas.classList.add('opacity-100');
-            
-            document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
-            document.getElementById('page-home').classList.remove('hidden');
-
-            enableFullUI();
-        });
 
         function handleSendMessage() {
             const text = messageInput.value.trim();
@@ -1695,6 +1845,254 @@
         });
 
         renderMessages();
+    </script>
+    <script>
+        (function(){
+            const tD = document.getElementById('tab-director');
+            const tE = document.getElementById('tab-editor');
+            const mD = document.getElementById('mode-director');
+            const mE = document.getElementById('mode-editor');
+            const on  = 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow';
+            const off = 'text-gray-500 hover:text-gray-800';
+            const base = 'px-5 py-2 rounded-full text-sm font-bold transition-all ';
+            function set(mode){
+                const dir = (mode === 'director');
+                mD.classList.toggle('hidden', !dir);
+                mE.classList.toggle('hidden', dir);
+                tD.className = base + (dir ? on : off);
+                tE.className = base + (dir ? off : on);
+            }
+            tD.addEventListener('click', () => set('director'));
+            tE.addEventListener('click', () => set('editor'));
+        })();
+    </script>
+    <script>
+    (function(){
+
+        lucide.createIcons();
+
+        const STYLE_ID = '__mikke_editor_style__';
+        const SEL_CLASS = '__mikke_sel__';
+        const HOVER_CLASS = '__mikke_hover__';
+
+        const iframe = document.getElementById('ed-preview');
+        const emptyPreview = document.getElementById('ed-empty-preview');
+        const statusText = document.getElementById('ed-status-text');
+        const statusDot = document.getElementById('ed-status-dot');
+        const editPanel = document.getElementById('ed-edit-panel');
+        const noSelection = document.getElementById('ed-no-selection');
+        const selectionBox = document.getElementById('ed-selection-box');
+        const btnExport = document.getElementById('ed-btn-export');
+
+        let selectedEl = null;
+        let loaded = false;
+
+        function setStatus(msg, ok) {
+            statusText.textContent = msg;
+            statusDot.className = 'w-2 h-2 rounded-full mr-2 ' + (ok ? 'bg-green-500' : 'bg-gray-300');
+        }
+
+        // ---------- 読み込み ----------
+        function loadHTML(text) {
+            selectedEl = null;
+            showSelection(false);
+            iframe.srcdoc = text;
+            iframe.classList.remove('hidden');
+            emptyPreview.classList.add('hidden');
+        }
+
+        const fileInput = document.getElementById('ed-file-input');
+        const dropZone = document.getElementById('ed-drop-zone');
+
+        fileInput.addEventListener('change', (e) => {
+            const f = e.target.files[0];
+            if (!f) return;
+            const r = new FileReader();
+            r.onload = () => loadHTML(r.result);
+            r.readAsText(f);
+        });
+
+        ['dragover', 'dragenter'].forEach(ev =>
+            dropZone.addEventListener(ev, (e) => { e.preventDefault(); dropZone.classList.add('drop-active'); }));
+        ['dragleave', 'drop'].forEach(ev =>
+            dropZone.addEventListener(ev, (e) => { e.preventDefault(); dropZone.classList.remove('drop-active'); }));
+        dropZone.addEventListener('drop', (e) => {
+            const f = e.dataTransfer.files[0];
+            if (!f) return;
+            const r = new FileReader();
+            r.onload = () => loadHTML(r.result);
+            r.readAsText(f);
+        });
+
+        document.getElementById('ed-btn-load-paste').addEventListener('click', () => {
+            const t = document.getElementById('ed-paste-area').value.trim();
+            if (t) loadHTML(t);
+        });
+
+        // ---------- iframe内のクリック編集を有効化 ----------
+        function injectEditorStyle(doc) {
+            if (doc.getElementById(STYLE_ID)) return;
+            const st = doc.createElement('style');
+            st.id = STYLE_ID;
+            st.textContent =
+                '.' + HOVER_CLASS + '{outline:2px dashed #a855f7 !important;outline-offset:1px;cursor:pointer !important;}' +
+                '.' + SEL_CLASS + '{outline:3px solid #ec4899 !important;outline-offset:2px;}';
+            (doc.head || doc.documentElement).appendChild(st);
+        }
+
+        iframe.addEventListener('load', () => {
+            if (!iframe.srcdoc) return;
+            const doc = iframe.contentDocument;
+            if (!doc || !doc.body) return;
+            injectEditorStyle(doc);
+
+            doc.addEventListener('mouseover', (e) => {
+                if (e.target && e.target.classList) e.target.classList.add(HOVER_CLASS);
+            }, true);
+            doc.addEventListener('mouseout', (e) => {
+                if (e.target && e.target.classList) e.target.classList.remove(HOVER_CLASS);
+            }, true);
+            doc.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                selectElement(e.target);
+            }, true);
+
+            loaded = true;
+            btnExport.disabled = false;
+            btnExport.className = 'w-full py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-sm font-bold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm hover:opacity-90';
+            editPanel.classList.remove('opacity-40', 'pointer-events-none');
+            setStatus('読み込み完了。要素をクリックして編集できます', true);
+        });
+
+        // ---------- 選択 ----------
+        function selectElement(el) {
+            if (!el || el === iframe.contentDocument.documentElement || el.tagName === 'HTML') return;
+            if (selectedEl) selectedEl.classList.remove(SEL_CLASS);
+            selectedEl = el;
+            selectedEl.classList.add(SEL_CLASS);
+
+            document.getElementById('ed-sel-tag').textContent = '<' + el.tagName.toLowerCase() + '>';
+
+            const isImg = el.tagName === 'IMG';
+            document.getElementById('ed-image-editor').classList.toggle('hidden', !isImg);
+            document.getElementById('ed-text-editor').classList.toggle('hidden', isImg);
+
+            if (isImg) {
+                document.getElementById('ed-img-url').value = el.getAttribute('src') || '';
+            } else {
+                document.getElementById('ed-text-input').value = el.textContent.trim();
+                const hasChildEls = el.children.length > 0;
+                document.getElementById('ed-container-note').classList.toggle('hidden', !hasChildEls);
+            }
+
+            const cs = iframe.contentWindow.getComputedStyle(el);
+            document.getElementById('ed-color-text').value = rgbToHex(cs.color) || '#111111';
+            const bg = rgbToHex(cs.backgroundColor);
+            if (bg) document.getElementById('ed-color-bg').value = bg;
+
+            showSelection(true);
+        }
+
+        function showSelection(on) {
+            selectionBox.classList.toggle('hidden', !on);
+            noSelection.classList.toggle('hidden', on);
+        }
+
+        function clearSelection() {
+            if (selectedEl) selectedEl.classList.remove(SEL_CLASS);
+            selectedEl = null;
+            showSelection(false);
+        }
+        document.getElementById('ed-btn-clear-sel').addEventListener('click', clearSelection);
+
+        function rgbToHex(rgb) {
+            if (!rgb) return null;
+            const m = rgb.match(/\d+/g);
+            if (!m || m.length < 3) return null;
+            if (m.length === 4 && m[3] === '0') return null; // 透明は無視
+            return '#' + m.slice(0, 3).map(x => (+x).toString(16).padStart(2, '0')).join('');
+        }
+
+        // ---------- 反映 ----------
+        document.getElementById('ed-btn-apply').addEventListener('click', () => {
+            if (!selectedEl) return;
+            if (selectedEl.tagName === 'IMG') {
+                const url = document.getElementById('ed-img-url').value.trim();
+                if (url) selectedEl.setAttribute('src', url);
+            } else {
+                selectedEl.textContent = document.getElementById('ed-text-input').value;
+            }
+            selectedEl.style.color = document.getElementById('ed-color-text').value;
+            if (selectedEl.tagName !== 'IMG') {
+                selectedEl.style.backgroundColor = document.getElementById('ed-color-bg').value;
+            }
+            setStatus('反映しました。続けて編集できます', true);
+        });
+
+        // ---------- 画像アップロード（Canvasで1280px・JPEG化：サイズ判定なし） ----------
+        document.getElementById('ed-img-file').addEventListener('change', (e) => {
+            const f = e.target.files[0];
+            if (!f || !selectedEl) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const MAX = 1280;
+                    let w = img.width, h = img.height;
+                    if (w > MAX || h > MAX) {
+                        if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
+                        else { w = Math.round(w * MAX / h); h = MAX; }
+                    }
+                    const c = document.createElement('canvas');
+                    c.width = w; c.height = h;
+                    c.getContext('2d').drawImage(img, 0, 0, w, h);
+                    const dataUrl = c.toDataURL('image/jpeg', 0.85);
+                    selectedEl.setAttribute('src', dataUrl);
+                    document.getElementById('ed-img-url').value = '（端末から取り込んだ画像を埋め込みました）';
+                    setStatus('画像を埋め込みました', true);
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(f);
+        });
+
+        // ---------- 削除 ----------
+        document.getElementById('ed-btn-delete').addEventListener('click', () => {
+            if (!selectedEl) return;
+            selectedEl.remove();
+            clearSelection();
+            setStatus('要素を削除しました', true);
+        });
+
+        // ---------- 書き出し ----------
+        document.getElementById('ed-btn-export').addEventListener('click', () => {
+            const doc = iframe.contentDocument;
+            if (!doc) return;
+            // 編集用の飾りを一旦除去
+            const st = doc.getElementById(STYLE_ID);
+            if (st) st.remove();
+            doc.querySelectorAll('.' + SEL_CLASS).forEach(n => n.classList.remove(SEL_CLASS));
+            doc.querySelectorAll('.' + HOVER_CLASS).forEach(n => n.classList.remove(HOVER_CLASS));
+            // 空になった class="" を掃除
+            doc.querySelectorAll('[class=""]').forEach(n => n.removeAttribute('class'));
+
+            const html = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+
+            const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'edited.html';
+            a.click();
+            URL.revokeObjectURL(a.href);
+
+            // 編集を続けられるよう飾りを戻す
+            injectEditorStyle(doc);
+            if (selectedEl) selectedEl.classList.add(SEL_CLASS);
+            setStatus('編集後のHTMLを書き出しました', true);
+        });
+    
+    })();
     </script>
 </body>
 </html>
